@@ -1477,7 +1477,8 @@
                 padding: 20px 0;
                 border-left: none;
                 border-right: none;
-                margin-bottom: 10px;
+                margin: 0 -20px 10px -20px;
+                width: auto;
                 background: #0a0a0a;
                 border-top: 1px solid rgba(255, 255, 255, 0.05);
                 border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -1492,12 +1493,12 @@
             }
 
             .post-img {
-                border-radius: 0;
+                border-radius: 0 !important;
                 max-height: 60vh;
             }
 
-            .carousel-container {
-                border-radius: 0;
+            .carousel-container, .carousel-container > div {
+                border-radius: 0 !important;
             }
 
             .post-avatar {
