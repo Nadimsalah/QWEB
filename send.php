@@ -404,7 +404,7 @@ $uBalance = floatval($userData['Balance'] ?? 0);
                         <i class="fa-solid fa-check"></i>
                     </div>
                     <h2>Transfer Successful!</h2>
-                    <div class="s-amount">${parseFloat(amount).toFixed(2)} MAD</div>
+                    <div class="s-amount">${parseFloat(amount).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} MAD</div>
                     <p class="s-desc">Sent to <b>${name}</b></p>
                     <div class="s-loader"></div>
                 </div>

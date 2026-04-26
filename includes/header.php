@@ -376,7 +376,7 @@ if (!isset($categories)) {
                     .then(r => r.json())
                     .then(d => {
                         if (d && (d.balance !== undefined)) {
-                            balEl.textContent = parseFloat(d.balance).toFixed(2) + ' MAD';
+                            balEl.textContent = parseFloat(d.balance).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' MAD';
                         } else {
                             balEl.textContent = '0.00 MAD';
                         }
