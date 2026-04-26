@@ -193,6 +193,9 @@ $uBalance = floatval($userData['Balance'] ?? 0);
         </div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="assets/js/firebase-auth.js"></script>
     <script>
         let selectedUser = null;
         let html5QrCode = null;
@@ -395,6 +398,23 @@ $uBalance = floatval($userData['Balance'] ?? 0);
         }
 
         function showSuccessAnimation(amount, name) {
+            
+            // Push to Firebase Chat Room
+            try {
+                if (typeof firebase !== 'undefined') {
+                    const currentUserID = '<?= $userId ?>';
+                    const currentUserName = '<?= addslashes($userData['name']) ?>';
+                    const chatRoomId = [currentUserID, selectedUser.UserID].sort().join('_');
+                    firebase.database().ref('FriendChats/' + chatRoomId).push({
+                        timestamp: Date.now(),
+                        type: 'Transfer',
+                        message: amount,
+                        senderId: currentUserID,
+                        senderName: currentUserName
+                    });
+                }
+            } catch(e) { console.error("Firebase push failed", e); }
+
             const overlay = document.createElement('div');
             overlay.className = 'success-overlay';
             overlay.innerHTML = `

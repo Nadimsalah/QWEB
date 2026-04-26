@@ -305,7 +305,16 @@ usort($history, function($a, $b) {
                             $sub .= " • <span style='color:#ff3b30;'>Fee: $fee MAD</span>";
                         }
                         
-                        $link = "#";
+                        $otherUserId = intval($item['DriverID'] ?? 0);
+                        if ($otherUserId == 0 && !empty($otherPartyName)) {
+                            // Fallback lookup for past transactions
+                            $lookup = $con->query("SELECT UserID FROM Users WHERE name = '" . $con->real_escape_string($otherPartyName) . "' LIMIT 1");
+                            if ($lookup && $lookup->num_rows > 0) {
+                                $otherUserId = $lookup->fetch_assoc()['UserID'];
+                            }
+                        }
+                        
+                        $link = ($otherUserId > 0 && $otherUserId != $userId) ? "friend_chat.php?uid=" . $otherUserId : "#";
                     else:
                         // Order type
                         $isIncome = false;

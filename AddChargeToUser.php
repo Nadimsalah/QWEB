@@ -101,7 +101,7 @@ $sql="UPDATE Money SET TotalIncome=TotalIncome+$SendMoneyPercww,BalanceTraComm=B
 			   if(mysqli_query($con,$sql))
 			   {}
 
-$sql="INSERT INTO UserTransaction (UserID,Money,Method,DistnationName,DistnationPhoto,DriverID,OrderID,DriverName,Driverphoto,MoneyPlusOrLess,UserFees) VALUES ('$UserID','$Money','QOON Pay','$SenderName','$SenderPhoto','0','0','$RecieverName','$ReceiverPhoto','less','$SendMoneyPercww');";
+$sql="INSERT INTO UserTransaction (UserID,Money,Method,DistnationName,DistnationPhoto,DriverID,OrderID,DriverName,Driverphoto,MoneyPlusOrLess,UserFees) VALUES ('$UserID','$Money','QOON Pay','$SenderName','$SenderPhoto','$ReceiverID','0','$RecieverName','$ReceiverPhoto','less','$SendMoneyPercww');";
   if(mysqli_query($con,$sql))
   {
 	     
@@ -111,7 +111,7 @@ $sql="INSERT INTO UserTransaction (UserID,Money,Method,DistnationName,Distnation
 
 
 
-$sql="INSERT INTO UserTransaction (UserID,Money,Method,DistnationName,DistnationPhoto,DriverID,OrderID,DriverName,Driverphoto,MoneyPlusOrLess,UserFees) VALUES ('$ReceiverID','$Money','QOON Pay','$SenderName','$SenderPhoto','0','0','$RecieverName','$ReceiverPhoto','Add funds','$SendMoneyPercww');";
+$sql="INSERT INTO UserTransaction (UserID,Money,Method,DistnationName,DistnationPhoto,DriverID,OrderID,DriverName,Driverphoto,MoneyPlusOrLess,UserFees,Type) VALUES ('$ReceiverID','$Money','QOON Pay','$SenderName','$SenderPhoto','$UserID','0','$RecieverName','$ReceiverPhoto','Add funds','$SendMoneyPercww','SENDMONEY');";
   if(mysqli_query($con,$sql))
   {
          

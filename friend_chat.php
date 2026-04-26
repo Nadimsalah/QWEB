@@ -143,7 +143,7 @@ $chatRoomId = $idArr[0] . "_" . $idArr[1];
         .msg-wrapper.them { align-self: flex-start; align-items: flex-start; }
 
         .msg-bubble {
-            padding: 10px 14px; border-radius: 16px; font-size: 15px; line-height: 1.4;
+            padding: 10px 14px 20px 14px; border-radius: 16px; font-size: 15px; line-height: 1.4;
             position: relative; word-wrap: break-word; white-space: pre-wrap;
             box-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
@@ -209,6 +209,46 @@ $chatRoomId = $idArr[0] . "_" . $idArr[1];
         .img-viewer.active { opacity: 1; pointer-events: auto; }
         .img-viewer img { max-width: 100vw; max-height: 100vh; object-fit: contain; }
         .img-close { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 30px; cursor: pointer; }
+
+        /* Apple Cash Style Transfer Card */
+        .apple-cash-card {
+            background: linear-gradient(135deg, #111 0%, #1a1a1a 100%);
+            border: 1px solid rgba(44, 181, 232, 0.3);
+            border-radius: 20px;
+            padding: 20px 20px 15px 20px;
+            width: 250px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+        .msg-wrapper.me .apple-cash-card {
+            border-bottom-right-radius: 4px;
+        }
+        .msg-wrapper.them .apple-cash-card {
+            border-bottom-left-radius: 4px;
+        }
+        .ac-logo-row {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 25px;
+        }
+        .ac-logo-row img { height: 18px; filter: brightness(0) invert(1); }
+        .ac-amount {
+            font-size: 32px; font-weight: 800; letter-spacing: -1px;
+            margin-bottom: 5px; color: #fff;
+        }
+        .ac-amount sup { font-size: 16px; font-weight: 600; top: -0.5em; position: relative; margin-left: 2px; }
+        .ac-desc {
+            font-size: 13px; color: #2cb5e8; font-weight: 600;
+        }
+        .ac-bottom {
+            margin-top: 15px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .ac-status { font-size: 11px; font-weight: 600; color: #34c759; text-transform: uppercase; letter-spacing: 0.5px; }
+        .ac-icon {
+            width: 20px; height: 20px; border-radius: 50%; background: #34c759; color: #fff;
+            display: flex; align-items: center; justify-content: center; font-size: 10px;
+        }
 
     </style>
 </head>
@@ -306,19 +346,47 @@ $chatRoomId = $idArr[0] . "_" . $idArr[1];
             
             if (data.type === 'Image') {
                 contentHtml = `<img src="${data.message}" class="msg-image" onclick="openImageViewer(this.src)">`;
+            } else if (data.type === 'Transfer') {
+                const amountText = parseFloat(data.message).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                const descText = isMe ? `You sent to ${friendName}` : `${data.senderName} sent you`;
+                contentHtml = `
+                    <div class="apple-cash-card">
+                        <div class="ac-logo-row">
+                            <img src="qoon_pay_logo.png" alt="QOON Pay">
+                        </div>
+                        <div class="ac-amount">${amountText}<sup>MAD</sup></div>
+                        <div class="ac-desc">${descText}</div>
+                        <div class="ac-bottom">
+                            <div class="ac-status">Completed</div>
+                            <div class="ac-icon"><i class="fa-solid fa-check"></i></div>
+                        </div>
+                    </div>
+                `;
             } else {
-                contentHtml = data.message;
+                contentHtml = `<div class="msg-bubble">${data.message}</div>`;
             }
 
             const checkmarks = isMe ? `<i class="fa-solid fa-check-double" style="color: #4db8ff; font-size:10px;"></i>` : '';
             const time = formatTime(data.timestamp || Date.now());
 
-            wrap.innerHTML = `
-                <div class="msg-bubble">
+            if (data.type === 'Transfer') {
+                wrap.innerHTML = `
                     ${contentHtml}
                     <div class="msg-meta">${time} ${checkmarks}</div>
-                </div>
-            `;
+                `;
+            } else if (data.type === 'Image') {
+                wrap.innerHTML = `
+                    ${contentHtml}
+                    <div class="msg-meta" style="margin-top: 4px;">${time} ${checkmarks}</div>
+                `;
+            } else {
+                wrap.innerHTML = `
+                    <div class="msg-bubble">
+                        ${data.message}
+                        <div class="msg-meta" style="position:absolute; bottom:6px; right:10px;">${time} ${checkmarks}</div>
+                    </div>
+                `;
+            }
 
             messagesArea.appendChild(wrap);
             messagesArea.scrollTo({ top: messagesArea.scrollHeight, behavior: 'smooth' });
