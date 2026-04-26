@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+<button onclick="testF()">Test</button>
+<script>
+function testF() {
+    let formData = new FormData();
+    formData.append('PostID', 125);
+    fetch('GetPostCommentsWeb.php', { method: 'POST', body: formData })
+    .then(res => res.text())
+    .then(text => document.body.innerText += text);
+}
+</script>
+</body>
+</html>

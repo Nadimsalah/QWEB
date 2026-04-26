@@ -1,0 +1,1 @@
+﻿<?php $arr = array("FoodID"=>"123", "FoodName"=>"Pizza", "FoodDesc"=>"Desc", "FoodCatID"=>"1", "FoodPrice"=>"10", "FoodOfferPrice"=>"9", "FoodPhoto"=>"a.jpg", "CreatedAtFoods"=>"2023", "Extraone"=>"1", "Extratwo"=>"0"); array_splice($arr, 9, 10, array(array("Cat1", "Cat2"))); echo json_encode($arr); ?>

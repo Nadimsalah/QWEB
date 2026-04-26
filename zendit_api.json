@@ -1,0 +1,3903 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Zendit API",
+    "version": "1.0.12",
+    "contact": {
+      "name": "Zendit Support",
+      "email": "support@zendit.io",
+      "url": "https://developers.zendit.io"
+    },
+    "description": "# Overview\nOur cloud-based Prepaid as a Service platform is now even more accessible with our reliable and efficient REST API. Our API provides seamless access to catalogs, balance information, and transactions for our:\n\n- International Mobile Top Up Products\n- International Mobile Bundles\n- Digital Gift Cards\n- Utility Payments\n- eSIM\n\nOur platform is built with industry-standard security protocols and is designed to integrate seamlessly with your existing systems. We are committed to providing top-notch support, so please don't hesitate to reach out to our experienced zendit support team with any questions or support needs. \n\n## Zendit University\nAs a supplement to this API guide, head over to [Zendit University](https://developers.zendit.io/zendit-concepts) to understand the features of the system, how transaction flows work and how to get details from the catalog for your integration.\n\n## Environments\nTesting and development before going live with your product or service is crucial. That’s why we provide easy access to both our test bed and production environments through our gateway.\n\nWhen you register for zendit, you’ll be provided with a test mode API key to use for simulated transactions. These transactions will not transfer real value, but will deduct from your test bed wallet. No credit card is required for this environment, and you can manage your wallet balance through our administration console.\n\nWhen you’re ready to switch to production mode and start processing real transactions, you’ll need to fund your prepay wallet with real value. This will allow you to process transactions using your production key.\n\nFor more information on using our testbed environment to simulate different responses, refer to our comprehensive [test mode](https://developers.zendit.io/zendit-concepts/zendit-test-mode) environment documentation.\n\nPlease don’t hesitate to contact our support team if you have any questions or need assistance.\n\n## API Security\nWhen you sign up for our platform, you’ll be given access to your test mode key for testing your integration with our API. To send requests to an API endpoint, please use the Authentication header and include your API key as follows:\n```\nAuthorization: Bearer YOUR_API_KEY\n```\n\nThis will authenticate your requests and allow our API to process them securely. If you’re ready to switch to production mode and start processing real transactions, you’ll need to use your production key instead.\n\nFor more information about our security, refer to our [security guide](https://developers.zendit.io/zendit-concepts/zendit-security).\n\n## Transactions\nTransparency and visibility are most important when it comes to processing transactions. That’s why we process transactions asynchronously and provide detailed status updates throughout the process.\n\nWhen you send a transaction through our platform, we first validate the parameters of the transaction and then return the transaction ID in the response, along with any error messages if the transaction cannot be processed. From there, the transaction enters the zendit ecosystem and begins to move through our system.\n\nTo check on the status of your transaction, you can periodically poll the transaction using the transaction ID. Our system provides detailed updates on the transaction’s status as it moves through the system, including updates on receipt, wallet authorization, offer fulfillment, and completion.\n\nOnce the transaction is complete, you’ll receive a final status update that reports whether it was successful or encountered any errors during processing. Additionally, each transaction contains a history log that shows all status updates throughout the transaction process, providing you with a comprehensive view of the transaction’s journey through our platform.\n\nTo understand more about how to work with transactions, refer to our [transaction guide](https://developers.zendit.io/zendit-concepts/transaction-processing).\n\n### Transaction ID\nProviding our users with maximum flexibility when it comes to tracking their transactions is important. That’s why we don’t automatically generate transaction IDs – instead, you can supply any alphanumeric string of your choosing (such as an autonumber or a GUID) to track your transaction in our system.\n\nTo ensure that your transaction is processed correctly, you must supply the ID you will use to track the transaction status with each transaction request. Please note that transaction IDs are unique per zendit account and environment, so you can use the same transaction ID in both your test environment and production environment (once per environment).\n\nIf you’re using an autonumber scheme and have test and production environments, there’s no need to worry about collisions of IDs between the two environments. We understand the importance of keeping your test and production environments separate, and our system is designed to handle this seamlessly.\n\n## Queue and Retry\nWe strive to ensure that your transactions are processed reliably and efficiently. While most transactions are processed in real time, occasional recoverable errors can occur when a product provider in the ecosystem encounters an issue.\n\nTo address this, our API automatically sets a 15-minute timeout on the transaction and then retries it. If there is an extended problem with a product provider, the system will continue to retry the transaction every 15 minutes until it either completes successfully or fails after 24 hours.\n\nIf you would prefer not to use the queue and retry feature, you may turn the feature off in the client console on the API settings page.\n\nFor more information refer to the [Queue and Retry guide](https://developers.zendit.io/zendit-concepts/queue-and-retry).\n\n## Digital Gift Card and Utility Payment Required Felds\nDigital Gift Cards and Utility Payments based on the brand requirements may require more information than just the recipient’s phone number. For the specific requirements of a Digital Gift Card or Utility Payment offer the list of fields required will be provided in the catalog. You can find all the possible fields that a these offers may require on the [required fields page](https://developers.zendit.io/required-fields).\n\n## Error Messages\nFor a detailed list of possible error statuses, please see [Error Message Guide](https://developers.zendit.io/error-messages/).\n\n### Transaction Log Structure\nzendit Transactions contain a log of activity as the transaction progresses through the system. You can find this on any transaction under the “log” structure. The log will give more detail about the transaction from when it was submitted, when it was authorized against the wallet, when it was submitted for fulfillment and any errors that were encountered while processing will be noted at the stage where the transaction failed.\n\n## Searching using createdAt date on transactions\nWhen using the createdAt date on the transaction search endpoints (/topup/purchases, /transactions and /voucher/purchases) dates use the [RFC 3339](https://www.rfc-editor.org/rfc/rfc3339) format in UTC Timezone (e.g. 2023-02-15T03:15:22Z)\n\nWhen searching with createdAt there are a few prefixes you can add to the time in order to search around the timestamp supplied. The search formats are as follows:\n\n| Format | Description | Example |\n| ------ | ----------- | ------- |\n| No prefix | Search for an exact date/time | 2023-02-15T03:15:22Z will search for transactions that match February 15, 2023 at 3:15 and 22 seconds in UTC timezone |\n| lt | Search for a date/time that is earlier than the supplied value | lt2023-02-15T03:15:22Z will search for transactions that are before February 15, 2023 at 3:15 and 22 seconds in UTC timezone |\n| lte | Search for a date/time that is equal to the supplied value and earlier | lte2023-02-15T03:15:22Z will search for transactions that are equal February 15, 2023 at 3:15 and 22 seconds in UTC timezone and transactions that are earlier |\n| gt | Search for a date/time that is later than the supplied value | gt2023-02-15T03:15:22Z will search for transactions that are after February 15, 2023 at 3:15 and 22 seconds in UTC timezone |\n| gte | Search for a date/time that is equal to the supplied value and later | gte2023-02-15T03:15:22Z will search for transactions that are equal to February 15, 2023 at 3:15 and 22 seconds in UTC timezone and transactions that are later |\n\n## Regions\nCatalog methods support filtering/searching products by region. Regions are string values and supported with the following values:\n  - Global (includes global esim)\n  - Africa\n  - Asia\n  - Caribbean\n  - Central America\n  - Eastern Europe\n  - Western Europe\n  - North America\n  - Oceania\n  - South America\n  - South Asia\n  - Southeast Asia\n  - Middle East and North Africa\n\n## Try out the API\nSwagger pages for the api can be found at [https://api.zendit.io/swagger/index.html](https://api.zendit.io/swagger/index.html)\n\n## MSISDN (Phone Number) Lookup\nPhone number lookup is currently in beta with select clients. The beta group is closed to new participants. For testing in the test mode environment, the following phone number patterns may be used to get simulated results:\n| Phone Number Pattern | Country Result | Carrier Result | \n| -------------------- | -------------- | -------------- |\n| +502 3XXX XXXX | GT | Claro |\n| +502 5XXX XXXX | GT | Tigo |\n| +1 5XX XXX XXXX | US | Verizon |\n| +1 6XX XXX XXXX | US | T-Mobile | \n\nUsing any number sequence to fill in the X in these numbers will yield these results in the test mode environment. All other phone numbers will yield a phone number not found error. For the production environment, all valid phone numbers will work.\n\nNote that for US phone numbers and some destinations that use MVNOs (e.g. Boost, Mint) the carrier result will return the network the device is assigned to (e.g. T-Mobile in the case of Mint Mobile) and will not return the name of the MVNO. This is a limitation of the service. \n\nClients who aren't included in the beta will receive an error on the endpoints of LOOKUP_NOT_ENABLED when calling the endpoint.\n\n## Reports \nTransaction reports can be generated from the API. Transaction reports are generated asynchronously and are first called with the POST request to generate the report with a start datetime and end datetime. The report generates a CSV file of transactions that are either in DONE or FAILED status. Transactions that have not completed will not be included in the report since their final status is not known until they complete.\n\nFor the time period, the start datetime includes transactions that are at the start datetime or later. For the end datetime, transactions included in the report will be earlier than the set time. As an example, to produce a report for 1 day, set the start datetime to \"2024-02-01T00:00:00Z\" and the end datetime to \"2024-02-02T00:00:00Z\" and it will include all transactions starting from midnight on February 1, 2024 and completing before February 2, 2024. Transactions still in flight on February 1, 2024 but not completing until February 2, 2024 will appear on a report for 1 day for February 2, 2024.\n\nWhen selecting a time period, consider the length of time between the start and end time and your transaction volume as a guide to how long a report may take to generate. The longer the period and number of transactions completed within this period will require more time to generate the report.\n\nAfter sending a generate report, you will receive an acknoledgement of the request including a system generated report Id to track the status. You may poll the status endpoint (polling interval should be at least 1 second between poll requests) to check on the progress of the report. When the report status has responded with Ready, the file is ready to download.\n\nDownloading the report you may use the reportId and filename included in the status response. You may also use the downloadUrl which has the fully formed API call to download the report. Downloading the report must include your API Key since report downloads are not on a public URL. \n\nIn the case of failure, the failure reason will be returned in the error structure and the report will have a FAILED status. You can check the log structure in the report to find out more information as to why the report generation failed. \n"
+  },
+  "servers": [
+    {
+      "url": "https://api.zendit.io/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Account",
+      "description": "Check your account balance. \nFor wallet inforatmion see the [zendit wallet guide](https://developers.zendit.io/zendit-concepts/zendit-wallets/).\n"
+    },
+    {
+      "name": "Brands",
+      "description": "Brand information, logos, redemption instructions and Terms & Conditions for Digital Gift Cards and Utility Payments."
+    },
+    {
+      "name": "eSIM",
+      "description": "eSIM Catalog and Transaction Operations. For more information about eSIM products see the [eSIM Guide](https://developers.zendit.io/zendit-concepts/esim). \nFor catalog operations refer to the [zendit catalog guide](https://developers.zendit.io/zendit-concepts/zendit-catalog/).\nFor transactions refer to the [zendit transaction guide](https://developers.zendit.io/zendit-concepts/transaction-processing/).\nFor webhooks refer to the [zendit webhook guide](https://developers.zendit.io/zendit-concepts/webhooks/).\n"
+    },
+    {
+      "name": "Mobile Top Up",
+      "description": "Mobile Top Up, Mobile Bundle, and Mobile Data Catalog and Transaction Operations\nFor catalog operations refer to the [zendit catalog guide](https://developers.zendit.io/zendit-concepts/zendit-catalog/).\nFor transactions refer to the [zendit transaction guide](https://developers.zendit.io/zendit-concepts/transaction-processing/).\nFor webhooks refer to the [zendit webhook guide](https://developers.zendit.io/zendit-concepts/webhooks/).\n"
+    },
+    {
+      "name": "Voucher",
+      "description": "Digital Gift Card and Prepaid Utilities Catalog and Transaction Operations\nFor receipt details on transactions, refer to the [Gift Card & Utility Payments Guide](https://developers.zendit.io/zendit-university/digital-gift-cards) \nFor catalog operations refer to the [zendit catalog guide](https://developers.zendit.io/zendit-concepts/zendit-catalog/).\nFor transactions refer to the [zendit transaction guide](https://developers.zendit.io/zendit-concepts/transaction-processing/).\nFor webhooks refer to the [zendit webhook guide](https://developers.zendit.io/zendit-concepts/webhooks/).\n"
+    },
+    {
+      "name": "Transaction Status",
+      "description": "Status of Zendit Transactions\nFor transactions refer to the [zendit transaction guide](https://developers.zendit.io/zendit-concepts/transaction-processing/).\n"
+    },
+    {
+      "name": "Tools",
+      "description": "Tools for Zendit API \nTools currently includes the Phone Number Lookup tool that is currently in beta for select clients. \n"
+    },
+    {
+      "name": "Reports",
+      "description": "Transacion detail reports that can be downloaded in CSV format for a specified start datetime and ending at a specified end datetime \n"
+    },
+    {
+      "name": "Promotions",
+      "description": "Upcoming and active promotions for Mobile Top Up, Mobile Bundle and Mobile Data Plans. \n"
+    }
+  ],
+  "paths": {
+    "/balance": {
+      "get": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "Curl",
+            "source": "curl -X GET -H \"Authorization: [[apiKey]]\" \"https://https://api.zendit.io/v1//v1/balance\"\n"
+          }
+        ],
+        "tags": [
+          "Account"
+        ],
+        "summary": "Get current balance of wallet",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.BalanceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/brands": {
+      "get": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "tags": [
+          "Brands"
+        ],
+        "summary": "Get list of available brands (entire list or filtered by destination country)",
+        "parameters": [
+          {
+            "name": "_limit",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "description": "Number of items to return (Minimum 1, Maximum 1,024)"
+            }
+          },
+          {
+            "name": "_offset",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "description": "Number of items to skip - use with limit for pagination"
+            }
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "2 letter ISO code for destination country (optional)"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrandsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/brands/{brand}": {
+      "get": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "tags": [
+          "Brands"
+        ],
+        "summary": "Get details for a specific brand",
+        "parameters": [
+          {
+            "name": "brand",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Name of brand for query"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Brand"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Item not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/brands/{brand}/redemptionInstructions": {
+      "get": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "tags": [
+          "Brands"
+        ],
+        "summary": "Get redemption instructions and terms & conditions",
+        "parameters": [
+          {
+            "name": "brand",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Name of brand for query"
+            }
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "2 Letter ISO code for destination country of product"
+            }
+          },
+          {
+            "name": "deliveryType",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Delivery type for product (matches deliveryType on transaction)"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "2 letter ISO code for language requested (en is delivered as default or when requested language is not available for product)"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RedemptionInstructions"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Item not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/esim/offers": {
+      "get": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "Curl",
+            "source": "curl -X GET\\\n-H \"Authorization: Bearer [[accessToken]]\"\\\n-H \"Accept: application/json\"\\\n\"https://api.zendit.io/v1/esim/offers?_limit=&_offset=&brand=&country=®ions=&subType=\"\n"
+          }
+        ],
+        "tags": [
+          "eSIM"
+        ],
+        "summary": "Get list of eSIM offers",
+        "parameters": [
+          {
+            "name": "_limit",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            },
+            "description": "Number of items to return (Minimum 1, Maximum 1,024)"
+          },
+          {
+            "name": "_offset",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            },
+            "description": "Number of items to skip - use with limit for pagination"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "name": "brand",
+            "in": "query",
+            "description": "Brand (Carrier for MTU) to filter"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "name": "country",
+            "in": "query",
+            "description": "2 letter ISO code for the destination country to filter"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/regions"
+            },
+            "name": "regions",
+            "in": "query",
+            "description": "String for the name of the region to filter"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "name": "subType",
+            "in": "query",
+            "description": "Offer subtype to filter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ESimOffersResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/esim/offers/{offerId}": {
+      "get": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "Curl",
+            "source": "curl -X GET\\\n-H \"Authorization: Bearer [[accessToken]]\"\\\n-H \"Accept: application/json\"\\\n\"https://api.zendit.io/v1/esim/offers/{offerId}\"\n"
+          }
+        ],
+        "tags": [
+          "eSIM"
+        ],
+        "summary": "Get an eSIM offer by the offer ID",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "description": "Catalog Id to find",
+            "name": "offerId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ESimOffer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Item not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/esim/purchases": {
+      "get": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "Curl",
+            "source": "curl -X GET\\\n-H \"Authorization: Bearer [[accessToken]]\"\\\n-H \"Accept: application/json\"\\\n\"https://api.zendit.io/v1/esim/purchases?_limit=&_offset=&createdAt=&status=\"\n"
+          }
+        ],
+        "tags": [
+          "eSIM"
+        ],
+        "summary": "Get list of eSim transactions",
+        "parameters": [
+          {
+            "schema": {
+              "type": "number"
+            },
+            "name": "_limit",
+            "in": "query",
+            "required": true,
+            "description": "Number of items to retrieve (Minimum 1, Masimum 1,024)"
+          },
+          {
+            "schema": {
+              "type": "integer"
+            },
+            "name": "_offset",
+            "in": "query",
+            "required": true,
+            "description": "Number of items to skip - use with limit for pagination"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "name": "createdAt",
+            "in": "query",
+            "description": "Data filter - see Overview section for filtering by date"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/transactionStatus"
+            },
+            "name": "status",
+            "in": "query",
+            "description": "Status to filter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ESimPurchasesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "Curl",
+            "source": "curl -X POST\\\n-H \"Authorization: Bearer [[accessToken]]\"\\\n-H \"Accept: application/json\"\\\n-H \"Content-Type: application/json\"\\\n\"https://api.zendit.io/v1/esim/purchases\"\n"
+          }
+        ],
+        "tags": [
+          "eSIM"
+        ],
+        "summary": "Purchase an eSIM offer for a new eSIM or add an offer to an existing eSIM",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dto.ESimPurchaseMakeInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ESimPurchaseResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/esim/purchases/{transactionId}": {
+      "get": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "Curl",
+            "source": "curl -X GET\\\n-H \"Authorization: Bearer [[accessToken]]\"\\\n-H \"Accept: application/json\"\\\n\"https://api.zendit.io/v1/esim/purchases/{transactionId}\"\n"
+          }
+        ],
+        "tags": [
+          "eSIM"
+        ],
+        "summary": "Get eSim transaction by id",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "description": "Transaction ID to find",
+            "name": "transactionId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ESimPurchase"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Transaction not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/esim/purchases/{transactionId}/qrcode": {
+      "get": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "Curl",
+            "source": "curl -X GET\\\n-H \"Authorization: Bearer [[accessToken]]\"\\\n-H \"Accept: application/json\"\\\n\"https://api.zendit.io/v1/esim/purchases/{transactionId}/qrcode\"\n"
+          }
+        ],
+        "tags": [
+          "eSIM"
+        ],
+        "summary": "Get eSim QR code by transaction id",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "description": "Transaction ID to find",
+            "name": "transactionId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary",
+                  "description": "Binary stream for PNG version of image"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ESimQRCode"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Transaction not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/esim/{iccId}/plans": {
+      "get": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "Curl",
+            "source": "curl -X GET\\\n-H \"Authorization: Bearer [[accessToken]]\"\\\n-H \"Accept: application/json\"\\\n\"https://api.zendit.io/v1/esim/{iccId}/plans\" \n"
+          }
+        ],
+        "tags": [
+          "eSIM"
+        ],
+        "summary": "Retrieve usage of active and queued plans on an eSIM.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "name": "iccId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ESIMPlansResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/esim/purchases/{transactionId}/refund": {
+      "get": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "tags": [
+          "eSIM"
+        ],
+        "summary": "Check status of transaction refund",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "name": "transactionId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ESimRefundStatus"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Transaction not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "tags": [
+          "eSIM"
+        ],
+        "summary": "Initiate a transaction refund",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "name": "transactionId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ESimRefund"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Transaction not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/topups/offers": {
+      "get": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "Curl",
+            "source": "curl -X GET\\\n-H \"Authorization: Bearer [[accessToken]]\"\\\n-H \"Accept: application/json\"\\\n\"https://api.zendit.io/v1/topups/offers?_limit=&_offset=&brand=&country=®ions=&subType=\"        \n"
+          }
+        ],
+        "tags": [
+          "Mobile Top Up"
+        ],
+        "summary": "Get list of topup offers",
+        "parameters": [
+          {
+            "schema": {
+              "type": "number"
+            },
+            "name": "_limit",
+            "in": "query",
+            "required": true,
+            "description": "Number of items to return (Minimum 1, Maximum 1,024)"
+          },
+          {
+            "schema": {
+              "type": "number"
+            },
+            "name": "_offset",
+            "in": "query",
+            "required": true,
+            "description": "Number of items to skip - use with limit for pagination"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "name": "brand",
+            "in": "query",
+            "description": "Brand (Carrier for MTU) to filter"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "name": "country",
+            "in": "query",
+            "description": "2 letter ISO code for the destination country to filter"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/regions"
+            },
+            "name": "regions",
+            "in": "query",
+            "description": "String for the name of the region to filter"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/topupSubtypes"
+            },
+            "name": "subType",
+            "in": "query",
+            "description": "Offer subtype to filter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.TopupOffersResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/topups/offers/{offerId}": {
+      "get": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "Curl",
+            "source": "curl -X GET\\\n-H \"Authorization: Bearer [[accessToken]]\"\\\n-H \"Accept: application/json\"\\\n\"https://api.zendit.io/v1/topups/offers/{offerId}\"        \n"
+          }
+        ],
+        "tags": [
+          "Mobile Top Up"
+        ],
+        "summary": "Get a topup offer by the offer ID",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "description": "Catalog Id to find",
+            "name": "offerId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.TopupOffer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Item not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/topups/purchases": {
+      "get": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "Curl",
+            "source": "curl -X GET\\\n-H \"Authorization: Bearer [[accessToken]]\"\\\n-H \"Accept: application/json\"\\\n\"https://api.zendit.io/v1/topups/purchases?_limit=&_offset=&createdAt=&status=\"\n"
+          }
+        ],
+        "tags": [
+          "Mobile Top Up"
+        ],
+        "summary": "Get list of topup transactions",
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer"
+            },
+            "name": "_limit",
+            "in": "query",
+            "required": true,
+            "description": "Number of items to return (Minimum 1, Maximum 1,024)"
+          },
+          {
+            "schema": {
+              "type": "integer"
+            },
+            "name": "_offset",
+            "in": "query",
+            "required": true,
+            "description": "Number of items to skip - use with limit for pagination"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "name": "createdAt",
+            "in": "query",
+            "description": "Data filter - see Overview section for filtering by date"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/transactionStatus"
+            },
+            "name": "status",
+            "in": "query",
+            "description": "Status to filter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.TopupPurchasesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "Curl",
+            "source": "curl -X POST\\\n-H \"Authorization: Bearer [[accessToken]]\"\\\n-H \"Accept: application/json\"\\\n-H \"Content-Type: application/json\"\\\n\"https://api.zendit.io/v1/topups/purchases\"      \n"
+          }
+        ],
+        "tags": [
+          "Mobile Top Up"
+        ],
+        "summary": "Create transaction for purchase",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dto.TopupPurchaseMakeInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.TopupPurchaseResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/topups/purchases/{transactionId}": {
+      "get": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "Curl",
+            "source": "curl -X POST\\\n-H \"Authorization: Bearer [[accessToken]]\"\\\n-H \"Accept: application/json\"\\\n-H \"Content-Type: application/json\"\\\n\"https://api.zendit.io/v1/topups/purchases\"      \n"
+          }
+        ],
+        "tags": [
+          "Mobile Top Up"
+        ],
+        "summary": "Get topup transaction by id",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "description": "Transaction Id to find",
+            "name": "transactionId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.TopupPurchase"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Transaction not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactions": {
+      "get": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "Curl",
+            "source": "curl -X GET\\\n-H \"Authorization: Bearer [[accessToken]]\"\\\n-H \"Accept: application/json\"\\\n\"https://api.zendit.io/v1/transactions?_limit=&_offset=&createdAt=&productType=&status=&type=\"\n"
+          }
+        ],
+        "tags": [
+          "Transaction Status"
+        ],
+        "summary": "Get list of transactions",
+        "parameters": [
+          {
+            "schema": {
+              "type": "number"
+            },
+            "name": "_limit",
+            "in": "query",
+            "required": true,
+            "description": "Number of items to return (Minimum 1, Maximum 1,024)"
+          },
+          {
+            "schema": {
+              "type": "number"
+            },
+            "name": "_offset",
+            "in": "query",
+            "required": true,
+            "description": "Number of items to skip - use with limit for pagination"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "name": "createdAt",
+            "in": "query",
+            "description": "Data filter - see Overview section for filtering by date"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/productType"
+            },
+            "name": "productType",
+            "in": "query",
+            "description": "Product type to filter"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/transactionStatus"
+            },
+            "name": "status",
+            "in": "query",
+            "description": "Status to filter"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/transactionType"
+            },
+            "name": "type",
+            "in": "query",
+            "description": "Type of transaction to filter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.TransactionsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Transaction not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactions/{transactionId}": {
+      "get": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "Curl",
+            "source": "curl -X GET\\\n-H \"Authorization: Bearer [[accessToken]]\"\\\n-H \"Accept: application/json\"\\\n\"https://api.zendit.io/v1/transactions/{transactionId}\"\n"
+          }
+        ],
+        "tags": [
+          "Transaction Status"
+        ],
+        "summary": "Get transaction by id",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "description": "Transaction Id to find",
+            "name": "transactionId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.Transaction"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Transaction not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vouchers/offers": {
+      "get": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "Curl",
+            "source": "curl -X GET\\\n-H \"Authorization: Bearer [[accessToken]]\"\\\n-H \"Accept: application/json\"\\\n\"https://api.zendit.io/v1/vouchers/offers?_limit=&_offset=&brand=&country=&subType=\"     \n"
+          }
+        ],
+        "tags": [
+          "Voucher"
+        ],
+        "summary": "Get list of voucher offers",
+        "parameters": [
+          {
+            "schema": {
+              "type": "number"
+            },
+            "name": "_limit",
+            "in": "query",
+            "required": true,
+            "description": "Number of items to return (Minimum 1, Maximum 1,024)"
+          },
+          {
+            "schema": {
+              "type": "number"
+            },
+            "name": "_offset",
+            "in": "query",
+            "required": true,
+            "description": "Number of items to skip - use with limit for pagination"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "name": "brand",
+            "in": "query",
+            "description": "Brand (Carrier for MTU) to filter"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "name": "country",
+            "in": "query",
+            "description": "2 letter ISO code for the destination country to filter"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/regions"
+            },
+            "name": "regions",
+            "in": "query",
+            "description": "String for the name of the region to filter"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "name": "subType",
+            "in": "query",
+            "description": "Offer subtype to filter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.VoucherOffersResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vouchers/offers/{offerId}": {
+      "get": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "Curl",
+            "source": "curl -X GET\\\n-H \"Authorization: Bearer [[accessToken]]\"\\\n-H \"Accept: application/json\"\\\n\"https://api.zendit.io/v1/vouchers/offers/{offerId}\"\n"
+          }
+        ],
+        "tags": [
+          "Voucher"
+        ],
+        "summary": "Get a voucher offer by the offer ID",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "description": "Catalog Id to find",
+            "name": "offerId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.VoucherOffer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Item not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vouchers/purchases": {
+      "get": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "Curl",
+            "source": "curl -X GET\\\n-H \"Authorization: Bearer [[accessToken]]\"\\\n-H \"Accept: application/json\"\\\n\"https://api.zendit.io/v1/vouchers/purchases?_limit=&_offset=&createdAt=&status=\"      \n"
+          }
+        ],
+        "tags": [
+          "Voucher"
+        ],
+        "summary": "Get list of transactions",
+        "parameters": [
+          {
+            "schema": {
+              "type": "number"
+            },
+            "name": "_limit",
+            "in": "query",
+            "required": true,
+            "description": "Number of items to return (Minimum 1, Maximum 1,024)"
+          },
+          {
+            "schema": {
+              "type": "number"
+            },
+            "name": "_offset",
+            "in": "query",
+            "required": true,
+            "description": "Number of items to skip - use with limit for pagination"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "name": "createdAt",
+            "in": "query",
+            "description": "Data filter - see Overview section for filtering by date"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/transactionStatus"
+            },
+            "name": "status",
+            "in": "query",
+            "description": "Status to filter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.VoucherPurchasesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "Curl",
+            "source": "curl -X POST\\\n-H \"Authorization: Bearer [[accessToken]]\"\\\n-H \"Accept: application/json\"\\\n-H \"Content-Type: application/json\"\\\n\"https://api.zendit.io/v1/vouchers/purchases\"      \n"
+          }
+        ],
+        "tags": [
+          "Voucher"
+        ],
+        "summary": "Create transaction for purchase",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dto.VoucherPurchaseInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.VoucherPurchaseResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vouchers/purchases/{transactionId}": {
+      "get": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "Curl",
+            "source": "curl -X GET\\\n-H \"Authorization: Bearer [[accessToken]]\"\\\n-H \"Accept: application/json\"\\\n\"https://api.zendit.io/v1/vouchers/purchases/{transactionId}\"\n"
+          }
+        ],
+        "tags": [
+          "Voucher"
+        ],
+        "summary": "Get purchase transaction by id",
+        "parameters": [
+          {
+            "name": "transactionId",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Transaction Id to find",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.VoucherPurchase"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Transaction not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tools/phonenumberlookup/{msisdn}": {
+      "get": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "Curl",
+            "source": "curl -X GET\\\n-H \"Authorization: Bearer [[accessToken]]\"\\\n-H \"Accept: application/json\"\\\n\"https://api.zendit.io/v1/tools/{msisdn}\"\n"
+          }
+        ],
+        "tags": [
+          "Tools"
+        ],
+        "summary": "BETA Lookup an MSISDN.",
+        "parameters": [
+          {
+            "name": "msisdn",
+            "schema": {
+              "type": "string"
+            },
+            "description": "MSISDN (phone number) to lookup in e.164 format",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.PhoneNumberLookupResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not Found - MSISDN not found or lookup not enabled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Transaction not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reports/transactions": {
+      "post": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "Curl",
+            "source": "curl -X POST\\\n-H \"Authorization: Bearer [[accessToken]]\"\\\n-H \"Accept: application/json\"\\\n-H \"Content-Type: application/json\"\\\n\"https://api.zendit.io/v1/reports/transactions\"      \n"
+          }
+        ],
+        "tags": [
+          "Reports"
+        ],
+        "summary": "Generate a transaction report",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dto.ReportTransactionsPeriod"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ReportTransactions"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reports/transactions/{reportId}": {
+      "get": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "Curl",
+            "source": "curl -X GET\\\n-H \"Authorization: Bearer [[accessToken]]\"\\\n-H \"Accept: application/json\"\\\n\"https://api.zendit.io/v1/reports/transactions/{reportId}\"\n"
+          }
+        ],
+        "tags": [
+          "Reports"
+        ],
+        "summary": "Get the status of a requested report",
+        "parameters": [
+          {
+            "name": "reportId",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Report Id to check status",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ReportTransactions"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Transaction not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reports/transactions/{reportId}/{file}": {
+      "get": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "Curl",
+            "source": "curl -X GET\\\n-H \"Authorization: Bearer [[accessToken]]\"\\\n-H \"Accept: application/octet-stream\"\\\n\"https://api.zendit.io/v1/reports/transactions/{reportId}/{file}\"\n"
+          }
+        ],
+        "tags": [
+          "Reports"
+        ],
+        "summary": "Download a Report",
+        "parameters": [
+          {
+            "name": "reportId",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Report Id to check status",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "file",
+            "schema": {
+              "type": "string"
+            },
+            "description": "File name to download",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary",
+                  "description": "Binary stream for CSV file for report"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Transaction not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/promos": {
+      "get": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "tags": [
+          "Promotions"
+        ],
+        "summary": "Get a list of carrier promotions for Mobile Topup, Mobile Bundle, and Mobile Data products",
+        "parameters": [
+          {
+            "name": "_limit",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Maximum number of promos to retrieve",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "_offset",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Number of promos to skip for pagination",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "brand",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Brand to retrieve promos for",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "country",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma separated list of 2 letter ISO codes for countries to retreive",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "language",
+            "schema": {
+              "type": "string"
+            },
+            "description": "2 letter ISO code for language to retrieve, English is returned by default or when specified language is unavailable",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "region",
+            "schema": {
+              "$ref": "#/components/schemas/regions"
+            },
+            "in": "query",
+            "description": "String for the name of the region to filter (case sensitive)",
+            "required": false
+          },
+          {
+            "name": "status",
+            "schema": {
+              "$ref": "#/components/schemas/promoStatus"
+            },
+            "description": "Status of the promo",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.PromosResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/promos/{promoId}": {
+      "get": {
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ],
+        "tags": [
+          "Promotions"
+        ],
+        "summary": "Get a promo by ID",
+        "parameters": [
+          {
+            "name": "promoId",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Promo to retrieve by ID",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.promo"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - Transaction not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dto.ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "webhooks": {
+    "shieldwall": {
+      "post": {
+        "security": [],
+        "summary": "Transaction ShieldWall",
+        "tags": [
+          "Transaction Status"
+        ],
+        "requestBody": {
+          "description": "Transaction info for verification",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dto.Transaction"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Return a 200 for recognized transactions."
+          },
+          "404": {
+            "description": "Return a 404 to block unrecognized transactions."
+          }
+        }
+      }
+    },
+    "mtu": {
+      "post": {
+        "security": [],
+        "summary": "Mobile Top Up Purchase",
+        "tags": [
+          "Mobile Top Up"
+        ],
+        "requestBody": {
+          "description": "Mobile Top Up, Mobile Bundle, and Mobile Data purchase result",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dto.TopupPurchase"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook processed successfully"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "esim": {
+      "post": {
+        "security": [],
+        "summary": "eSIM Purchase",
+        "tags": [
+          "eSIM"
+        ],
+        "requestBody": {
+          "description": "eSIM purchase result",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dto.ESimPurchase"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook processed successfully"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "voucher": {
+      "post": {
+        "security": [],
+        "summary": "Voucher Purchase",
+        "tags": [
+          "Voucher"
+        ],
+        "requestBody": {
+          "description": "Digital Gift Card and Utility purchase result",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/dto.VoucherPurchase"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook processed successfully"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "dto.PromosResponse": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "description": "Number of items to return"
+          },
+          "list": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/dto.promo"
+            },
+            "description": "List of promos"
+          },
+          "offset": {
+            "type": "integer",
+            "description": "Number of promos to skip for pagination"
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of promos for filterd values"
+          }
+        }
+      },
+      "dto.promo": {
+        "type": "object",
+        "description": "Promo item",
+        "properties": {
+          "brand": {
+            "$ref": "#/components/schemas/dto.BrandInfo"
+          },
+          "country": {
+            "type": "string",
+            "description": "3 Letter ISO code for country"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Date promo was created"
+          },
+          "description": {
+            "$ref": "#/components/schemas/dto.PromoDescription"
+          },
+          "endAt": {
+            "type": "string",
+            "description": "Datetime that promo period ends (UTC Timezone)"
+          },
+          "id": {
+            "type": "string",
+            "description": "ID for promo"
+          },
+          "maxValue": {
+            "type": "integer",
+            "description": "Maximum value transferred for the promo to apply"
+          },
+          "minValue": {
+            "type": "integer",
+            "description": "Minimum value transferred for the promo to apply"
+          },
+          "regions": {
+            "$ref": "#/components/schemas/regions"
+          },
+          "startAt": {
+            "type": "string",
+            "description": "Datetime the promo will begin (UTC Timezone)"
+          },
+          "status": {
+            "$ref": "#/components/schemas/promoStatus"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Last datetime the promo information was updated"
+          }
+        }
+      },
+      "dto.PromoDescription": {
+        "type": "object",
+        "description": "Description of promo",
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "Short description of promo"
+          },
+          "language": {
+            "type": "string",
+            "description": "Language for description"
+          },
+          "terms": {
+            "type": "string",
+            "description": "Long description of promo including terms and conditions"
+          }
+        }
+      },
+      "dto.BrandInfo": {
+        "type": "object",
+        "description": "Brand information",
+        "properties": {
+          "brand": {
+            "type": "string",
+            "description": "Brand name key"
+          },
+          "brandName": {
+            "type": "string",
+            "description": "Display name for brand"
+          }
+        }
+      },
+      "dto.PhoneNumberLookupResponse": {
+        "type": "object",
+        "properties": {
+          "brand": {
+            "type": "string",
+            "description": "Brand (Carrier) for the MSISDN"
+          },
+          "country": {
+            "type": "string",
+            "description": "Country for MSISDN in 2 letter ISO code format"
+          },
+          "mobileCountryCode": {
+            "type": "string",
+            "description": "[Mobile Country Code](https://en.wikipedia.org/wiki/Mobile_country_code)\n"
+          },
+          "mobileNetworkCode": {
+            "type": "string",
+            "description": "[Mobile Network Code](https://www.mcc-mnc.com/)\n"
+          },
+          "msisdn": {
+            "type": "string",
+            "description": "MSISDN (phone number) looked up"
+          }
+        },
+        "required": [
+          "brand",
+          "country",
+          "mobileCountryCode",
+          "mobileNetworkCode",
+          "msisdn"
+        ]
+      },
+      "dto.ESIMPlan": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "Plan description"
+          },
+          "endAt": {
+            "type": "string",
+            "description": "Date/Time the plan will end (empty if plan is unused)"
+          },
+          "startAt": {
+            "type": "string",
+            "description": "Date/Time the plan started (empty if plan is unused)"
+          },
+          "iccid": {
+            "type": "string",
+            "description": "ICCID of the eSIM"
+          },
+          "initialDataGB": {
+            "type": "number",
+            "description": "Amount of data in bytes for the plan (amount of daily high speed data for unlimited plans)"
+          },
+          "remainingDataGB": {
+            "type": "number",
+            "description": "Amount of data remaining in plan (amount of high speed data remaining for current day on unlimited plans)"
+          },
+          "offerId": {
+            "type": "string",
+            "description": "Offer ID for the plan"
+          },
+          "status": {
+            "$ref": "#/components/schemas/esimStatus"
+          },
+          "unlimited": {
+            "type": "boolean",
+            "description": "Indicates if the plan has unlimited data (true) or a finite data limit (false)."
+          }
+        },
+        "required": [
+          "description",
+          "iccid",
+          "initialDataGB",
+          "offerId",
+          "remainingDataGB",
+          "status"
+        ]
+      },
+      "dto.ESIMPlansResponse": {
+        "type": "object",
+        "properties": {
+          "list": {
+            "type": "array",
+            "description": "List of plans",
+            "items": {
+              "$ref": "#/components/schemas/dto.ESIMPlan"
+            }
+          },
+          "firstInstalledAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date and time (UTC) when the first plan was installed on this eSIM."
+          },
+          "total": {
+            "type": "number",
+            "description": "Number of plans assigned to eSIM"
+          }
+        },
+        "required": [
+          "list",
+          "total"
+        ]
+      },
+      "dto.BalanceResponse": {
+        "type": "object",
+        "description": "Wallet balance response",
+        "properties": {
+          "availableBalance": {
+            "description": "Available balance in the wallet",
+            "type": "integer"
+          },
+          "currency": {
+            "description": "Currency of the available balance",
+            "type": "string"
+          },
+          "currencyDivisor": {
+            "description": "Divisor for decimal value of currency",
+            "type": "number"
+          }
+        }
+      },
+      "dto.Confirmation": {
+        "type": "object",
+        "description": "Confirmation of completed transaction",
+        "properties": {
+          "confirmationNumber": {
+            "description": "Confirmation reference number for the transaction",
+            "type": "string"
+          },
+          "externalReferenceId": {
+            "description": "Reference ID for the transaction",
+            "type": "string"
+          },
+          "transactionTime": {
+            "description": "Time of the transaction with the provider",
+            "type": "string"
+          }
+        }
+      },
+      "dto.Cost": {
+        "type": "object",
+        "description": "Zendit price for partner",
+        "properties": {
+          "currency": {
+            "description": "Currency for the price",
+            "type": "string"
+          },
+          "currencyDivisor": {
+            "description": "Currency divisor for the price",
+            "type": "integer"
+          },
+          "discount": {
+            "description": "The discount percentage in the cost of the offer",
+            "type": "number"
+          },
+          "fee": {
+            "description": "The fee charged on the item in addition to the base cost",
+            "type": "number"
+          },
+          "feePct": {
+            "description": "The fee in % on the item in addition to the base cost",
+            "type": "number"
+          },
+          "fixed": {
+            "description": "Price for a fixed offer",
+            "type": "integer"
+          },
+          "fx": {
+            "description": "FX rate for a range offer",
+            "type": "number"
+          },
+          "max": {
+            "description": "Maximum price for a range offer",
+            "type": "integer"
+          },
+          "min": {
+            "description": "Minimum price for a range offer",
+            "type": "integer"
+          }
+        }
+      },
+      "dto.ESimConfirmation": {
+        "type": "object",
+        "description": "Confirmation of a completed eSIM transaction",
+        "properties": {
+          "activationCode": {
+            "description": "Activation PIN for eSIM",
+            "type": "string"
+          },
+          "externalReferenceId": {
+            "description": "Matching ID for the eSIM",
+            "type": "string"
+          },
+          "iccid": {
+            "description": "ICCID of the eSIM",
+            "type": "string"
+          },
+          "redemptionInstructions": {
+            "description": "Instructions reference for installing the eSIM",
+            "type": "string"
+          },
+          "smdpAddress": {
+            "description": "SMDP+ Address for installing the eSIM",
+            "type": "string"
+          }
+        }
+      },
+      "dto.ESimOffer": {
+        "type": "object",
+        "properties": {
+          "brand": {
+            "description": "Brand of eSIM",
+            "type": "string"
+          },
+          "brandName": {
+            "description": "Brand name for the eSIM",
+            "type": "string"
+          },
+          "cost": {
+            "description": "Zendit price for partner",
+            "$ref": "#/components/schemas/dto.Cost"
+          },
+          "country": {
+            "description": "Destination country for eSIM (blank for regional eSIM products)",
+            "type": "string"
+          },
+          "createdAt": {
+            "description": "Date/time offer was added to the catalog",
+            "type": "string"
+          },
+          "dataGB": {
+            "description": "Amount of data included in eSIM offer (0 when data is unlimited)",
+            "type": "number"
+          },
+          "dataSpeeds": {
+            "description": "Available data speeds for eSIM",
+            "type": "array",
+            "items": {
+              "description": "eSIM data speeds (2G, 3G, 4G, or 5G)",
+              "$ref": "#/components/schemas/dataSpeed"
+            }
+          },
+          "dataUnlimited": {
+            "description": "Flag for eSIMs with unlimited data",
+            "type": "boolean"
+          },
+          "durationDays": {
+            "description": "Duration of the eSIM offer in days",
+            "type": "integer"
+          },
+          "enabled": {
+            "description": "Flag for whether the offer is enabled",
+            "type": "boolean"
+          },
+          "notes": {
+            "description": "Notes included about the eSIM offer",
+            "type": "string"
+          },
+          "offerId": {
+            "description": "Catalog ID of the offer (used for purchases)",
+            "type": "string"
+          },
+          "price": {
+            "description": "Price to customer for eSIM (when using the zendit pricing module)",
+            "$ref": "#/components/schemas/dto.Price"
+          },
+          "priceType": {
+            "description": "Price type for the eSIM (Fixed or Range)",
+            "$ref": "#/components/schemas/priceType"
+          },
+          "productType": {
+            "description": "Product type for eSIM",
+            "$ref": "#/components/schemas/productType"
+          },
+          "regions": {
+            "description": "Regions for the eSIM",
+            "type": "array",
+            "items": {
+              "description": "Region name from region list",
+              "$ref": "#/components/schemas/regions"
+            }
+          },
+          "roaming": {
+            "description": "Roaming information for regional eSIM products (empty array for NO ROAM eSIM offers)",
+            "type": "array",
+            "items": {
+              "description": "Roaming country and Data Speeds available",
+              "$ref": "#/components/schemas/dto.ESimRoaming"
+            }
+          },
+          "shortNotes": {
+            "description": "Short notes for eSIM offer",
+            "type": "string"
+          },
+          "smsNumber": {
+            "description": "Included SMS messages with eSIM (0 when unlimited or not included, check smsUnlimited flag)",
+            "type": "integer"
+          },
+          "smsUnlimited": {
+            "description": "Flag whether SMS messaging is unlimited for offer",
+            "type": "boolean"
+          },
+          "subTypes": {
+            "description": "Subtypes for the eSIM offer",
+            "type": "array",
+            "items": {
+              "description": "Subtype entry",
+              "type": "string"
+            }
+          },
+          "updatedAt": {
+            "description": "Last date/time the offer was updated",
+            "type": "string"
+          },
+          "voiceMinutes": {
+            "description": "Voice minutes included in eSIM offer (0 when unlimited or not included, check voiceUnlimited Flag)",
+            "type": "integer"
+          },
+          "voiceUnlimited": {
+            "description": "Flag whether voice minutes are unlimited for the offer",
+            "type": "boolean"
+          }
+        }
+      },
+      "dto.ESimOffersResponse": {
+        "type": "object",
+        "description": "Catalog response for eSIM offer searches",
+        "properties": {
+          "limit": {
+            "description": "Limit specified for number of offers to retrieve",
+            "type": "integer"
+          },
+          "list": {
+            "description": "List of eSIM offers in response",
+            "type": "array",
+            "items": {
+              "description": "eSIM Offers",
+              "$ref": "#/components/schemas/dto.ESimOffer"
+            }
+          },
+          "offset": {
+            "description": "Number of offers specified to skip",
+            "type": "integer"
+          },
+          "total": {
+            "description": "Total number of offers matching search",
+            "type": "integer"
+          }
+        }
+      },
+      "dto.ESimPurchase": {
+        "type": "object",
+        "description": "eSIM Purchase Response",
+        "properties": {
+          "brand": {
+            "description": "Brand of eSIM",
+            "type": "string"
+          },
+          "brandName": {
+            "description": "Brand name for eSIM",
+            "type": "string"
+          },
+          "confirmation": {
+            "$ref": "#/components/schemas/dto.ESimConfirmation"
+          },
+          "cost": {
+            "description": "Total cost of the eSIM to Partner inclusive of fees",
+            "type": "integer"
+          },
+          "costBase": {
+            "description": "Catalog cost to the partner exclusive of fees",
+            "type": "number"
+          },
+          "costCurrency": {
+            "description": "Currency of cost to eSIM Partner",
+            "type": "string"
+          },
+          "costCurrencyDivisor": {
+            "description": "Divisor for display of cost",
+            "type": "integer"
+          },
+          "costFee": {
+            "description": "Fee amount charged for offer included in the total cost",
+            "type": "number"
+          },
+          "country": {
+            "description": "Destination country for eSIM offer (blank when eSIM offer is regional)",
+            "type": "string"
+          },
+          "createdAt": {
+            "description": "Date/time transaction was created",
+            "type": "string"
+          },
+          "dataGB": {
+            "description": "GB of data included in eSIM (0 when data is unlimited)",
+            "type": "number"
+          },
+          "dataSpeeds": {
+            "description": "Data speeds available for eSIM",
+            "type": "array",
+            "items": {
+              "description": "Data speed entry",
+              "$ref": "#/components/schemas/dataSpeed"
+            }
+          },
+          "dataUnlimited": {
+            "description": "Flag indicating whether data is unlimited on the eSIM",
+            "type": "boolean"
+          },
+          "durationDays": {
+            "description": "Duration of the eSIM offer in days",
+            "type": "integer"
+          },
+          "error": {
+            "description": "Error information encountered while processing transaction",
+            "$ref": "#/components/schemas/dto.Error"
+          },
+          "log": {
+            "description": "Trace log for fulfillment of transaction",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/dto.TransactionLogItem"
+            }
+          },
+          "notes": {
+            "description": "Notes included about the eSIM offer",
+            "type": "string"
+          },
+          "offerId": {
+            "description": "Catalog ID of the offer (used for purchases)",
+            "type": "string"
+          },
+          "price": {
+            "description": "Total price for customer for eSIM inclusive of fees (when using the zendit pricing module)",
+            "type": "integer"
+          },
+          "priceBase": {
+            "description": "Base price from the pricing module exclusive of fees",
+            "type": "number"
+          },
+          "priceCurrency": {
+            "description": "Currency of price charged to customer for eSIM (when using the zendit pricing module)",
+            "type": "string"
+          },
+          "priceCurrencyDivisor": {
+            "description": "Divisor for display of price",
+            "type": "integer"
+          },
+          "priceFee": {
+            "description": "Fee amount charged to customer when using the pricing module",
+            "type": "number"
+          },
+          "priceType": {
+            "description": "Price type for the eSIM (Fixed or Range)",
+            "$ref": "#/components/schemas/priceType"
+          },
+          "productType": {
+            "description": "Product type for eSIM",
+            "$ref": "#/components/schemas/productType"
+          },
+          "regions": {
+            "description": "Regions for the eSIM",
+            "type": "array",
+            "items": {
+              "description": "Region name from region list",
+              "$ref": "#/components/schemas/regions"
+            }
+          },
+          "roaming": {
+            "description": "Roaming information for regional eSIM products (empty array for NO ROAM eSIM offers)",
+            "type": "array",
+            "items": {
+              "description": "Roaming country and Data Speeds available",
+              "$ref": "#/components/schemas/dto.ESimRoaming"
+            }
+          },
+          "shortNotes": {
+            "description": "Short notes for eSIM offer",
+            "type": "string"
+          },
+          "smsNumber": {
+            "description": "Included SMS messages with eSIM (0 when unlimited or not included, check smsUnlimited flag)",
+            "type": "integer"
+          },
+          "smsUnlimited": {
+            "description": "Flag whether SMS messaging is unlimited for offer",
+            "type": "boolean"
+          },
+          "status": {
+            "description": "Status of transaction",
+            "$ref": "#/components/schemas/transactionStatus"
+          },
+          "subTypes": {
+            "description": "Subtypes for the eSIM offer",
+            "type": "array",
+            "items": {
+              "description": "Subtype entry",
+              "type": "string"
+            }
+          },
+          "transactionId": {
+            "description": "Transaction Id provided by partner",
+            "type": "string"
+          },
+          "updatedAt": {
+            "description": "Date/Time of last update to transaction",
+            "type": "string"
+          },
+          "value": {
+            "description": "Value and type of price used for purchase of ranged products",
+            "$ref": "#/components/schemas/dto.PurchaseValue"
+          },
+          "voiceMinutes": {
+            "description": "Voice minutes included in eSIM offer (0 when unlimited or not included, check voiceUnlimited Flag)",
+            "type": "integer"
+          },
+          "voiceUnlimited": {
+            "description": "Flag whether voice minutes are unlimited for the offer",
+            "type": "boolean"
+          },
+          "refund": {
+            "description": "Status of a refund for the transaction when a refund is provided for the item",
+            "type": "object",
+            "properties": {
+              "status": {
+                "description": "Status of the refund for the transaction",
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "dto.ESimPurchaseMakeInput": {
+        "description": "eSIM Purchase Request",
+        "type": "object",
+        "properties": {
+          "iccid": {
+            "description": "ICCID to apply plan (omit to issue a new eSIM)",
+            "type": "string"
+          },
+          "offerId": {
+            "description": "Catalog ID of the offer (used for purchases)",
+            "type": "string"
+          },
+          "transactionId": {
+            "description": "Transaction Id provided by partner",
+            "type": "string"
+          }
+        },
+        "required": [
+          "offerId",
+          "transactionId"
+        ]
+      },
+      "dto.ESimPurchaseResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "description": "Status of transaction acceptance",
+            "type": "string"
+          },
+          "transactionId": {
+            "description": "Transaction Id provided by partner",
+            "type": "string"
+          }
+        }
+      },
+      "dto.ESimPurchasesResponse": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "description": "Limit of number of transactions to retrieve in search",
+            "type": "integer"
+          },
+          "list": {
+            "description": "List of eSIM transactions found for search",
+            "type": "array",
+            "items": {
+              "description": "eSIM transaction item",
+              "$ref": "#/components/schemas/dto.ESimPurchase"
+            }
+          },
+          "offset": {
+            "description": "Number of transaction results to skip in search",
+            "type": "integer"
+          },
+          "total": {
+            "description": "Total number of transactions found matching search",
+            "type": "integer"
+          }
+        }
+      },
+      "dto.ESimRoaming": {
+        "description": "Roaming destinations and data speeds for eSIM",
+        "type": "object",
+        "properties": {
+          "country": {
+            "description": "2 letter ISO country code",
+            "type": "string"
+          },
+          "dataSpeeds": {
+            "description": "Available data speeds for destination",
+            "type": "array",
+            "items": {
+              "description": "Data speed entries",
+              "$ref": "#/components/schemas/dataSpeed"
+            }
+          }
+        }
+      },
+      "dto.Error": {
+        "type": "object",
+        "description": "Error returned on transaction",
+        "properties": {
+          "code": {
+            "description": "Error code from zendit",
+            "type": "string"
+          },
+          "description": {
+            "description": "Description of error",
+            "type": "string"
+          },
+          "message": {
+            "description": "Detail error message f"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,5097 @@
+test2026-04-22 02:30:15 - URI: /upload_user_photo.php
+_POST: Array
+(
+)
+_FILES: Array
+(
+    [photo] => Array
+        (
+            [name] => 263fdcd338a94572f2ed78c42872b7b5.jpg
+            [full_path] => 263fdcd338a94572f2ed78c42872b7b5.jpg
+            [type] => image/jpeg
+            [tmp_name] => C:\xampp\tmp\php6EC.tmp
+            [error] => 0
+            [size] => 84917
+        )
+
+)
+----------------------------------------
+2026-04-22 02:32:53 - URI: /upload_user_photo.php
+_POST: Array
+(
+)
+_FILES: Array
+(
+    [photo] => Array
+        (
+            [name] => hq720.jpg
+            [full_path] => hq720.jpg
+            [type] => image/jpeg
+            [tmp_name] => C:\xampp\tmp\php6FCF.tmp
+            [error] => 0
+            [size] => 44416
+        )
+
+)
+----------------------------------------
+2026-04-22 02:33:08 - URI: /upload_user_photo.php
+_POST: Array
+(
+)
+_FILES: Array
+(
+    [photo] => Array
+        (
+            [name] => news-dog-looking-at-pills-five-dangerous-human-medications-anim@ls-september-825x619.jpg
+            [full_path] => news-dog-looking-at-pills-five-dangerous-human-medications-anim@ls-september-825x619.jpg
+            [type] => image/jpeg
+            [tmp_name] => C:\xampp\tmp\phpAB81.tmp
+            [error] => 0
+            [size] => 71325
+        )
+
+)
+----------------------------------------
+2026-04-22 02:35:33 - URI: /upload_user_photo.php
+_POST: Array
+(
+    [UserID] => 1000018
+)
+_FILES: Array
+(
+    [photo] => Array
+        (
+            [name] => news-dog-looking-at-pills-five-dangerous-human-medications-anim@ls-september-825x619.jpg
+            [full_path] => news-dog-looking-at-pills-five-dangerous-human-medications-anim@ls-september-825x619.jpg
+            [type] => image/jpeg
+            [tmp_name] => C:\xampp\tmp\phpE2B5.tmp
+            [error] => 0
+            [size] => 71325
+        )
+
+)
+----------------------------------------
+2026-04-22 16:10:28 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 394
+)
+----------------------------------------
+2026-04-22 16:10:28 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 394
+)
+----------------------------------------
+2026-04-22 16:10:30 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 399
+)
+----------------------------------------
+2026-04-22 16:10:31 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 399
+)
+----------------------------------------
+2026-04-22 16:10:32 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 399
+)
+----------------------------------------
+2026-04-22 16:10:32 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 399
+)
+----------------------------------------
+2026-04-22 16:14:47 - URI: /delivery_offers.php
+_POST: Array
+(
+    [total] => 85
+    [shopId] => 5613
+    [shopName] => Omega 3
+    [cart] => [{"id":"394","name":"Soupe OMEGA3","img":"https://...[390 bytes]
+)
+php://input: total=85&shopId=5613&shopName=Omega+3&cart=%5B%7B%22id%22%3A%22394%22%2C%22name%22%3A%22Soupe+OMEGA3...
+----------------------------------------
+2026-04-22 16:15:07 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 396
+)
+----------------------------------------
+2026-04-22 16:15:07 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 396
+)
+----------------------------------------
+2026-04-22 16:15:09 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 396
+)
+----------------------------------------
+2026-04-22 16:15:09 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 396
+)
+----------------------------------------
+2026-04-22 16:15:32 - URI: /LogOrSign.php
+_POST: Array
+(
+    [AccountType] => Email
+    [Email] => nadim@qoon.app
+    [Password] => 102030++
+    [UserFirebaseToken] => 
+    [Mode] => Login
+)
+----------------------------------------
+2026-04-22 16:15:39 - URI: /delivery_offers.php
+_POST: Array
+(
+    [total] => 70
+    [shopId] => 5613
+    [shopName] => Omega 3
+    [cart] => [{"id":"396","name":"Almejas Marinee","img":"https://qoon.app/jibler/admin/jbler/shops/jblerShop/photo/Api/photo/photo/w-199266712.png","qty":1,"unitPrice":70,"size":"","color":"","totalPrice":70}]
+)
+php://input: total=70&shopId=5613&shopName=Omega+3&cart=%5B%7B%22id%22%3A%22396%22%2C%22name%22%3A%22Almejas+Mari...
+----------------------------------------
+2026-04-22 16:20:46 - URI: /CancelOrderUser.php
+_POST: Array
+(
+    [OrderID] => 2222662
+)
+----------------------------------------
+2026-04-22 16:23:49 - URI: /CancelOrderUser.php
+_POST: Array
+(
+    [OrderID] => 2222662
+)
+php://input: OrderID=2222662...
+----------------------------------------
+2026-04-22 16:24:23 - URI: /CancelOrderUser.php
+_POST: Array
+(
+    [OrderID] => 2222662
+)
+----------------------------------------
+2026-04-22 16:27:19 - URI: /UpdateProfileUserWithImageinapp.php
+_POST: Array
+(
+    [UserID] => 1000018
+)
+_FILES: Array
+(
+    [photo] => Array
+        (
+            [name] => Capture d'écran 2026-04-21 215425.png
+            [full_path] => Capture d'écran 2026-04-21 215425.png
+            [type] => image/png
+            [tmp_name] => C:\xampp\tmp\php62D1.tmp
+            [error] => 0
+            [size] => 1094517
+        )
+
+)
+----------------------------------------
+2026-04-22 16:28:03 - URI: /UpdateProfileUserWithImageinapp.php
+_POST: Array
+(
+    [UserID] => 9999
+    [fullname] => test
+)
+php://input: UserID=9999&fullname=test...
+----------------------------------------
+2026-04-22 16:42:32 - URI: /UpdateProfileUserWithImageinapp.php
+_POST: Array
+(
+    [UserID] => 1000018
+)
+_FILES: Array
+(
+    [photo] => Array
+        (
+            [name] => Capture d’écran 2026-02-18 191911.png
+            [full_path] => Capture d’écran 2026-02-18 191911.png
+            [type] => image/png
+            [tmp_name] => C:\xampp\tmp\php5012.tmp
+            [error] => 0
+            [size] => 70921
+        )
+
+)
+----------------------------------------
+2026-04-22 16:42:49 - URI: /UpdateProfileUserWithImageinapp.php
+_POST: Array
+(
+    [UserID] => 1000018
+)
+_FILES: Array
+(
+    [photo] => Array
+        (
+            [name] => Capture d'écran 2026-02-20 030703.png
+            [full_path] => Capture d'écran 2026-02-20 030703.png
+            [type] => image/png
+            [tmp_name] => C:\xampp\tmp\php95D6.tmp
+            [error] => 0
+            [size] => 87678
+        )
+
+)
+----------------------------------------
+2026-04-22 18:12:52 - URI: /GetAllPosts.php
+_POST: Array
+(
+    [UserLongt] => 0
+    [UserLat] => 0
+)
+php://input: UserLongt=0&UserLat=0...
+----------------------------------------
+2026-04-22 18:29:02 - URI: /GetAllPosts.php
+_POST: Array
+(
+    [UserLat] => 
+    [UserLongt] => 
+    [Page] => 
+)
+php://input: UserLat=&UserLongt=&Page=...
+----------------------------------------
+2026-04-22 18:32:11 - URI: /GetAllPosts.php
+_POST: Array
+(
+    [UserLat] => 0
+    [UserLongt] => 0
+    [Page] => 0
+)
+php://input: UserLat=0&UserLongt=0&Page=0...
+----------------------------------------
+2026-04-22 18:32:24 - URI: /GetAllPosts.php
+_POST: Array
+(
+    [UserLat] => 0
+    [UserLongt] => 0
+    [Page] => 0
+)
+php://input: UserLat=0&UserLongt=0&Page=0...
+----------------------------------------
+2026-04-22 18:40:48 - URI: /GetAllPostsById.php
+_POST: Array
+(
+    [UserLat] => 0
+    [UserLongt] => 0
+    [UserID] => 1000016
+    [Page] => 0
+    [Pro] => Normal
+)
+php://input: UserLat=0&UserLongt=0&UserID=1000016&Page=0&Pro=Normal...
+----------------------------------------
+2026-04-22 18:41:57 - URI: /GetAllPosts.php
+_POST: Array
+(
+    [UserLat] => 0
+    [UserLongt] => 0
+    [UserID] => 1000016
+    [Page] => 0
+    [Pro] => Normal
+)
+php://input: UserLat=0&UserLongt=0&UserID=1000016&Page=0&Pro=Normal...
+----------------------------------------
+2026-04-22 19:00:54 - URI: /GetAllPosts.php
+_POST: Array
+(
+    [UserLat] => 0
+    [UserLongt] => 0
+    [UserID] => 1000016
+    [Page] => 0
+    [Pro] => Normal
+)
+php://input: UserLat=0&UserLongt=0&UserID=1000016&Page=0&Pro=Normal...
+----------------------------------------
+2026-04-23 01:25:23 - URI: /LogOrSign.php
+_POST: Array
+(
+    [AccountType] => Email
+    [Email] => nadim@qoon.app
+    [Password] => 102030++
+    [UserFirebaseToken] => 
+    [Mode] => Login
+)
+----------------------------------------
+2026-04-23 01:26:07 - URI: /GetPostCommentsWeb.php
+_POST: Array
+(
+    [PostID] => 268
+)
+----------------------------------------
+2026-04-23 01:29:16 - URI: /GetPostCommentsWeb.php
+_POST: Array
+(
+    [PostID] => 268
+)
+----------------------------------------
+2026-04-23 01:29:22 - URI: /GetPostCommentsWeb.php
+_POST: Array
+(
+    [PostID] => 124
+)
+----------------------------------------
+2026-04-23 01:29:28 - URI: /GetPostCommentsWeb.php
+_POST: Array
+(
+    [PostID] => 257
+)
+----------------------------------------
+2026-04-23 02:20:19 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-23 02:20:20 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-23 02:20:27 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-23 02:20:27 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-23 02:22:14 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-23 02:22:15 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-23 02:23:12 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-23 02:23:13 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-23 02:32:01 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-23 02:32:01 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-23 02:35:46 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-23 02:35:47 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-23 03:01:29 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-23 03:01:30 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-23 03:01:56 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 394
+)
+----------------------------------------
+2026-04-23 03:01:56 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 394
+)
+----------------------------------------
+2026-04-23 15:04:34 - URI: /LogOrSign.php
+_POST: Array
+(
+    [AccountType] => Email
+    [Email] => nadim@qoon.app
+    [Password] => 102030++
+    [UserFirebaseToken] => 
+    [Mode] => Login
+)
+----------------------------------------
+2026-04-23 15:18:50 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 15:18:50 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 15:22:44 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1751
+)
+----------------------------------------
+2026-04-23 15:22:45 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1751
+)
+----------------------------------------
+2026-04-23 15:22:50 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 15:22:50 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 15:23:00 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1753
+)
+----------------------------------------
+2026-04-23 15:23:01 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1753
+)
+----------------------------------------
+2026-04-23 15:31:31 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 15:31:32 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 16:49:21 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 16:49:21 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 16:49:30 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1760
+)
+----------------------------------------
+2026-04-23 16:49:30 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1760
+)
+----------------------------------------
+2026-04-23 16:49:37 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1758
+)
+----------------------------------------
+2026-04-23 16:49:37 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1758
+)
+----------------------------------------
+2026-04-23 16:53:41 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 16:53:41 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 16:53:44 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1751
+)
+----------------------------------------
+2026-04-23 16:53:44 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1751
+)
+----------------------------------------
+2026-04-23 16:53:46 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1753
+)
+----------------------------------------
+2026-04-23 16:53:46 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1753
+)
+----------------------------------------
+2026-04-23 16:53:51 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1759
+)
+----------------------------------------
+2026-04-23 16:53:51 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1759
+)
+----------------------------------------
+2026-04-23 16:57:53 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1759
+)
+----------------------------------------
+2026-04-23 16:57:53 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1759
+)
+----------------------------------------
+2026-04-23 17:00:02 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 17:00:02 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 17:01:56 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 17:01:56 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 17:03:02 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 17:03:03 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 17:04:31 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 17:04:32 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 17:05:18 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1751
+)
+----------------------------------------
+2026-04-23 17:05:19 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1751
+)
+----------------------------------------
+2026-04-23 17:05:32 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 17:05:33 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 17:05:53 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1752
+)
+----------------------------------------
+2026-04-23 17:05:54 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1752
+)
+----------------------------------------
+2026-04-23 17:06:17 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 17:06:18 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 17:06:27 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1751
+)
+----------------------------------------
+2026-04-23 17:06:27 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1751
+)
+----------------------------------------
+2026-04-23 17:06:36 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 17:06:37 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 17:06:45 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1752
+)
+----------------------------------------
+2026-04-23 17:06:46 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1752
+)
+----------------------------------------
+2026-04-23 17:06:56 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1752
+)
+----------------------------------------
+2026-04-23 17:06:57 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1752
+)
+----------------------------------------
+2026-04-23 17:07:06 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 17:07:06 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 17:07:16 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1752
+)
+----------------------------------------
+2026-04-23 17:07:16 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1752
+)
+----------------------------------------
+2026-04-23 17:07:24 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 17:07:25 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 17:07:38 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1752
+)
+----------------------------------------
+2026-04-23 17:07:39 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1752
+)
+----------------------------------------
+2026-04-23 17:08:31 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 500
+)
+----------------------------------------
+2026-04-23 17:08:32 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 500
+)
+----------------------------------------
+2026-04-23 17:08:49 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1758
+)
+----------------------------------------
+2026-04-23 17:08:50 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1758
+)
+----------------------------------------
+2026-04-23 17:13:01 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1758
+)
+----------------------------------------
+2026-04-23 17:13:01 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1758
+)
+----------------------------------------
+2026-04-23 17:14:35 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1758
+)
+----------------------------------------
+2026-04-23 17:14:35 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1758
+)
+----------------------------------------
+2026-04-23 17:15:35 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1758
+)
+----------------------------------------
+2026-04-23 17:15:35 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1758
+)
+----------------------------------------
+2026-04-23 17:26:33 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1758
+)
+----------------------------------------
+2026-04-23 17:26:33 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1758
+)
+----------------------------------------
+2026-04-23 17:26:41 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1758
+)
+----------------------------------------
+2026-04-23 17:26:41 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1758
+)
+----------------------------------------
+2026-04-23 17:27:46 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1758
+)
+----------------------------------------
+2026-04-23 17:27:47 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1758
+)
+----------------------------------------
+2026-04-23 17:29:17 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1758
+)
+----------------------------------------
+2026-04-23 17:29:17 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1758
+)
+----------------------------------------
+2026-04-23 17:32:35 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1758
+)
+----------------------------------------
+2026-04-23 17:32:35 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1758
+)
+----------------------------------------
+2026-04-23 17:35:09 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1758
+)
+----------------------------------------
+2026-04-23 17:35:10 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1758
+)
+----------------------------------------
+2026-04-23 17:35:17 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1752
+)
+----------------------------------------
+2026-04-23 17:35:17 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1752
+)
+----------------------------------------
+2026-04-23 17:36:22 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1758
+)
+----------------------------------------
+2026-04-23 17:36:22 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1758
+)
+----------------------------------------
+2026-04-23 17:36:34 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1777
+)
+----------------------------------------
+2026-04-23 17:36:34 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1777
+)
+----------------------------------------
+2026-04-23 17:36:40 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1019
+)
+----------------------------------------
+2026-04-23 17:36:41 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1019
+)
+----------------------------------------
+2026-04-23 17:36:45 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1015
+)
+----------------------------------------
+2026-04-23 17:36:45 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1015
+)
+----------------------------------------
+2026-04-23 17:37:10 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1019
+)
+----------------------------------------
+2026-04-23 17:37:10 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1019
+)
+----------------------------------------
+2026-04-23 17:37:13 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1015
+)
+----------------------------------------
+2026-04-23 17:37:13 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1015
+)
+----------------------------------------
+2026-04-23 17:38:50 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1019
+)
+----------------------------------------
+2026-04-23 17:38:50 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1019
+)
+----------------------------------------
+2026-04-23 17:38:52 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1015
+)
+----------------------------------------
+2026-04-23 17:38:53 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1015
+)
+----------------------------------------
+2026-04-23 17:40:45 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1019
+)
+----------------------------------------
+2026-04-23 17:40:46 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1019
+)
+----------------------------------------
+2026-04-23 17:40:47 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1015
+)
+----------------------------------------
+2026-04-23 17:40:47 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1015
+)
+----------------------------------------
+2026-04-23 17:43:12 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1019
+)
+----------------------------------------
+2026-04-23 17:43:13 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1019
+)
+----------------------------------------
+2026-04-23 17:45:17 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1019
+)
+----------------------------------------
+2026-04-23 17:45:17 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1019
+)
+----------------------------------------
+2026-04-23 17:48:04 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1019
+)
+----------------------------------------
+2026-04-23 17:48:04 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1019
+)
+----------------------------------------
+2026-04-23 17:50:39 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1019
+)
+----------------------------------------
+2026-04-23 17:50:40 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1019
+)
+----------------------------------------
+2026-04-23 17:52:03 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1019
+)
+----------------------------------------
+2026-04-23 17:52:04 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1019
+)
+----------------------------------------
+2026-04-23 17:53:17 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1019
+)
+----------------------------------------
+2026-04-23 17:53:18 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1019
+)
+----------------------------------------
+2026-04-23 17:57:00 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1019
+)
+----------------------------------------
+2026-04-23 17:57:01 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1019
+)
+----------------------------------------
+2026-04-23 17:59:15 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1019
+)
+----------------------------------------
+2026-04-23 17:59:16 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1019
+)
+----------------------------------------
+2026-04-23 18:03:01 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1019
+)
+----------------------------------------
+2026-04-23 18:03:02 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1019
+)
+----------------------------------------
+2026-04-23 18:08:28 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1019
+)
+----------------------------------------
+2026-04-23 18:08:29 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1019
+)
+----------------------------------------
+2026-04-23 18:14:23 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 18:14:23 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 18:14:31 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 18:14:31 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-23 18:17:41 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 18:17:41 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 18:21:19 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 18:21:20 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 18:23:41 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 18:23:41 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 18:31:30 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 18:31:30 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 18:33:07 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 18:33:07 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 18:36:04 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 18:36:04 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 18:37:39 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 18:37:39 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 18:37:57 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 18:37:57 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 18:43:45 - URI: /LogOrSign.php
+_POST: Array
+(
+    [AccountType] => Email
+    [Email] => nadim@qoon.app
+    [Password] => 102030++
+    [UserFirebaseToken] => 
+    [Mode] => Login
+)
+----------------------------------------
+2026-04-23 18:43:51 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1015
+)
+----------------------------------------
+2026-04-23 18:43:53 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1015
+)
+----------------------------------------
+2026-04-23 18:54:38 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 18:54:39 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 18:56:40 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 18:56:41 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 18:58:06 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 18:58:07 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 18:58:46 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 18:58:47 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 19:00:46 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1015
+)
+----------------------------------------
+2026-04-23 19:00:46 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1015
+)
+----------------------------------------
+2026-04-23 19:01:44 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 19:01:45 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 19:02:01 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 19:02:02 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 19:20:31 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 19:20:31 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 19:26:57 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 19:26:57 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1775
+)
+----------------------------------------
+2026-04-23 19:27:01 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\php45BC.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-23 19:27:02 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-2026760346.png
+)
+----------------------------------------
+2026-04-23 19:27:02 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://localhost:8000/vto_temp/vto_69ea566629965.avif
+    [prodImg] => https://qoon.app/Patner/partener/Api/photo/w-2026760346.png
+    [prompt] => Keep the person exactly the same. Only change the clothing to match the product. Realistic fabric, correct fit, natural lighting, high resolution.
+)
+----------------------------------------
+2026-04-23 19:53:12 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1015
+)
+----------------------------------------
+2026-04-23 19:53:13 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1015
+)
+----------------------------------------
+2026-04-23 19:53:17 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\php52C8.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-23 19:53:18 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-1720850642.png
+)
+----------------------------------------
+2026-04-23 19:53:18 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://localhost:8000/vto_temp/vto_69ea5c8e26fef.avif
+    [prodImg] => https://qoon.app/Patner/partener/Api/photo/w-1720850642.png
+    [prompt] => Keep the person exactly the same. Only change the clothing to match the product. Realistic fabric, correct fit, natural lighting, high resolution.
+)
+----------------------------------------
+2026-04-23 19:53:24 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1015
+)
+----------------------------------------
+2026-04-23 19:53:25 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1015
+)
+----------------------------------------
+2026-04-23 20:49:37 - URI: /LogOrSign.php
+_POST: Array
+(
+    [AccountType] => Email
+    [Email] => nadim@qoon.app
+    [Password] => 102030++
+    [UserFirebaseToken] => 
+    [Mode] => Login
+)
+----------------------------------------
+2026-04-23 20:50:23 - URI: /GetPostCommentsWeb.php
+_POST: Array
+(
+    [PostID] => 242
+)
+----------------------------------------
+2026-04-23 20:51:23 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 394
+)
+----------------------------------------
+2026-04-23 20:51:23 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 394
+)
+----------------------------------------
+2026-04-23 20:51:30 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 394
+)
+----------------------------------------
+2026-04-23 20:51:30 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 394
+)
+----------------------------------------
+2026-04-23 20:51:37 - URI: /delivery_offers.php
+_POST: Array
+(
+    [total] => 50
+    [shopId] => 5613
+    [shopName] => Omega 3
+    [cart] => [{"id":"394","name":"Soupe OMEGA3","img":"https://qoon.app/jibler/admin/jbler/shops/jblerShop/photo/Api/photo/photo/w-100464327.png","qty":1,"unitPrice":50,"size":"","color":"","totalPrice":50}]
+)
+php://input: total=50&shopId=5613&shopName=Omega+3&cart=%5B%7B%22id%22%3A%22394%22%2C%22name%22%3A%22Soupe+OMEGA3...
+----------------------------------------
+2026-04-23 20:52:12 - URI: /AcceptOfferUser.php
+_POST: Array
+(
+    [OrderID] => 2222664
+    [DelvryId] => 140
+    [OrderPrice] => 19
+    [OfferKey] => -OqvfqL00o0CCaI5tg4H
+)
+----------------------------------------
+2026-04-23 22:11:07 - URI: /UpdateProfileUserWithImageinapp.php
+_POST: Array
+(
+    [UserID] => 1000018
+)
+_FILES: Array
+(
+    [photo] => Array
+        (
+            [name] => profile.jpg
+            [full_path] => profile.jpg
+            [type] => image/jpeg
+            [tmp_name] => C:\xampp\tmp\php808B.tmp
+            [error] => 0
+            [size] => 52820
+        )
+
+)
+----------------------------------------
+2026-04-23 22:17:38 - URI: /UpdateProfileUserWithImageinapp.php
+_POST: Array
+(
+    [UserID] => 1000018
+    [fullname] => Nadim
+    [PhoneNumber] => 006666632
+    [email] => Nadim@qoon.app
+)
+----------------------------------------
+2026-04-23 23:06:33 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1071
+)
+----------------------------------------
+2026-04-23 23:06:33 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1071
+)
+----------------------------------------
+2026-04-23 23:06:36 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1096
+)
+----------------------------------------
+2026-04-23 23:06:36 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1096
+)
+----------------------------------------
+2026-04-23 23:10:03 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1117
+)
+----------------------------------------
+2026-04-23 23:10:03 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1117
+)
+----------------------------------------
+2026-04-23 23:11:26 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1078
+)
+----------------------------------------
+2026-04-23 23:11:35 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1078
+)
+----------------------------------------
+2026-04-24 00:27:37 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 529
+)
+----------------------------------------
+2026-04-24 00:27:38 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 529
+)
+----------------------------------------
+2026-04-24 00:42:45 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-24 00:42:45 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-24 00:42:49 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-24 00:42:49 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-24 00:43:32 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 806
+)
+----------------------------------------
+2026-04-24 00:43:32 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 806
+)
+----------------------------------------
+2026-04-24 00:47:23 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 806
+)
+----------------------------------------
+2026-04-24 00:47:24 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 806
+)
+----------------------------------------
+2026-04-24 00:48:03 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 767
+)
+----------------------------------------
+2026-04-24 00:48:04 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 767
+)
+----------------------------------------
+2026-04-24 00:48:06 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 766
+)
+----------------------------------------
+2026-04-24 00:48:06 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 766
+)
+----------------------------------------
+2026-04-24 02:19:07 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 395
+)
+----------------------------------------
+2026-04-24 02:19:07 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 395
+)
+----------------------------------------
+2026-04-24 02:20:28 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-24 02:20:28 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-24 02:23:41 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-24 02:23:42 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-24 02:25:28 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 394
+)
+----------------------------------------
+2026-04-24 02:25:29 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 394
+)
+----------------------------------------
+2026-04-24 02:25:39 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 399
+)
+----------------------------------------
+2026-04-24 02:25:39 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 399
+)
+----------------------------------------
+2026-04-24 02:25:42 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 396
+)
+----------------------------------------
+2026-04-24 02:25:42 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 396
+)
+----------------------------------------
+2026-04-24 02:25:45 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 399
+)
+----------------------------------------
+2026-04-24 02:25:45 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 399
+)
+----------------------------------------
+2026-04-24 02:25:50 - URI: /GetFeesJiblerUserPrice.php
+_POST: Array
+(
+    [total] => 190
+)
+----------------------------------------
+2026-04-24 02:25:50 - URI: /GetAllAddress.php
+_POST: Array
+(
+    [UserID] => 1000018
+)
+----------------------------------------
+2026-04-24 02:27:35 - URI: /delivery_offers.php
+_POST: Array
+(
+    [total] => 199.5
+    [shopId] => 5613
+    [shopName] => Omega 3
+    [cart] => [{"id":"394","name":"Soupe OMEGA3","img":"https://...[830 bytes]
+    [payMethod] => COD
+    [addrType] => Home
+    [addrLat] => 35.7629469878148
+    [addrLon] => -5.82222878728489
+    [orderNote] => 
+    [platformFee] => 9.5
+)
+php://input: total=199.5&shopId=5613&shopName=Omega+3&cart=%5B%7B%22id%22%3A%22394%22%2C%22name%22%3A%22Soupe+OME...
+----------------------------------------
+2026-04-24 02:27:49 - URI: /CancelOrderUser.php
+_POST: Array
+(
+    [OrderID] => 2222665
+)
+----------------------------------------
+2026-04-24 02:30:24 - URI: /GetOneOrdersDetails.php
+_POST: Array
+(
+    [OrderID] => 2222665
+)
+----------------------------------------
+2026-04-24 02:30:28 - URI: /GetFeesJiblerUserPrice.php
+_POST: Array
+(
+    [total] => 190
+)
+----------------------------------------
+2026-04-24 02:30:28 - URI: /GetAllAddress.php
+_POST: Array
+(
+    [UserID] => 1000018
+)
+----------------------------------------
+2026-04-24 02:31:09 - URI: /delivery_offers.php
+_POST: Array
+(
+    [total] => 199.5
+    [shopId] => 5613
+    [shopName] => Omega 3
+    [cart] => [{"id":"394","name":"Soupe OMEGA3","unitPrice":50,...[846 bytes]
+    [payMethod] => COD
+    [addrType] => Home
+    [addrLat] => 33.95347966044385
+    [addrLon] => -6.84553371914396
+    [orderNote] => 
+    [platformFee] => 9.5
+)
+php://input: total=199.5&shopId=5613&shopName=Omega+3&cart=%5B%7B%22id%22%3A%22394%22%2C%22name%22%3A%22Soupe+OME...
+----------------------------------------
+2026-04-24 02:34:06 - URI: /GetOneOrdersDetails.php
+_POST: Array
+(
+    [OrderID] => 2222665
+)
+----------------------------------------
+2026-04-24 02:34:09 - URI: /GetFeesJiblerUserPrice.php
+_POST: Array
+(
+    [total] => 190
+)
+----------------------------------------
+2026-04-24 02:34:09 - URI: /GetAllAddress.php
+_POST: Array
+(
+    [UserID] => 1000018
+)
+----------------------------------------
+2026-04-24 02:34:32 - URI: /delivery_offers.php
+_POST: Array
+(
+    [total] => 199.5
+    [shopId] => 5613
+    [shopName] => Omega 3
+    [cart] => [{"id":"394","name":"Soupe OMEGA3","unitPrice":50,...[846 bytes]
+    [payMethod] => COD
+    [addrType] => Work
+    [addrLat] => 33.9537045
+    [addrLon] => -6.845671
+    [orderNote] => 
+    [platformFee] => 9.5
+)
+php://input: total=199.5&shopId=5613&shopName=Omega+3&cart=%5B%7B%22id%22%3A%22394%22%2C%22name%22%3A%22Soupe+OME...
+----------------------------------------
+2026-04-24 02:36:58 - URI: /CancelOrderUser.php
+_POST: Array
+(
+    [OrderID] => 2222667
+)
+----------------------------------------
+2026-04-24 02:37:05 - URI: /GetOneOrdersDetails.php
+_POST: Array
+(
+    [OrderID] => 2222667
+)
+----------------------------------------
+2026-04-24 02:38:57 - URI: /GetOneOrdersDetails.php
+_POST: Array
+(
+    [OrderID] => 2222667
+)
+----------------------------------------
+2026-04-24 02:39:00 - URI: /GetFeesJiblerUserPrice.php
+_POST: Array
+(
+    [total] => 190
+)
+----------------------------------------
+2026-04-24 02:39:00 - URI: /GetAllAddress.php
+_POST: Array
+(
+    [UserID] => 1000018
+)
+----------------------------------------
+2026-04-24 02:40:02 - URI: /delivery_offers.php
+_POST: Array
+(
+    [total] => 199.5
+    [shopId] => 5613
+    [shopName] => Omega 3
+    [cart] => [{"id":"394","name":"Soupe OMEGA3","unitPrice":50,...[846 bytes]
+    [payMethod] => COD
+    [addrType] => Home
+    [addrLat] => 33.9537045
+    [addrLon] => -6.845671
+    [orderNote] => home
+    [platformFee] => 9.5
+)
+php://input: total=199.5&shopId=5613&shopName=Omega+3&cart=%5B%7B%22id%22%3A%22394%22%2C%22name%22%3A%22Soupe+OME...
+----------------------------------------
+2026-04-24 02:42:58 - URI: /CancelOrderUser.php
+_POST: Array
+(
+    [OrderID] => 2222668
+)
+----------------------------------------
+2026-04-24 02:43:06 - URI: /GetOneOrdersDetails.php
+_POST: Array
+(
+    [OrderID] => 2222668
+)
+----------------------------------------
+2026-04-24 02:43:10 - URI: /GetFeesJiblerUserPrice.php
+_POST: Array
+(
+    [total] => 190
+)
+----------------------------------------
+2026-04-24 02:43:10 - URI: /GetAllAddress.php
+_POST: Array
+(
+    [UserID] => 1000018
+)
+----------------------------------------
+2026-04-24 02:43:54 - URI: /AddAddressUser.php
+_POST: Array
+(
+    [UserID] => 1000018
+    [AddressType] => Home
+    [AddressName] => Home
+    [AddressText] => New Location from Checkout
+    [AddressLat] => 33.95363774826936
+    [AddressLongt] => -6.8459116537358815
+)
+----------------------------------------
+2026-04-24 02:43:57 - URI: /delivery_offers.php
+_POST: Array
+(
+    [total] => 199.5
+    [shopId] => 5613
+    [shopName] => Omega 3
+    [cart] => [{"id":"394","name":"Soupe OMEGA3","unitPrice":50,...[846 bytes]
+    [payMethod] => COD
+    [addrType] => Home
+    [addrLat] => 33.95363774826936
+    [addrLon] => -6.8459116537358815
+    [orderNote] => Souissi
+    [platformFee] => 9.5
+)
+php://input: total=199.5&shopId=5613&shopName=Omega+3&cart=%5B%7B%22id%22%3A%22394%22%2C%22name%22%3A%22Soupe+OME...
+----------------------------------------
+2026-04-24 02:44:31 - URI: /AcceptOfferUser.php
+_POST: Array
+(
+    [OrderID] => 2222669
+    [DelvryId] => 140
+    [OrderPrice] => 12
+    [OfferKey] => -OqwwTBjx9LpMiWM2xa5
+)
+----------------------------------------
+2026-04-24 02:50:34 - URI: /CancelOrderUser.php
+_POST: Array
+(
+    [OrderID] => 2222669
+)
+----------------------------------------
+2026-04-24 02:52:03 - URI: /GetOneOrdersDetails.php
+_POST: Array
+(
+    [OrderID] => 2222669
+)
+----------------------------------------
+2026-04-24 02:52:06 - URI: /GetFeesJiblerUserPrice.php
+_POST: Array
+(
+    [total] => 190
+)
+----------------------------------------
+2026-04-24 02:52:06 - URI: /GetAllAddress.php
+_POST: Array
+(
+    [UserID] => 1000018
+)
+----------------------------------------
+2026-04-24 02:52:22 - URI: /delivery_offers.php
+_POST: Array
+(
+    [total] => 199.5
+    [shopId] => 5613
+    [shopName] => Omega 3
+    [cart] => [{"id":"394","name":"Soupe OMEGA3","unitPrice":50,...[846 bytes]
+    [payMethod] => COD
+    [addrType] => Home
+    [addrLat] => 33.95363774826936
+    [addrLon] => -6.8459116537358815
+    [orderNote] => 
+    [platformFee] => 9.5
+)
+php://input: total=199.5&shopId=5613&shopName=Omega+3&cart=%5B%7B%22id%22%3A%22394%22%2C%22name%22%3A%22Soupe+OME...
+----------------------------------------
+2026-04-24 02:52:53 - URI: /AcceptOfferUser.php
+_POST: Array
+(
+    [OrderID] => 2222670
+    [DelvryId] => 140
+    [OrderPrice] => 12
+    [OfferKey] => -OqwyO5qeMimV2uuGta8
+)
+----------------------------------------
+2026-04-24 03:00:15 - URI: /CancelOrderUser.php
+_POST: Array
+(
+    [OrderID] => 2222670
+)
+----------------------------------------
+2026-04-24 03:01:37 - URI: /GetOneOrdersDetails.php
+_POST: Array
+(
+    [OrderID] => 2222670
+)
+----------------------------------------
+2026-04-24 03:01:40 - URI: /GetFeesJiblerUserPrice.php
+_POST: Array
+(
+    [total] => 190
+)
+----------------------------------------
+2026-04-24 03:01:40 - URI: /GetAllAddress.php
+_POST: Array
+(
+    [UserID] => 1000018
+)
+----------------------------------------
+2026-04-24 03:01:47 - URI: /delivery_offers.php
+_POST: Array
+(
+    [total] => 199.5
+    [shopId] => 5613
+    [shopName] => Omega 3
+    [cart] => [{"id":"394","name":"Soupe OMEGA3","unitPrice":50,...[846 bytes]
+    [payMethod] => COD
+    [addrType] => Home
+    [addrLat] => 33.95363774826936
+    [addrLon] => -6.8459116537358815
+    [orderNote] => 
+    [platformFee] => 9.5
+)
+php://input: total=199.5&shopId=5613&shopName=Omega+3&cart=%5B%7B%22id%22%3A%22394%22%2C%22name%22%3A%22Soupe+OME...
+----------------------------------------
+2026-04-24 03:02:14 - URI: /AcceptOfferUser.php
+_POST: Array
+(
+    [OrderID] => 2222671
+    [DelvryId] => 140
+    [OrderPrice] => 12
+    [OfferKey] => -Oqx-XZW_Ooacxqld8WI
+)
+----------------------------------------
+2026-04-24 03:02:29 - URI: /CancelOrderUser.php
+_POST: Array
+(
+    [OrderID] => 2222671
+)
+----------------------------------------
+2026-04-24 03:02:37 - URI: /GetOneOrdersDetails.php
+_POST: Array
+(
+    [OrderID] => 2222671
+)
+----------------------------------------
+2026-04-24 03:02:40 - URI: /GetFeesJiblerUserPrice.php
+_POST: Array
+(
+    [total] => 190
+)
+----------------------------------------
+2026-04-24 03:02:41 - URI: /GetAllAddress.php
+_POST: Array
+(
+    [UserID] => 1000018
+)
+----------------------------------------
+2026-04-24 03:02:47 - URI: /delivery_offers.php
+_POST: Array
+(
+    [total] => 199.5
+    [shopId] => 5613
+    [shopName] => Omega 3
+    [cart] => [{"id":"394","name":"Soupe OMEGA3","unitPrice":50,...[846 bytes]
+    [payMethod] => COD
+    [addrType] => Home
+    [addrLat] => 33.95363774826936
+    [addrLon] => -6.8459116537358815
+    [orderNote] => 
+    [platformFee] => 9.5
+)
+php://input: total=199.5&shopId=5613&shopName=Omega+3&cart=%5B%7B%22id%22%3A%22394%22%2C%22name%22%3A%22Soupe+OME...
+----------------------------------------
+2026-04-24 03:05:14 - URI: /CancelOrderUser.php
+_POST: Array
+(
+    [OrderID] => 2222672
+)
+----------------------------------------
+2026-04-24 03:05:23 - URI: /GetOneOrdersDetails.php
+_POST: Array
+(
+    [OrderID] => 2222671
+)
+----------------------------------------
+2026-04-24 03:05:26 - URI: /GetFeesJiblerUserPrice.php
+_POST: Array
+(
+    [total] => 190
+)
+----------------------------------------
+2026-04-24 03:05:26 - URI: /GetAllAddress.php
+_POST: Array
+(
+    [UserID] => 1000018
+)
+----------------------------------------
+2026-04-24 03:05:32 - URI: /delivery_offers.php
+_POST: Array
+(
+    [total] => 199.5
+    [shopId] => 5613
+    [shopName] => Omega 3
+    [cart] => [{"id":"394","name":"Soupe OMEGA3","unitPrice":50,...[846 bytes]
+    [payMethod] => COD
+    [addrType] => Home
+    [addrLat] => 33.95363774826936
+    [addrLon] => -6.8459116537358815
+    [orderNote] => 
+    [platformFee] => 9.5
+)
+php://input: total=199.5&shopId=5613&shopName=Omega+3&cart=%5B%7B%22id%22%3A%22394%22%2C%22name%22%3A%22Soupe+OME...
+----------------------------------------
+2026-04-24 03:07:49 - URI: /CancelOrderUser.php
+_POST: Array
+(
+    [OrderID] => 2222673
+)
+----------------------------------------
+2026-04-24 03:10:52 - URI: /GetOneOrdersDetails.php
+_POST: Array
+(
+    [OrderID] => 2222673
+)
+----------------------------------------
+2026-04-24 03:10:55 - URI: /GetFeesJiblerUserPrice.php
+_POST: Array
+(
+    [total] => 190
+)
+----------------------------------------
+2026-04-24 03:10:55 - URI: /GetAllAddress.php
+_POST: Array
+(
+    [UserID] => 1000018
+)
+----------------------------------------
+2026-04-24 03:11:01 - URI: /delivery_offers.php
+_POST: Array
+(
+    [total] => 199.5
+    [shopId] => 5613
+    [shopName] => Omega 3
+    [cart] => [{"id":"394","name":"Soupe OMEGA3","unitPrice":50,...[846 bytes]
+    [payMethod] => COD
+    [addrType] => Home
+    [addrLat] => 33.95363774826936
+    [addrLon] => -6.8459116537358815
+    [orderNote] => 
+    [platformFee] => 9.5
+)
+php://input: total=199.5&shopId=5613&shopName=Omega+3&cart=%5B%7B%22id%22%3A%22394%22%2C%22name%22%3A%22Soupe+OME...
+----------------------------------------
+2026-04-24 03:16:57 - URI: /CancelOrderUser.php
+_POST: Array
+(
+    [OrderID] => 2222674
+)
+----------------------------------------
+2026-04-24 03:17:07 - URI: /GetOneOrdersDetails.php
+_POST: Array
+(
+    [OrderID] => 2222673
+)
+----------------------------------------
+2026-04-24 03:17:10 - URI: /GetFeesJiblerUserPrice.php
+_POST: Array
+(
+    [total] => 190
+)
+----------------------------------------
+2026-04-24 03:17:11 - URI: /GetAllAddress.php
+_POST: Array
+(
+    [UserID] => 1000018
+)
+----------------------------------------
+2026-04-24 03:17:23 - URI: /delivery_offers.php
+_POST: Array
+(
+    [total] => 199.5
+    [shopId] => 5613
+    [shopName] => Omega 3
+    [cart] => [{"id":"394","name":"Soupe OMEGA3","unitPrice":50,...[846 bytes]
+    [payMethod] => COD
+    [addrType] => Home
+    [addrLat] => 33.95363774826936
+    [addrLon] => -6.8459116537358815
+    [orderNote] => 
+    [platformFee] => 9.5
+)
+php://input: total=199.5&shopId=5613&shopName=Omega+3&cart=%5B%7B%22id%22%3A%22394%22%2C%22name%22%3A%22Soupe+OME...
+----------------------------------------
+2026-04-24 03:20:38 - URI: /CancelOrderUser.php
+_POST: Array
+(
+    [OrderID] => 2222675
+)
+----------------------------------------
+2026-04-24 03:20:47 - URI: /GetOneOrdersDetails.php
+_POST: Array
+(
+    [OrderID] => 2222675
+)
+----------------------------------------
+2026-04-24 03:20:50 - URI: /GetFeesJiblerUserPrice.php
+_POST: Array
+(
+    [total] => 190
+)
+----------------------------------------
+2026-04-24 03:20:50 - URI: /GetAllAddress.php
+_POST: Array
+(
+    [UserID] => 1000018
+)
+----------------------------------------
+2026-04-24 03:20:56 - URI: /delivery_offers.php
+_POST: Array
+(
+    [total] => 199.5
+    [shopId] => 5613
+    [shopName] => Omega 3
+    [cart] => [{"id":"394","name":"Soupe OMEGA3","unitPrice":50,...[846 bytes]
+    [payMethod] => COD
+    [addrType] => Home
+    [addrLat] => 33.95363774826936
+    [addrLon] => -6.8459116537358815
+    [orderNote] => 
+    [platformFee] => 9.5
+)
+php://input: total=199.5&shopId=5613&shopName=Omega+3&cart=%5B%7B%22id%22%3A%22394%22%2C%22name%22%3A%22Soupe+OME...
+----------------------------------------
+2026-04-24 03:25:04 - URI: /CancelOrderUser.php
+_POST: Array
+(
+    [OrderID] => 2222676
+)
+----------------------------------------
+2026-04-24 03:25:13 - URI: /GetOneOrdersDetails.php
+_POST: Array
+(
+    [OrderID] => 2222676
+)
+----------------------------------------
+2026-04-24 03:25:16 - URI: /GetFeesJiblerUserPrice.php
+_POST: Array
+(
+    [total] => 190
+)
+----------------------------------------
+2026-04-24 03:25:17 - URI: /GetAllAddress.php
+_POST: Array
+(
+    [UserID] => 1000018
+)
+----------------------------------------
+2026-04-24 03:25:23 - URI: /delivery_offers.php
+_POST: Array
+(
+    [total] => 199.5
+    [shopId] => 5613
+    [shopName] => Omega 3
+    [cart] => [{"id":"394","name":"Soupe OMEGA3","unitPrice":50,...[846 bytes]
+    [payMethod] => COD
+    [addrType] => Home
+    [addrLat] => 33.95363774826936
+    [addrLon] => -6.8459116537358815
+    [orderNote] => 
+    [platformFee] => 9.5
+)
+php://input: total=199.5&shopId=5613&shopName=Omega+3&cart=%5B%7B%22id%22%3A%22394%22%2C%22name%22%3A%22Soupe+OME...
+----------------------------------------
+2026-04-24 03:25:38 - URI: /CancelOrderUser.php
+_POST: Array
+(
+    [OrderID] => 2222677
+)
+----------------------------------------
+2026-04-24 03:26:01 - URI: /GetOneOrdersDetails.php
+_POST: Array
+(
+    [OrderID] => 2222677
+)
+----------------------------------------
+2026-04-24 03:26:04 - URI: /GetFeesJiblerUserPrice.php
+_POST: Array
+(
+    [total] => 190
+)
+----------------------------------------
+2026-04-24 03:26:04 - URI: /GetAllAddress.php
+_POST: Array
+(
+    [UserID] => 1000018
+)
+----------------------------------------
+2026-04-24 03:26:27 - URI: /AddAddressUser.php
+_POST: Array
+(
+    [UserID] => 1000018
+    [AddressType] => Hotel
+    [AddressName] => Hotel
+    [AddressText] => New Location from Checkout
+    [AddressLat] => 33.95954538170331
+    [AddressLongt] => -6.880598533490479
+)
+----------------------------------------
+2026-04-24 03:26:30 - URI: /delivery_offers.php
+_POST: Array
+(
+    [total] => 199.5
+    [shopId] => 5613
+    [shopName] => Omega 3
+    [cart] => [{"id":"394","name":"Soupe OMEGA3","unitPrice":50,...[846 bytes]
+    [payMethod] => COD
+    [addrType] => Hotel
+    [addrLat] => 33.95954538170331
+    [addrLon] => -6.880598533490479
+    [orderNote] => 
+    [platformFee] => 9.5
+)
+php://input: total=199.5&shopId=5613&shopName=Omega+3&cart=%5B%7B%22id%22%3A%22394%22%2C%22name%22%3A%22Soupe+OME...
+----------------------------------------
+2026-04-24 03:26:45 - URI: /AcceptOfferUser.php
+_POST: Array
+(
+    [OrderID] => 2222678
+    [DelvryId] => 140
+    [OrderPrice] => 12
+    [OfferKey] => -Oqx58N4npP0GO7EA4WE
+)
+----------------------------------------
+2026-04-24 03:35:57 - URI: /CancelOrderUser.php
+_POST: Array
+(
+    [OrderID] => 2222678
+)
+----------------------------------------
+2026-04-24 03:47:22 - URI: /GetOneOrdersDetails.php
+_POST: Array
+(
+    [OrderID] => 2222678
+)
+----------------------------------------
+2026-04-24 03:52:19 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-24 03:52:20 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-24 03:52:23 - URI: /GetFeesJiblerUserPrice.php
+_POST: Array
+(
+    [total] => 80
+)
+----------------------------------------
+2026-04-24 03:52:24 - URI: /GetAllAddress.php
+_POST: Array
+(
+    [UserID] => 1000018
+)
+----------------------------------------
+2026-04-24 03:52:31 - URI: /delivery_offers.php
+_POST: Array
+(
+    [total] => 84
+    [shopId] => 5613
+    [shopName] => Omega 3
+    [cart] => [{"id":"410","name":"Pulpe","img":"https://qoon.app/jibler/admin/jbler/shops/jblerShop/photo/Api/photo/photo/w-637551669.png","qty":1,"unitPrice":80,"size":"","color":"","extras":[],"totalPrice":80}]
+    [payMethod] => COD
+    [addrType] => Home
+    [addrLat] => 33.95954538170331
+    [addrLon] => -6.880598533490479
+    [orderNote] => 
+    [platformFee] => 4
+    [deliveryFee] => 12
+)
+php://input: total=84&shopId=5613&shopName=Omega+3&cart=%5B%7B%22id%22%3A%22410%22%2C%22name%22%3A%22Pulpe%22%2C%...
+----------------------------------------
+2026-04-24 03:55:34 - URI: /CancelOrderUser.php
+_POST: Array
+(
+    [OrderID] => 2222679
+)
+----------------------------------------
+2026-04-24 03:56:04 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 398
+)
+----------------------------------------
+2026-04-24 03:56:05 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 398
+)
+----------------------------------------
+2026-04-24 03:56:08 - URI: /GetFeesJiblerUserPrice.php
+_POST: Array
+(
+    [total] => 30
+)
+----------------------------------------
+2026-04-24 03:56:10 - URI: /GetAllAddress.php
+_POST: Array
+(
+    [UserID] => 1000018
+)
+----------------------------------------
+2026-04-24 03:57:17 - URI: /delivery_offers.php
+_POST: Array
+(
+    [total] => 33
+    [shopId] => 5613
+    [shopName] => Omega 3
+    [cart] => [{"id":"398","name":"Croquette Poisson","img":"htt...[212 bytes]
+    [payMethod] => COD
+    [addrType] => Home
+    [addrLat] => 33.95954538170331
+    [addrLon] => -6.880598533490479
+    [orderNote] => 
+    [platformFee] => 3
+    [deliveryFee] => 12
+)
+php://input: total=33&shopId=5613&shopName=Omega+3&cart=%5B%7B%22id%22%3A%22398%22%2C%22name%22%3A%22Croquette+Po...
+----------------------------------------
+2026-04-24 03:57:38 - URI: /CancelOrderUser.php
+_POST: Array
+(
+    [OrderID] => 2222679
+)
+----------------------------------------
+2026-04-24 03:59:35 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 537
+)
+----------------------------------------
+2026-04-24 03:59:36 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 537
+)
+----------------------------------------
+2026-04-24 03:59:39 - URI: /GetFeesJiblerUserPrice.php
+_POST: Array
+(
+    [total] => 40
+)
+----------------------------------------
+2026-04-24 03:59:39 - URI: /GetAllAddress.php
+_POST: Array
+(
+    [UserID] => 1000018
+)
+----------------------------------------
+2026-04-24 03:59:49 - URI: /delivery_offers.php
+_POST: Array
+(
+    [total] => 43
+    [shopId] => 6268
+    [shopName] => Sushi Le mekong  🍣 
+    [cart] => [{"id":"537","name":"Nouilles sauté aux légumes"...[223 bytes]
+    [payMethod] => COD
+    [addrType] => Home
+    [addrLat] => 33.95954538170331
+    [addrLon] => -6.880598533490479
+    [orderNote] => 
+    [platformFee] => 3
+    [deliveryFee] => 12
+)
+php://input: total=43&shopId=6268&shopName=Sushi+Le+mekong++%F0%9F%8D%A3+&cart=%5B%7B%22id%22%3A%22537%22%2C%22na...
+----------------------------------------
+2026-04-24 04:00:05 - URI: /CancelOrderUser.php
+_POST: Array
+(
+    [OrderID] => 2222680
+)
+----------------------------------------
+2026-04-24 04:05:32 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1132
+)
+----------------------------------------
+2026-04-24 04:05:34 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1132
+)
+----------------------------------------
+2026-04-24 04:05:39 - URI: /GetFeesJiblerUserPrice.php
+_POST: Array
+(
+    [total] => 280
+)
+----------------------------------------
+2026-04-24 04:05:40 - URI: /GetAllAddress.php
+_POST: Array
+(
+    [UserID] => 1000018
+)
+----------------------------------------
+2026-04-24 04:05:51 - URI: /delivery_offers.php
+_POST: Array
+(
+    [total] => 294
+    [shopId] => 732693
+    [shopName] => 
+    [cart] => [{"id":1132,"name":"Duo bougeoir","img":"https://qoon.app/Patner/partener/Api/photo/w-1412096516.png","qty":1,"unitPrice":280,"size":"","color":"","extras":[],"totalPrice":280}]
+    [payMethod] => COD
+    [addrType] => Home
+    [addrLat] => 33.95954538170331
+    [addrLon] => -6.880598533490479
+    [orderNote] => 
+    [platformFee] => 14
+    [deliveryFee] => 12
+)
+php://input: total=294&shopId=732693&shopName=&cart=%5B%7B%22id%22%3A1132%2C%22name%22%3A%22Duo+bougeoir%22%2C%22...
+----------------------------------------
+2026-04-24 04:12:08 - URI: /CancelOrderUser.php
+_POST: Array
+(
+    [OrderID] => 2222684
+)
+----------------------------------------
+2026-04-24 04:15:20 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1129
+)
+----------------------------------------
+2026-04-24 04:15:20 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1129
+)
+----------------------------------------
+2026-04-24 04:15:24 - URI: /GetFeesJiblerUserPrice.php
+_POST: Array
+(
+    [total] => 240
+)
+----------------------------------------
+2026-04-24 04:15:25 - URI: /GetAllAddress.php
+_POST: Array
+(
+    [UserID] => 1000018
+)
+----------------------------------------
+2026-04-24 04:15:31 - URI: /delivery_offers.php
+_POST: Array
+(
+    [total] => 252
+    [shopId] => 732692
+    [shopName] => 
+    [cart] => [{"id":1129,"name":"Vase Corps","img":"https://qoon.app/Patner/partener/Api/photo/w-323184277.png","qty":1,"unitPrice":240,"size":"","color":"","extras":[],"totalPrice":240}]
+    [payMethod] => COD
+    [addrType] => Home
+    [addrLat] => 33.95954538170331
+    [addrLon] => -6.880598533490479
+    [orderNote] => 
+    [platformFee] => 12
+    [deliveryFee] => 12
+)
+php://input: total=252&shopId=732692&shopName=&cart=%5B%7B%22id%22%3A1129%2C%22name%22%3A%22Vase+Corps%22%2C%22im...
+----------------------------------------
+2026-04-24 04:16:22 - URI: /CancelOrderUser.php
+_POST: Array
+(
+    [OrderID] => 2222685
+)
+----------------------------------------
+2026-04-24 04:23:38 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1090
+)
+----------------------------------------
+2026-04-24 04:23:38 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1090
+)
+----------------------------------------
+2026-04-24 05:06:11 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 529
+)
+----------------------------------------
+2026-04-24 05:06:12 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 529
+)
+----------------------------------------
+2026-04-24 05:06:13 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1248
+)
+----------------------------------------
+2026-04-24 05:06:14 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1248
+)
+----------------------------------------
+2026-04-24 05:07:06 - URI: /LogOrSign.php
+_POST: Array
+(
+    [AccountType] => Email
+    [Email] => nadim@qoon.app
+    [Password] => 102030++
+    [UserFirebaseToken] => 
+    [Mode] => Login
+)
+----------------------------------------
+2026-04-24 05:13:17 - URI: /UpdateProfileUserWithImageinapp.php
+_POST: Array
+(
+    [UserID] => 1000018
+)
+_FILES: Array
+(
+    [photo] => Array
+        (
+            [name] => profile.jpg
+            [full_path] => profile.jpg
+            [type] => image/jpeg
+            [tmp_name] => C:\xampp\tmp\php213.tmp
+            [error] => 0
+            [size] => 61454
+        )
+
+)
+----------------------------------------
+2026-04-24 17:47:18 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1752
+)
+----------------------------------------
+2026-04-24 17:47:19 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1752
+)
+----------------------------------------
+2026-04-24 17:47:21 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1760
+)
+----------------------------------------
+2026-04-24 17:47:22 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1760
+)
+----------------------------------------
+2026-04-24 17:47:32 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\php8D40.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-24 17:47:33 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-1282563370.png
+)
+----------------------------------------
+2026-04-24 17:47:35 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://localhost:8000/vto_temp/vto_69eb909527beb.avif
+    [prodImg] => https://qoon.app/Patner/partener/Api/photo/w-1282563370.png
+    [prompt] => Keep the person exactly the same. Only change the clothing to match the product. Realistic fabric, correct fit, natural lighting, high resolution.
+)
+----------------------------------------
+2026-04-24 18:41:19 - URI: /LogOrSign.php
+_POST: Array
+(
+    [AccountType] => Email
+    [Email] => nadim@qoon.app
+    [Password] => 102030++
+    [UserFirebaseToken] => 
+    [Mode] => Login
+)
+----------------------------------------
+2026-04-24 18:46:25 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1016
+)
+----------------------------------------
+2026-04-24 18:46:26 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1016
+)
+----------------------------------------
+2026-04-24 18:46:34 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\php99BE.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-24 18:46:35 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-869704208.png
+)
+----------------------------------------
+2026-04-24 18:46:35 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://localhost:8000/vto_temp/vto_69eb9e6b8118a.avif
+    [prodImg] => https://qoon.app/Patner/partener/Api/photo/w-869704208.png
+    [prompt] => Keep the person exactly the same. Only change the clothing to match the product. Realistic fabric, correct fit, natural lighting, high resolution.
+)
+----------------------------------------
+2026-04-24 18:47:45 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1014
+)
+----------------------------------------
+2026-04-24 18:47:46 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1014
+)
+----------------------------------------
+2026-04-25 16:11:05 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1014
+)
+----------------------------------------
+2026-04-25 16:11:06 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1014
+)
+----------------------------------------
+2026-04-25 16:19:03 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 189
+)
+----------------------------------------
+2026-04-25 16:19:05 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 189
+)
+----------------------------------------
+2026-04-25 16:25:12 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 394
+)
+----------------------------------------
+2026-04-25 16:25:13 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 394
+)
+----------------------------------------
+2026-04-25 16:28:45 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 189
+)
+----------------------------------------
+2026-04-25 16:28:47 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 189
+)
+----------------------------------------
+2026-04-25 16:33:38 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 394
+)
+----------------------------------------
+2026-04-25 16:33:38 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 394
+)
+----------------------------------------
+2026-04-25 16:34:04 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 189
+)
+----------------------------------------
+2026-04-25 16:34:04 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 189
+)
+----------------------------------------
+2026-04-25 16:34:19 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 189
+)
+----------------------------------------
+2026-04-25 16:34:20 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 189
+)
+----------------------------------------
+2026-04-25 16:34:43 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 181
+)
+----------------------------------------
+2026-04-25 16:34:44 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 181
+)
+----------------------------------------
+2026-04-25 16:34:50 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 179
+)
+----------------------------------------
+2026-04-25 16:34:50 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 179
+)
+----------------------------------------
+2026-04-25 16:35:04 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 548
+)
+----------------------------------------
+2026-04-25 16:35:04 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 548
+)
+----------------------------------------
+2026-04-25 16:35:14 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 767
+)
+----------------------------------------
+2026-04-25 16:35:14 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 767
+)
+----------------------------------------
+2026-04-25 16:40:06 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 189
+)
+----------------------------------------
+2026-04-25 16:40:08 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 189
+)
+----------------------------------------
+2026-04-25 17:02:02 - URI: /GetPostCommentsWeb.php
+_POST: Array
+(
+    [PostID] => 308
+)
+----------------------------------------
+2026-04-25 17:02:09 - URI: /AddComment.php
+_POST: Array
+(
+    [PostID] => 308
+    [CommentText] => ni
+    [UserID] => 1000018
+    [ShopID] => 0
+)
+----------------------------------------
+2026-04-25 17:02:14 - URI: /GetPostCommentsWeb.php
+_POST: Array
+(
+    [PostID] => 308
+)
+----------------------------------------
+2026-04-25 17:24:13 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1777
+)
+----------------------------------------
+2026-04-25 17:24:14 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1777
+)
+----------------------------------------
+2026-04-25 17:24:22 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1760
+)
+----------------------------------------
+2026-04-25 17:24:23 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1760
+)
+----------------------------------------
+2026-04-25 17:24:31 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\phpD43A.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 17:24:31 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-1282563370.png
+)
+----------------------------------------
+2026-04-25 17:24:31 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://localhost:8000/vto_temp/vto_69ecdcaf5c54e.avif
+    [prodImg] => https://qoon.app/Patner/partener/Api/photo/w-1282563370.png
+    [prompt] => Keep the person exactly the same. Only change the clothing to match the product. Realistic fabric, correct fit, natural lighting, high resolution.
+)
+----------------------------------------
+2026-04-25 17:35:10 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1777
+)
+----------------------------------------
+2026-04-25 17:35:10 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1777
+)
+----------------------------------------
+2026-04-25 17:35:13 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1760
+)
+----------------------------------------
+2026-04-25 17:35:13 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1760
+)
+----------------------------------------
+2026-04-25 17:35:21 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\phpC16F.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 17:35:22 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-1282563370.png
+)
+----------------------------------------
+2026-04-25 17:35:22 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://localhost:8000/vto_temp/vto_69ecdf3a54f4e.avif
+    [prodImg] => https://qoon.app/Patner/partener/Api/photo/w-1282563370.png
+    [prompt] => Keep the person exactly the same. Only change the clothing to match the product. Realistic fabric, correct fit, natural lighting, high resolution.
+)
+----------------------------------------
+2026-04-25 17:56:10 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1777
+)
+----------------------------------------
+2026-04-25 17:56:10 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1777
+)
+----------------------------------------
+2026-04-25 17:56:16 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-25 17:56:16 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-25 17:56:24 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\php4F5.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 17:56:24 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-1648690750.png
+)
+----------------------------------------
+2026-04-25 17:56:24 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://localhost:8000/vto_temp/vto_69ece4285ed8f.avif
+    [prodImg] => https://qoon.app/Patner/partener/Api/photo/w-1648690750.png
+    [prompt] => Keep the person exactly the same. Only change the clothing to match the product. Realistic fabric, correct fit, natural lighting, high resolution.
+)
+----------------------------------------
+2026-04-25 17:58:29 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1777
+)
+----------------------------------------
+2026-04-25 17:58:29 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1777
+)
+----------------------------------------
+2026-04-25 17:58:33 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1760
+)
+----------------------------------------
+2026-04-25 17:58:33 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1760
+)
+----------------------------------------
+2026-04-25 17:58:41 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\php1CDB.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 17:58:41 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-1282563370.png
+)
+----------------------------------------
+2026-04-25 17:58:41 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://localhost:8000/vto_temp/vto_69ece4b18e026.avif
+    [prodImg] => https://qoon.app/Patner/partener/Api/photo/w-1282563370.png
+    [prompt] => Keep the person exactly the same. Only change the clothing to match the product. Realistic fabric, correct fit, natural lighting, high resolution.
+)
+----------------------------------------
+2026-04-25 18:07:55 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1777
+)
+----------------------------------------
+2026-04-25 18:07:56 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1777
+)
+----------------------------------------
+2026-04-25 18:08:00 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1760
+)
+----------------------------------------
+2026-04-25 18:08:00 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1760
+)
+----------------------------------------
+2026-04-25 18:08:09 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\phpC6A3.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 18:08:09 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-1282563370.png
+)
+----------------------------------------
+2026-04-25 18:08:09 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://localhost:8000/vto_temp/vto_69ece6e949903.avif
+    [prodImg] => https://qoon.app/Patner/partener/Api/photo/w-1282563370.png
+    [prompt] => Keep the person exactly the same. Only change the clothing to match the product. Realistic fabric, correct fit, natural lighting, high resolution.
+)
+----------------------------------------
+2026-04-25 18:11:36 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1777
+)
+----------------------------------------
+2026-04-25 18:11:36 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1777
+)
+----------------------------------------
+2026-04-25 18:11:40 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1760
+)
+----------------------------------------
+2026-04-25 18:11:40 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1760
+)
+----------------------------------------
+2026-04-25 18:11:46 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\php192A.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 18:11:47 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-1282563370.png
+)
+----------------------------------------
+2026-04-25 18:11:47 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://localhost:8000/vto_temp/vto_69ece7c30f863.avif
+    [prodImg] => https://qoon.app/Patner/partener/Api/photo/w-1282563370.png
+    [prompt] => Keep the person exactly the same. Only change the clothing to match the product. Realistic fabric, correct fit, natural lighting, high resolution.
+)
+----------------------------------------
+2026-04-25 18:16:05 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1777
+)
+----------------------------------------
+2026-04-25 18:16:06 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1777
+)
+----------------------------------------
+2026-04-25 18:16:09 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1760
+)
+----------------------------------------
+2026-04-25 18:16:10 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1760
+)
+----------------------------------------
+2026-04-25 18:16:15 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\php323E.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 18:16:15 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-1282563370.png
+)
+----------------------------------------
+2026-04-25 18:16:15 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://localhost:8000/vto_temp/vto_69ece8cf92389.avif
+    [prodImg] => https://qoon.app/Patner/partener/Api/photo/w-1282563370.png
+    [prompt] => Virtual try-on fashion photography, high quality, photorealistic clothing, natural lighting.
+)
+----------------------------------------
+2026-04-25 18:22:26 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1760
+)
+----------------------------------------
+2026-04-25 18:22:26 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1760
+)
+----------------------------------------
+2026-04-25 18:22:29 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1777
+)
+----------------------------------------
+2026-04-25 18:22:30 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1777
+)
+----------------------------------------
+2026-04-25 18:22:32 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1760
+)
+----------------------------------------
+2026-04-25 18:22:33 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1760
+)
+----------------------------------------
+2026-04-25 18:22:39 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\phpCF7.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 18:33:17 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1777
+)
+----------------------------------------
+2026-04-25 18:33:18 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1777
+)
+----------------------------------------
+2026-04-25 18:33:21 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1760
+)
+----------------------------------------
+2026-04-25 18:33:21 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1760
+)
+----------------------------------------
+2026-04-25 18:33:26 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\phpEEC1.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 18:50:37 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1777
+)
+----------------------------------------
+2026-04-25 18:50:38 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1777
+)
+----------------------------------------
+2026-04-25 18:50:41 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1759
+)
+----------------------------------------
+2026-04-25 18:50:42 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1759
+)
+----------------------------------------
+2026-04-25 18:50:52 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\phpE26F.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 18:50:54 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-706179653.png
+)
+----------------------------------------
+2026-04-25 18:50:59 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://tmpfiles.org/dl/35149437/image.jpg
+    [prodImg] => https://i.imgur.com/SfLETne.jpeg
+    [prompt] => Virtual try-on fashion photography, high quality, photorealistic clothing, natural lighting.
+)
+----------------------------------------
+2026-04-25 18:53:14 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1760
+)
+----------------------------------------
+2026-04-25 18:53:15 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1760
+)
+----------------------------------------
+2026-04-25 18:53:24 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\php36B3.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 18:53:47 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-1282563370.png
+)
+----------------------------------------
+2026-04-25 18:53:49 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://tmpfiles.org/dl/35149709/image.jpg
+    [prodImg] => https://i.imgur.com/BvjGZjJ.jpeg
+    [prompt] => Virtual try-on fashion photography, high quality, photorealistic clothing, natural lighting.
+)
+----------------------------------------
+2026-04-25 18:54:35 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1777
+)
+----------------------------------------
+2026-04-25 18:54:36 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1777
+)
+----------------------------------------
+2026-04-25 18:54:37 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1759
+)
+----------------------------------------
+2026-04-25 18:54:38 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1759
+)
+----------------------------------------
+2026-04-25 18:54:47 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\php7A73.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 18:55:09 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-706179653.png
+)
+----------------------------------------
+2026-04-25 18:55:11 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://tmpfiles.org/dl/35149849/image.jpg
+    [prodImg] => https://i.imgur.com/PAfoBrY.jpeg
+    [prompt] => Virtual try-on fashion photography, high quality, photorealistic clothing, natural lighting.
+)
+----------------------------------------
+2026-04-25 18:56:40 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1777
+)
+----------------------------------------
+2026-04-25 18:56:40 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1777
+)
+----------------------------------------
+2026-04-25 18:56:44 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1760
+)
+----------------------------------------
+2026-04-25 18:56:45 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1760
+)
+----------------------------------------
+2026-04-25 18:56:52 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\php6243.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 18:57:14 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-1282563370.png
+)
+----------------------------------------
+2026-04-25 18:57:17 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://tmpfiles.org/dl/35150028/image.jpg
+    [prodImg] => https://i.imgur.com/a20r3uk.jpeg
+    [prompt] => Virtual try-on fashion photography, high quality, photorealistic clothing, natural lighting.
+)
+----------------------------------------
+2026-04-25 18:59:42 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1777
+)
+----------------------------------------
+2026-04-25 18:59:42 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1777
+)
+----------------------------------------
+2026-04-25 18:59:46 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1759
+)
+----------------------------------------
+2026-04-25 18:59:46 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1759
+)
+----------------------------------------
+2026-04-25 18:59:54 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\php2919.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 19:00:16 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-706179653.png
+)
+----------------------------------------
+2026-04-25 19:00:20 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://tmpfiles.org/dl/35150303/image.jpg
+    [prodImg] => https://i.imgur.com/bHCTWgA.jpeg
+    [prompt] => Virtual try-on fashion photography, high quality, photorealistic clothing, natural lighting.
+)
+----------------------------------------
+2026-04-25 19:01:45 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-25 19:01:46 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-25 19:01:56 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\php754.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 19:02:18 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-1648690750.png
+)
+----------------------------------------
+2026-04-25 19:02:22 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://tmpfiles.org/dl/35150601/image.jpg
+    [prodImg] => https://i.imgur.com/R2gSsSu.jpeg
+    [prompt] => Virtual try-on fashion photography, high quality, photorealistic clothing, natural lighting.
+)
+----------------------------------------
+2026-04-25 19:06:37 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-25 19:06:37 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-25 19:06:44 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\php6AD2.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 19:07:06 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-1648690750.png
+)
+----------------------------------------
+2026-04-25 19:07:08 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://tmpfiles.org/dl/35151085/image.jpg
+    [prodImg] => https://i.imgur.com/dBmSHb8.jpeg
+    [prompt] => Virtual try-on fashion photography, high quality, photorealistic clothing, natural lighting.
+)
+----------------------------------------
+2026-04-25 19:09:38 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-25 19:09:39 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-25 19:09:45 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\php2CE5.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 19:10:07 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-1648690750.png
+)
+----------------------------------------
+2026-04-25 19:10:09 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://tmpfiles.org/dl/35151376/image.jpg
+    [prodImg] => https://i.imgur.com/Gh8MFJx.jpeg
+    [prompt] => Virtual try-on fashion photography, high quality, photorealistic clothing, natural lighting.
+)
+----------------------------------------
+2026-04-25 19:10:29 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1759
+)
+----------------------------------------
+2026-04-25 19:10:29 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1759
+)
+----------------------------------------
+2026-04-25 19:10:35 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\phpF04A.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 19:10:56 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-706179653.png
+)
+----------------------------------------
+2026-04-25 19:10:59 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://tmpfiles.org/dl/35151471/image.jpg
+    [prodImg] => https://i.imgur.com/qtSLeUp.jpeg
+    [prompt] => Virtual try-on fashion photography, high quality, photorealistic clothing, natural lighting.
+)
+----------------------------------------
+2026-04-25 19:11:25 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1760
+)
+----------------------------------------
+2026-04-25 19:11:25 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1760
+)
+----------------------------------------
+2026-04-25 19:11:33 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => tarik-elkalkoli.jpg
+            [full_path] => tarik-elkalkoli.jpg
+            [type] => image/jpeg
+            [tmp_name] => C:\xampp\tmp\phpD427.tmp
+            [error] => 0
+            [size] => 140271
+        )
+
+)
+----------------------------------------
+2026-04-25 19:11:36 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-1282563370.png
+)
+----------------------------------------
+2026-04-25 19:11:38 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => https://i.imgur.com/N1MRHBk.jpeg
+    [prodImg] => https://i.imgur.com/zyFWEij.jpeg
+    [prompt] => Virtual try-on fashion photography, high quality, photorealistic clothing, natural lighting.
+)
+----------------------------------------
+2026-04-25 19:13:35 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-25 19:13:36 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-25 19:13:42 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\phpCAF9.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 19:13:48 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-1648690750.png
+)
+----------------------------------------
+2026-04-25 19:13:50 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://tmpfiles.org/dl/35151783/image.jpg
+    [prodImg] => https://i.imgur.com/13z7gnF.jpeg
+    [prompt] => Virtual try-on: Take ONLY the garment from the SEC...[450 bytes]
+)
+----------------------------------------
+2026-04-25 19:14:07 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1759
+)
+----------------------------------------
+2026-04-25 19:14:07 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1759
+)
+----------------------------------------
+2026-04-25 19:14:16 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\php527D.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 19:14:23 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-706179653.png
+)
+----------------------------------------
+2026-04-25 19:14:25 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://tmpfiles.org/dl/35151829/image.jpg
+    [prodImg] => https://i.imgur.com/5fLLEl2.jpeg
+    [prompt] => Virtual try-on: Take ONLY the garment from the SEC...[450 bytes]
+)
+----------------------------------------
+2026-04-25 19:14:44 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-25 19:14:44 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-25 19:16:52 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-25 19:16:52 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-25 19:16:55 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1759
+)
+----------------------------------------
+2026-04-25 19:16:55 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1759
+)
+----------------------------------------
+2026-04-25 19:17:03 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\phpDCB7.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 19:18:03 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-25 19:18:04 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-25 19:18:13 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\phpECF2.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 19:18:19 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-1648690750.png
+)
+----------------------------------------
+2026-04-25 19:18:21 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://tmpfiles.org/dl/35152194/image.jpg
+    [prodImg] => https://i.imgur.com/iCL21Tu.jpeg
+    [prompt] => Virtual try-on: Take ONLY the garment from the SEC...[450 bytes]
+)
+----------------------------------------
+2026-04-25 19:18:30 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => fetch_result
+    [url] => https://api.pruna.ai/v1/predictions/delivery/xezq/v5NZuv2Ijk7xDZxafV4cMXA0DjgfzlU2Thc9PfZtISTILV9sA/output_186170.jpeg
+)
+----------------------------------------
+2026-04-25 19:21:02 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-25 19:21:02 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-25 19:21:12 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\phpA8CB.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 19:21:19 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-1648690750.png
+)
+----------------------------------------
+2026-04-25 19:21:21 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://tmpfiles.org/dl/35152471/image.jpg
+    [prodImg] => https://i.imgur.com/DWNFWLx.jpeg
+    [prompt] => Virtual try-on: Take ONLY the garment from the SEC...[450 bytes]
+)
+----------------------------------------
+2026-04-25 19:21:38 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => fetch_result
+    [url] => https://api.pruna.ai/v1/predictions/delivery/xezq/mJLF3o47u4ZyMV78DYJgs4Z0SL2JYZHtuVx5nfFFW3HQUVPLA/output_903016.jpeg
+)
+----------------------------------------
+2026-04-25 19:23:53 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-25 19:23:53 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-25 19:24:01 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\php3FC7.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 19:24:08 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-1648690750.png
+)
+----------------------------------------
+2026-04-25 19:24:11 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://tmpfiles.org/dl/35152697/image.jpg
+    [prodImg] => https://i.imgur.com/kUOBTDC.jpeg
+    [prompt] => Virtual try-on: Take ONLY the garment from the SEC...[450 bytes]
+)
+----------------------------------------
+2026-04-25 19:24:22 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => fetch_result
+    [url] => https://api.pruna.ai/v1/predictions/delivery/xezq/MroJRsDkeDw7Naqo41JYBeg5i4lUfnezCu9YHkutlWmRsq6ZB/output_13078.jpeg
+)
+----------------------------------------
+2026-04-25 19:29:04 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-25 19:29:05 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-25 19:29:11 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\phpF945.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 19:29:18 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-1648690750.png
+)
+----------------------------------------
+2026-04-25 19:29:22 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://tmpfiles.org/dl/35153182/image.jpg
+    [prodImg] => https://i.imgur.com/0Ok3VIv.jpeg
+    [prompt] => Replace the clothing on the person in the input im...[955 bytes]
+)
+----------------------------------------
+2026-04-25 19:29:41 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => fetch_result
+    [url] => https://api.pruna.ai/v1/predictions/delivery/xezq/D7sWg1qGfKULQahJTMmj7utehy2MFdWmJuybhxFA9lwDwqesA/output_607225.jpeg
+)
+----------------------------------------
+2026-04-25 19:35:42 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-25 19:35:42 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-25 19:35:55 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\php23D9.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 19:36:02 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-1648690750.png
+)
+----------------------------------------
+2026-04-25 19:36:04 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://tmpfiles.org/dl/35153775/image.jpg
+    [prodImg] => https://i.imgur.com/Tapir9I.jpeg
+    [prompt] => Replace the clothing on the person in the input im...[955 bytes]
+)
+----------------------------------------
+2026-04-25 19:36:16 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => fetch_result
+    [url] => http://localhost:8000/vto_temp/vto_result_1777138576_394ff1d9.jpg
+)
+----------------------------------------
+2026-04-25 19:39:21 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-25 19:39:22 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-25 19:39:31 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\php6DC9.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 19:39:39 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-1648690750.png
+)
+----------------------------------------
+2026-04-25 19:39:42 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://tmpfiles.org/dl/35154106/image.jpg
+    [prodImg] => https://i.imgur.com/y8uYO5K.jpeg
+    [prompt] => Replace the clothing on the person in the input im...[955 bytes]
+)
+----------------------------------------
+2026-04-25 19:45:16 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-25 19:45:17 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1761
+)
+----------------------------------------
+2026-04-25 19:45:26 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\phpDA7A.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 19:45:35 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-1648690750.png
+)
+----------------------------------------
+2026-04-25 19:45:40 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://tmpfiles.org/dl/35154640/image.jpg
+    [prodImg] => https://i.imgur.com/oXvQ7os.jpeg
+    [prompt] => Virtual try-on: Take the clothing from the SECOND ...[323 bytes]
+)
+----------------------------------------
+2026-04-25 19:46:10 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1015
+)
+----------------------------------------
+2026-04-25 19:46:13 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1015
+)
+----------------------------------------
+2026-04-25 19:46:20 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\phpAC08.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 19:48:15 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1015
+)
+----------------------------------------
+2026-04-25 19:48:15 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1015
+)
+----------------------------------------
+2026-04-25 19:48:22 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\php87AF.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 19:48:29 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-1720850642.png
+)
+----------------------------------------
+2026-04-25 19:48:34 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://tmpfiles.org/dl/35154934/image.jpg
+    [prodImg] => https://i.imgur.com/7sf940u.jpeg
+    [prompt] => Virtual try-on: Take the clothing from the SECOND ...[323 bytes]
+)
+----------------------------------------
+2026-04-25 19:54:58 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1015
+)
+----------------------------------------
+2026-04-25 19:54:59 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1015
+)
+----------------------------------------
+2026-04-25 19:55:06 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\phpB176.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 19:55:12 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-1720850642.png
+)
+----------------------------------------
+2026-04-25 19:55:14 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://tmpfiles.org/dl/35155517/image.jpg
+    [prodImg] => https://i.imgur.com/kyU1DJo.jpeg
+    [prompt] => Virtual try-on: Take the clothing from the SECOND ...[323 bytes]
+)
+----------------------------------------
+2026-04-25 19:57:23 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1015
+)
+----------------------------------------
+2026-04-25 19:57:24 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1015
+)
+----------------------------------------
+2026-04-25 19:57:32 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\phpED42.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 19:57:38 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-1720850642.png
+)
+----------------------------------------
+2026-04-25 19:57:41 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://tmpfiles.org/dl/35155786/image.jpg
+    [prodImg] => https://i.imgur.com/nx1jtQ6.jpeg
+    [prompt] => Virtual try-on: Take the clothing from the SECOND ...[323 bytes]
+)
+----------------------------------------
+2026-04-25 20:01:11 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1015
+)
+----------------------------------------
+2026-04-25 20:01:11 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1015
+)
+----------------------------------------
+2026-04-25 20:01:59 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\php204.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 20:02:06 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-1720850642.png
+)
+----------------------------------------
+2026-04-25 20:02:08 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://tmpfiles.org/dl/35156428/image.jpg
+    [prodImg] => https://i.imgur.com/NUWjrPC.jpeg
+    [prompt] => Virtual try-on: Take the clothing from the SECOND ...[323 bytes]
+)
+----------------------------------------
+2026-04-25 20:03:50 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1014
+)
+----------------------------------------
+2026-04-25 20:03:51 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1014
+)
+----------------------------------------
+2026-04-25 20:03:59 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => upload
+)
+_FILES: Array
+(
+    [file] => Array
+        (
+            [name] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [full_path] => beautiful-woman-purple-sweater-skirt_1303-17487.avif
+            [type] => image/avif
+            [tmp_name] => C:\xampp\tmp\phpD4F2.tmp
+            [error] => 0
+            [size] => 57173
+        )
+
+)
+----------------------------------------
+2026-04-25 20:04:05 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => proxy_image
+    [url] => https://qoon.app/Patner/partener/Api/photo/w-1984397297.png
+)
+----------------------------------------
+2026-04-25 20:04:08 - URI: /NanoBananaApi.php
+_POST: Array
+(
+    [action] => submit
+    [userImg] => http://tmpfiles.org/dl/35156622/image.jpg
+    [prodImg] => https://i.imgur.com/nN395Cs.jpeg
+    [prompt] => Virtual try-on fashion photography, high quality, photorealistic clothing, natural lighting.
+)
+----------------------------------------
+2026-04-25 20:18:15 - URI: /GetAllPostsById.php
+_POST: Array
+(
+    [userid] => 60
+)
+php://input: userid=60...
+----------------------------------------
+2026-04-25 20:18:42 - URI: /GetAllPostsById.php
+_POST: Array
+(
+    [userid] => 60
+)
+php://input: userid=60...
+----------------------------------------
+2026-04-25 20:20:05 - URI: /GetAllPostsById.php
+_POST: Array
+(
+    [PostID] => 121
+    [UserLongt] => -5
+    [UserLat] => 35
+    [UserID] => 60
+    [Page] => 0
+)
+php://input: PostID=121&UserLongt=-5&UserLat=35&UserID=60&Page=0...
+----------------------------------------
+2026-04-25 20:24:35 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1014
+)
+----------------------------------------
+2026-04-25 20:24:35 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1014
+)
+----------------------------------------
+2026-04-25 20:25:08 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1014
+)
+----------------------------------------
+2026-04-25 20:25:08 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1014
+)
+----------------------------------------
+2026-04-25 20:28:17 - URI: /GetAllPostsById.php
+_POST: Array
+(
+    [PostID] => 121
+    [UserLongt] => -5
+    [UserLat] => 35
+    [UserID] => 60
+    [Page] => 0
+)
+php://input: PostID=121&UserLongt=-5&UserLat=35&UserID=60&Page=0...
+----------------------------------------
+2026-04-25 20:30:31 - URI: /GetAllPosts.php
+_POST: Array
+(
+    [UserLat] => 35
+    [UserLongt] => -5
+    [UserID] => 60
+    [Page] => 0
+)
+php://input: UserLat=35&UserLongt=-5&UserID=60&Page=0...
+----------------------------------------
+2026-04-25 20:33:19 - URI: /GetAllPostsById.php
+_POST: Array
+(
+    [PostID] => 121
+    [UserLongt] => -5
+    [UserLat] => 35
+    [UserID] => 60
+    [Page] => 0
+)
+php://input: PostID=121&UserLongt=-5&UserLat=35&UserID=60&Page=0...
+----------------------------------------
+2026-04-25 22:34:01 - URI: /GetPostCommentsWeb.php
+_POST: Array
+(
+    [PostID] => 121
+)
+----------------------------------------
+2026-04-25 22:37:39 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-25 22:37:40 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-25 22:37:46 - URI: /GetFeesJiblerUserPrice.php
+_POST: Array
+(
+    [total] => 160
+)
+----------------------------------------
+2026-04-25 22:37:46 - URI: /GetAllAddress.php
+_POST: Array
+(
+    [UserID] => 1000018
+)
+----------------------------------------
+2026-04-25 22:38:08 - URI: /AddAddressUser.php
+_POST: Array
+(
+    [UserID] => 1000018
+    [AddressType] => Home
+    [AddressName] => Home
+    [AddressText] => New Location from Checkout
+    [AddressLat] => 33.9537045
+    [AddressLongt] => -6.845671
+)
+----------------------------------------
+2026-04-25 22:38:11 - URI: /delivery_offers.php
+_POST: Array
+(
+    [total] => 168
+    [shopId] => 5613
+    [shopName] => Omega 3
+    [cart] => [{"id":"410","name":"Pulpe","img":"https://qoon.app/jibler/admin/jbler/shops/jblerShop/photo/Api/photo/photo/w-637551669.png","qty":2,"unitPrice":80,"size":"","color":"","extras":[],"totalPrice":160}]
+    [payMethod] => COD
+    [addrType] => Home
+    [addrLat] => 33.9537045
+    [addrLon] => -6.845671
+    [orderNote] => 
+    [platformFee] => 8
+    [deliveryFee] => 12
+)
+php://input: total=168&shopId=5613&shopName=Omega+3&cart=%5B%7B%22id%22%3A%22410%22%2C%22name%22%3A%22Pulpe%22%2C...
+----------------------------------------
+2026-04-25 22:38:51 - URI: /AcceptOfferUser.php
+_POST: Array
+(
+    [OrderID] => 2222689
+    [DelvryId] => 140
+    [OrderPrice] => 17
+    [OfferKey] => -Or5MQ-uUkZZvXvLoghZ
+)
+----------------------------------------
+2026-04-25 22:40:34 - URI: /UserRateDriver.php
+_POST: Array
+(
+    [OrderID] => 2222689
+    [DriverID] => 140
+    [Rating] => 4
+    [Review] => 
+    [ShopID] => 5613
+    [RatingShop] => 5
+    [ReviewShop] => 
+)
+----------------------------------------
+2026-04-25 22:42:23 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 1014
+)
+----------------------------------------
+2026-04-25 22:42:23 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 1014
+)
+----------------------------------------
+2026-04-26 02:26:06 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-26 02:26:06 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-26 02:26:17 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-26 02:26:17 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => 410
+)
+----------------------------------------
+2026-04-26 03:42:45 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => AE102
+)
+----------------------------------------
+2026-04-26 03:42:46 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => AE102
+)
+----------------------------------------
+2026-04-26 03:42:51 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => AE103
+)
+----------------------------------------
+2026-04-26 03:42:51 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => AE103
+)
+----------------------------------------
+2026-04-26 03:42:58 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => AE102
+)
+----------------------------------------
+2026-04-26 03:42:58 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => AE102
+)
+----------------------------------------
+2026-04-26 03:45:09 - URI: /GetProdColor.php
+_POST: Array
+(
+    [FoodID] => AE101
+)
+----------------------------------------
+2026-04-26 03:45:10 - URI: /GetProdSizes.php
+_POST: Array
+(
+    [FoodID] => AE101
+)
+----------------------------------------

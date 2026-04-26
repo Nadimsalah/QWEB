@@ -1,0 +1,2 @@
+[2026-04-26 02:07:53] Zendit Purchase Failed - TransactionID: qoon_esim_1777162073_3480 - OfferID: PK510GZYG - HTTP: 400 - Response: {"message":"INVALID_VALUE: params.offerID: offer not found","errorCode":"validation_error","fields":{}}
+[2026-04-26 02:18:54] eSIM Access Purchase Failed - TransactionID: qoon_esim_1777162733_9254 - OfferID: PNQOJTLBQ - HTTP: 200 - Response: {"success":false,"errorCode":"200007","errorMsg":"the balance is insufficient","obj":null}

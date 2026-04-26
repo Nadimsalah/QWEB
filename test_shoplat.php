@@ -1,0 +1,1 @@
+﻿<?php require "conn.php"; $res = mysqli_query($con, "SELECT COUNT(*) as c FROM Shops WHERE ShopLat='' OR ShopLongt='' OR ShopLat IS NULL OR ShopLongt IS NULL"); $r=mysqli_fetch_assoc($res); echo "Empty coords: ".$r["c"]."\n"; ?>
