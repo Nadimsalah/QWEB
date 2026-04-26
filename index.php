@@ -569,26 +569,35 @@ if (empty($posts)) {
     </script>
     <link rel="stylesheet" href="assets/css/main.css">
     <style>
-        /* ─── GUARANTEED MOBILE LAYOUT FIXES (BYPASS CACHE) ─── */
+        /* ─── GUARANTEED FULL-BLEED LAYOUT (BYPASS CACHE) ─── */
         html, body {
             max-width: 100vw !important;
             overflow-x: hidden !important;
             overscroll-behavior-x: none !important;
         }
+        
+        .content-wrapper {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            overflow-x: hidden !important;
+        }
+        
+        .content-wrapper > main {
+            padding-left: 40px !important;
+            padding-right: 40px !important;
+        }
+        
+        .categories-section, .feed-section {
+            width: 100% !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            max-width: none !important;
+        }
+
         @media (max-width: 768px) {
-            .content-wrapper {
-                padding-left: 0 !important;
-                padding-right: 0 !important;
-                overflow-x: hidden !important;
-            }
             .content-wrapper > main {
                 padding-left: 20px !important;
                 padding-right: 20px !important;
-            }
-            .categories-section, .feed-section {
-                width: 100% !important;
-                margin-left: 0 !important;
-                margin-right: 0 !important;
             }
         }
         
