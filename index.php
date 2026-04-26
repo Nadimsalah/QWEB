@@ -587,7 +587,7 @@ if (empty($posts)) {
             padding-right: 40px !important;
         }
         
-        .categories-section, .feed-section {
+        .feed-section {
             width: 100% !important;
             margin-left: 0 !important;
             margin-right: 0 !important;
@@ -596,6 +596,7 @@ if (empty($posts)) {
 
         /* Force category cards to touch screen edges (match kenz.php) */
         .categories-section {
+            width: auto !important; /* 'auto' allows negative margins to expand both sides! */
             overflow: hidden !important;
             padding: 16px 0 0 0 !important;
             margin-left: -40px !important;
