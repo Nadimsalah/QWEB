@@ -21,11 +21,8 @@ $uName = $userData['name'] ?: 'User';
 $uEmail = $userData['Email'] ?: 'Not provided';
 $uPhone = $userData['PhoneNumber'] ?: 'Not provided';
 $uBalance = $userData['Balance'] ?? 0;
-$uOrders = 0;
-
-$uPhoto = resolvePhotoUrl($userData['UserPhoto'] ?? '', $uName);
-$uBalance = floatval($userData['UserBalance'] ?? 0);
 $uOrders = intval($userData['UserOrdersNum'] ?? 0);
+$uPhoto = resolvePhotoUrl($userData['UserPhoto'] ?? '', $uName);
 ?>
 <!DOCTYPE html>
 <html lang="en">

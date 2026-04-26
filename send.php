@@ -10,7 +10,7 @@ if (!$userId) {
 $userData = [];
 $res = $con->query("SELECT * FROM Users WHERE UserID = '$userId'");
 if($res) $userData = $res->fetch_assoc();
-$uBalance = floatval($userData['UserBalance'] ?? 0);
+$uBalance = floatval($userData['Balance'] ?? 0);
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -24,7 +24,7 @@ if(!$uPhoto || $uPhoto == 'NONE' || $uPhoto == '0') {
 } else if (strpos($uPhoto, 'http') === false) {
     $uPhoto = "photo/" . ltrim($uPhoto, '/');
 }
-$uBalance = floatval($userData['UserBalance'] ?? 0);
+$uBalance = floatval($userData['Balance'] ?? 0);
 
 // Unified History (Transactions + Orders)
 $history = [];
