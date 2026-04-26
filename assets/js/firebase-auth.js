@@ -36,9 +36,12 @@ window.googleLogin = function () {
         const user = result.user;
         console.log("Google Auth Success:", user.email);
         
+        const providerData = user.providerData && user.providerData.length > 0 ? user.providerData.find(p => p.providerId === 'google.com') || user.providerData[0] : null;
+        const externalId = providerData ? providerData.uid : user.uid;
+
         const formData = new FormData();
         formData.append('AccountType', 'Google');
-        formData.append('GoogleID', user.uid);
+        formData.append('GoogleID', externalId);
         formData.append('name', user.displayName || 'User');
         formData.append('Email', user.email);
         formData.append('Photo', user.photoURL || '');
@@ -96,9 +99,12 @@ window.appleLogin = function () {
         const user = result.user;
         console.log("Apple Auth Success:", user.email);
 
+        const providerData = user.providerData && user.providerData.length > 0 ? user.providerData.find(p => p.providerId === 'apple.com') || user.providerData[0] : null;
+        const externalId = providerData ? providerData.uid : user.uid;
+
         const formData = new FormData();
         formData.append('AccountType', 'Apple');
-        formData.append('GoogleID', user.uid); // Backend uses this field as unique external ID
+        formData.append('GoogleID', externalId); // Backend uses this field as unique external ID
         formData.append('name', user.displayName || 'Apple User');
         formData.append('Email', user.email || (user.uid + '@apple.com'));
         formData.append('Photo', user.photoURL || '');
