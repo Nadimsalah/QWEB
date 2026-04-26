@@ -51,14 +51,20 @@ function renderPostCard($post, $DomainNamee) {
     $orderBtnHtml = '';
     if (!empty($post['ProductID']) && $post['ProductID'] != '0') {
         $pPrice = floatval($post['FoodOfferPrice'] ?? 0) > 0 ? floatval($post['FoodOfferPrice']) : floatval($post['Price'] ?? 0);
-        $pImgUrl = get_img_url($post['FoodPhoto'] ?? null, $DomainNamee ?? null);
+        
+        $rawPhotosF = array_filter(array_map('trim', explode(',', $post['FoodPhoto'] ?? '')));
+        $imgUrlsF = [];
+        foreach($rawPhotosF as $rp) { if($rp) $imgUrlsF[] = get_img_url($rp, $DomainNamee ?? null); }
+        $pImgUrl = !empty($imgUrlsF) ? $imgUrlsF[0] : '';
+        $finalImages = (count($imgUrlsF) > 1) ? $imgUrlsF : (!empty($photos) ? $photos : [$pImgUrl]);
+        
         $foodJson = json_encode([
             'id' => $post['ProductID'],
             'name' => $post['FoodName'] ?? 'Product',
             'price' => $pPrice,
             'oldPrice' => floatval($post['FoodOfferPrice'] ?? 0) > 0 ? floatval($post['Price'] ?? 0) : null,
             'img' => $pImgUrl,
-            'images' => !empty($photos) ? $photos : [$pImgUrl],
+            'images' => $finalImages,
             'desc' => $post['FoodDescription'] ?? $post['FoodComponent'] ?? '',
             'cat_id' => $post['CategoryID'] ?? $_GET['cat'] ?? 0
         ]);

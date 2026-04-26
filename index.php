@@ -104,21 +104,29 @@ try {
                     $html .= '<div class="no-scrollbar" style="display:flex;gap:16px;overflow-x:auto;padding:0;width:100%;scrollbar-width:none; ">';
                     foreach ($finalRp as $kp) {
                         $kpPhotoRaw = $kp['FoodPhoto'] ?? $kp['PostPhoto'] ?? $kp['PostPhoto1'] ?? null;
+                        
+                        $rawPhotosF = array_filter(array_map('trim', explode(',', $kp['FoodPhoto'] ?? '')));
+                        $imgUrlsF = [];
+                        foreach($rawPhotosF as $rp) { if($rp) $imgUrlsF[] = get_img_url($rp, $DomainNamee ?? null); }
+                        
                         $kpPhoto = get_img_url($kpPhotoRaw, $DomainNamee ?? null);
+                        $kpImg = !empty($imgUrlsF) ? $imgUrlsF[0] : htmlspecialchars($kpPhoto ?: 'https://ui-avatars.com/api/?name=Item&background=222&color=fff');
                         $kpShopLogo = get_img_url($kp['ShopLogo'] ?? null, $DomainNamee ?? null);
                         $kpName = htmlspecialchars($kp['FoodName'] ?? $kp['PostText'] ?? 'Exclusive Item');
-                        $kpImg = htmlspecialchars($kpPhoto ?: 'https://ui-avatars.com/api/?name=Item&background=222&color=fff');
                         $kpSLogo = htmlspecialchars($kpShopLogo ?: 'https://ui-avatars.com/api/?name=S');
                         $kpSName = htmlspecialchars($kp['ShopName'] ?? 'Shop');
                         $kpPriceHtml = (!empty($kp['FoodPrice']) && $kp['FoodPrice'] > 0) ? '<div style="font-size: 12px; font-weight: 700; color: var(--purple-glow);">' . htmlspecialchars($kp['FoodPrice']) . ' MAD</div>' : '';
                         $kpPriceVal = floatval($kp['FoodOfferPrice'] ?? 0) > 0 ? floatval($kp['FoodOfferPrice']) : floatval($kp['FoodPrice'] ?? 0);
                         $kpOldPrice = floatval($kp['FoodOfferPrice'] ?? 0) > 0 ? floatval($kp['FoodPrice'] ?? 0) : null;
+                        
+                        $finalImages = (count($imgUrlsF) > 0) ? $imgUrlsF : [$kpImg];
                         $foodJson = json_encode([
                             'id' => $kp['FoodID'] ?? $kp['ProductID'] ?? 0,
                             'name' => $kp['FoodName'] ?? 'Product',
                             'price' => $kpPriceVal,
                             'oldPrice' => $kpOldPrice,
                             'img' => $kpImg,
+                            'images' => $finalImages,
                             'desc' => $kp['FoodDesc'] ?? '',
                             'cat_id' => $kp['CategoryId'] ?? $kp['CategoryID'] ?? 0,
                             'extra1' => $kp['Extraone'] ?? '',
@@ -184,21 +192,30 @@ try {
                     $html .= '<div class="no-scrollbar" style="display:flex;gap:16px;overflow-x:auto;padding:0;width:100%;scrollbar-width:none;">';
                     foreach ($finalRp as $kp) {
                         $kpPhotoRaw = $kp['FoodPhoto'] ?? null;
+                        
+                        $rawPhotosF = array_filter(array_map('trim', explode(',', $kp['FoodPhoto'] ?? '')));
+                        $imgUrlsF = [];
+                        foreach($rawPhotosF as $rp) { if($rp) $imgUrlsF[] = get_img_url($rp, $DomainNamee ?? null); }
+                        
                         $kpPhoto = get_img_url($kpPhotoRaw, $DomainNamee ?? null);
+                        $kpImg = !empty($imgUrlsF) ? $imgUrlsF[0] : htmlspecialchars($kpPhoto ?: 'https://ui-avatars.com/api/?name=Item&background=222&color=fff');
+                        
                         $kpShopLogo = get_img_url($kp['ShopLogo'] ?? null, $DomainNamee ?? null);
                         $kpName = htmlspecialchars($kp['FoodName'] ?? 'Fashion Item');
-                        $kpImg = htmlspecialchars($kpPhoto ?: 'https://ui-avatars.com/api/?name=Item&background=222&color=fff');
                         $kpSLogo = htmlspecialchars($kpShopLogo ?: 'https://ui-avatars.com/api/?name=S');
                         $kpSName = htmlspecialchars($kp['ShopName'] ?? 'Shop');
                         $kpPriceHtml = (!empty($kp['FoodPrice']) && $kp['FoodPrice'] > 0) ? '<div style="font-size: 12px; font-weight: 700; color: #f1c40f;">' . htmlspecialchars($kp['FoodPrice']) . ' MAD</div>' : '';
                         $kpPriceVal = floatval($kp['FoodOfferPrice'] ?? 0) > 0 ? floatval($kp['FoodOfferPrice']) : floatval($kp['FoodPrice'] ?? 0);
                         $kpOldPrice = floatval($kp['FoodOfferPrice'] ?? 0) > 0 ? floatval($kp['FoodPrice'] ?? 0) : null;
+                        
+                        $finalImages = (count($imgUrlsF) > 0) ? $imgUrlsF : [$kpImg];
                         $foodJson = json_encode([
                             'id' => $kp['FoodID'] ?? 0,
                             'name' => $kp['FoodName'] ?? 'Product',
                             'price' => $kpPriceVal,
                             'oldPrice' => $kpOldPrice,
                             'img' => $kpImg,
+                            'images' => $finalImages,
                             'desc' => $kp['FoodDesc'] ?? '',
                             'cat_id' => $kp['CategoryId'] ?? 0,
                             'extra1' => $kp['Extraone'] ?? '',
@@ -1280,16 +1297,27 @@ if (empty($posts)) {
                                     <?php foreach ($kenzProducts as $kp): ?>
                                         <?php
                                         $kpPhotoRaw = $kp['FoodPhoto'] ?? $kp['PostPhoto'] ?? $kp['PostPhoto1'] ?? null;
+                                        
+                                        $rawPhotosF = array_filter(array_map('trim', explode(',', $kp['FoodPhoto'] ?? '')));
+                                        $imgUrlsF = [];
+                                        foreach($rawPhotosF as $rp) { if($rp) $imgUrlsF[] = get_img_url($rp, $DomainNamee ?? null); }
+                                        
                                         $kpPhoto = get_img_url($kpPhotoRaw, $DomainNamee ?? null);
+                                        $kpImg = !empty($imgUrlsF) ? $imgUrlsF[0] : htmlspecialchars($kpPhoto ?: 'https://ui-avatars.com/api/?name=Item&background=222&color=fff');
+                                        
                                         $kpShopLogo = get_img_url($kp['ShopLogo'] ?? null, $DomainNamee ?? null);
                                         $kpPriceVal = floatval($kp['FoodOfferPrice'] ?? 0) > 0 ? floatval($kp['FoodOfferPrice']) : floatval($kp['FoodPrice'] ?? 0);
                                         $kpOldPrice = floatval($kp['FoodOfferPrice'] ?? 0) > 0 ? floatval($kp['FoodPrice'] ?? 0) : null;
+                                        
+                                        $finalImages = (count($imgUrlsF) > 0) ? $imgUrlsF : [$kpImg];
+                                        
                                         $foodJson = json_encode([
                                             'id' => $kp['FoodID'] ?? $kp['ProductID'] ?? 0,
                                             'name' => $kp['FoodName'] ?? 'Product',
                                             'price' => $kpPriceVal,
                                             'oldPrice' => $kpOldPrice,
-                                            'img' => htmlspecialchars($kpPhoto ?: 'https://ui-avatars.com/api/?name=Item&background=222&color=fff'),
+                                            'img' => $kpImg,
+                                            'images' => $finalImages,
                                             'desc' => $kp['FoodDesc'] ?? '',
                                             'cat_id' => $kp['CategoryId'] ?? $kp['CategoryID'] ?? 0,
                                             'extra1' => $kp['Extraone'] ?? '',
