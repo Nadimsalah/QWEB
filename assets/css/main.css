@@ -205,6 +205,12 @@
             transition: opacity 0.3s;
         }
 
+        /* On mobile: hide dot grid (no mouse), keep aurora clipped */
+        @media (max-width: 768px) {
+            .grid-bg, .grid-glow { display: none; }
+            .aurora-container { overflow: hidden; clip: rect(0, 100vw, 100vh, 0); }
+        }
+
         .aurora-container {
             position: fixed;
             inset: 0;
@@ -225,29 +231,29 @@
         }
 
         .blob-1 {
-            width: 80vw;
+            width: 70vw;
             height: 40vh;
             background: var(--accent-glow-2);
-            bottom: -10vh;
-            left: -20vw;
+            bottom: -5vh;
+            left: 0;
             animation-delay: 0s;
         }
 
         .blob-2 {
-            width: 70vw;
+            width: 60vw;
             height: 50vh;
             background: var(--accent-glow-1);
-            bottom: -20vh;
-            right: -10vw;
+            bottom: -10vh;
+            right: 0;
             animation-delay: -5s;
         }
 
         .blob-3 {
-            width: 60vw;
+            width: 50vw;
             height: 30vh;
             background: var(--accent-glow-3);
             bottom: 10vh;
-            left: 20vw;
+            left: 15vw;
             opacity: 0.4;
             animation-delay: -10s;
         }
