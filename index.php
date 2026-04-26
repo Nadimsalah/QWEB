@@ -147,7 +147,8 @@ try {
         if (!function_exists('getDynamicReelsHtml')) {
             function getDynamicReelsHtml($con, $DomainNamee)
             {
-                if (!$con) return '';
+                if (!$con)
+                    return '';
                 $query = "
                     SELECT * FROM (
                         SELECT Posts.Video, Posts.BunnyS as Thumbnail, Shops.ShopName, Shops.ShopLogo, Posts.PostID AS SortID, 'Video' AS MediaType, 'post' AS SourceType
@@ -160,58 +161,60 @@ try {
                         JOIN ShopStory ON Shops.ShopID = ShopStory.ShopID 
                         WHERE Shops.Status = 'ACTIVE' AND ShopStory.StoryStatus = 'ACTIVE'
                     ) AS combined ORDER BY RAND() LIMIT 8";
-                
+
                 $stmt = $con->prepare($query);
-                if (!$stmt) return '';
+                if (!$stmt)
+                    return '';
                 $stmt->execute();
                 $res = $stmt->get_result();
-                if (!$res || $res->num_rows == 0) return '';
-                
+                if (!$res || $res->num_rows == 0)
+                    return '';
+
                 $domain = $DomainNamee ?? 'https://qoon.app/dash/';
                 $uuid = uniqid();
-                
+
                 $html = '<div class="feed-inline-reels" style="width:100vw;position:relative;left:50%;transform:translateX(-50%);padding:40px 0;margin-top:20px;margin-bottom:20px;background:transparent;overflow:hidden;border-top:1px solid rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.05);">';
                 $html .= '<h3 style="font-size:18px;font-weight:600;padding:0 max(20px,calc(50vw - 340px));margin-bottom:24px;color:var(--text-main);">Suggested Reels</h3>';
                 $html .= '<div id="reels-track-' . $uuid . '" class="reels-track" style="display:flex;gap:16px;overflow-x:auto;padding:0 max(20px,calc(50vw - 340px));scroll-padding-inline:max(20px,calc(50vw - 340px));width:100%;scrollbar-width:none;scroll-snap-type:x mandatory;">';
-                
+
                 while ($row = $res->fetch_assoc()) {
                     $rawThumb = str_replace('jibler.app', 'qoon.app', trim($row['Thumbnail'] ?? ''));
                     $rawVideo = str_replace('jibler.app', 'qoon.app', trim($row['Video'] ?? ''));
-                    
+
                     $thumbUrl = get_img_url($rawThumb, $domain);
                     $mediaUrl = get_img_url($rawVideo === '-' ? '' : $rawVideo, $domain);
                     $logoUrl = get_img_url(trim($row['ShopLogo'] ?? ''), $domain);
-                    
+
                     $ext = strtolower(pathinfo($rawVideo, PATHINFO_EXTENSION));
                     $mt = strtoupper(trim($row['MediaType']));
                     $isV = ($mt === 'VIDEO' || in_array($ext, ['mp4', 'mov', 'webm', 'avi', 'mkv']));
                     $media = $isV ? 'video' : 'image';
-                    
+
                     $url = 'reel.php?id=' . $row['SortID'] . '&type=' . $row['SourceType'] . '&media=' . $media;
-                    
-                    $html .= '<div class="reel-card-real" onclick="location.href=\''.$url.'\'" style="width:160px;aspect-ratio:9/16;border-radius:16px;flex-shrink:0;position:relative;overflow:hidden;cursor:pointer;background:#111;scroll-snap-align:start;">';
-                    
+
+                    $html .= '<div class="reel-card-real" onclick="location.href=\'' . $url . '\'" style="width:160px;aspect-ratio:9/16;border-radius:16px;flex-shrink:0;position:relative;overflow:hidden;cursor:pointer;background:#111;scroll-snap-align:start;">';
+
                     // Thumbnail Rendering
                     if ($isV) {
                         if ($thumbUrl && $rawThumb != '' && $rawThumb != '0' && $rawThumb != '-') {
-                            $html .= '<img src="'.$thumbUrl.'" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" onerror="this.src=\''.$logoUrl.'\'">';
+                            $html .= '<img src="' . $thumbUrl . '" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" onerror="this.src=\'' . $logoUrl . '\'">';
                         } else {
-                            $html .= '<video src="'.$mediaUrl.'#t=0.5" preload="metadata" muted playsinline style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'block\';"></video>';
-                            $html .= '<img src="'.$logoUrl.'" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" />';
+                            $html .= '<video src="' . $mediaUrl . '#t=0.5" preload="metadata" muted playsinline style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'block\';"></video>';
+                            $html .= '<img src="' . $logoUrl . '" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" />';
                         }
                     } else {
-                        $html .= '<img src="'.$mediaUrl.'" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" onerror="this.src=\''.$logoUrl.'\'">';
+                        $html .= '<img src="' . $mediaUrl . '" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" onerror="this.src=\'' . $logoUrl . '\'">';
                     }
-                    
+
                     // Gradient overlay
                     $html .= '<div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 40%);"></div>';
                     // Logo and text
                     $html .= '<div style="position:absolute;bottom:12px;left:12px;right:12px;display:flex;align-items:center;gap:8px;z-index:2;">';
-                    $html .= '<img src="'.$logoUrl.'" style="width:24px;height:24px;border-radius:50%;border:2px solid #fff;object-fit:cover;" onerror="this.style.display=\'none\'">';
-                    $html .= '<span style="color:#fff;font-size:12px;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,0.8);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'.htmlspecialchars($row['ShopName']).'</span>';
+                    $html .= '<img src="' . $logoUrl . '" style="width:24px;height:24px;border-radius:50%;border:2px solid #fff;object-fit:cover;" onerror="this.style.display=\'none\'">';
+                    $html .= '<span style="color:#fff;font-size:12px;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,0.8);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' . htmlspecialchars($row['ShopName']) . '</span>';
                     $html .= '</div></div>';
                 }
-                
+
                 $html .= '</div></div>';
                 $stmt->close();
                 return $html;
@@ -221,7 +224,7 @@ try {
         // --- AJAX Pagination Interceptor ---
         if (isset($_GET['ajax_load_posts'])) {
             $limit = 5;
-            
+
             $seenArr = isset($_COOKIE['qoon_seen_posts']) ? explode(',', $_COOKIE['qoon_seen_posts']) : [];
             $seenList = !empty($seenArr) ? implode(',', array_map('intval', array_filter($seenArr))) : "";
             $seenClause = !empty($seenList) ? "AND Posts.PostID NOT IN ($seenList)" : "";
@@ -291,7 +294,8 @@ try {
                         }
                         $ajaxIndex++;
                     }
-                    if (count($seenArr) > 100) $seenArr = array_slice($seenArr, -100);
+                    if (count($seenArr) > 100)
+                        $seenArr = array_slice($seenArr, -100);
                     setcookie('qoon_seen_posts', implode(',', $seenArr), time() + 86400 * 7, '/');
                     echo $htmlOut;
                 } else {
@@ -415,7 +419,8 @@ try {
                     $posts[] = $row;
                 }
             }
-            if (count($seenArr) > 100) $seenArr = array_slice($seenArr, -100);
+            if (count($seenArr) > 100)
+                $seenArr = array_slice($seenArr, -100);
             setcookie('qoon_seen_posts', implode(',', $seenArr), time() + 86400 * 7, '/');
             $stmt->close();
         }
@@ -562,7 +567,7 @@ if (empty($posts)) {
             console.error("Firebase Initialization Error:", e);
         }
     </script>
-    <link rel="stylesheet" href="assets/css/main.css?v=<?= time() ?>">
+    <link rel="stylesheet" href="assets/css/main.css">
     <style>
         /* ─── PREMIUM UI ENHANCEMENTS ─── */
 
@@ -681,6 +686,140 @@ if (empty($posts)) {
 
     <!-- Main Application UI -->
     <div class="content-wrapper">
+        <main>
+            <?php
+            $activeOrders = [];
+            if ($con && isset($_COOKIE['qoon_user_id'])) {
+                $uid = $con->real_escape_string($_COOKIE['qoon_user_id']);
+                $q = "SELECT o.OrderID, o.OrderState, o.OrderDetails, s.ShopName, s.ShopLogo 
+                      FROM Orders o 
+                      LEFT JOIN Shops s ON o.ShopID = s.ShopID 
+                      WHERE o.UserID = '$uid' 
+                      AND LOWER(o.OrderState) NOT IN ('cancelled', 'canceled', 'finish', 'done', 'rated', 'delivered', 'order delivered', 'cancel')
+                      ORDER BY o.OrderID DESC LIMIT 10";
+                $res = $con->query($q);
+                if ($res) {
+                    while ($r = $res->fetch_assoc()) {
+                        $activeOrders[] = $r;
+                    }
+                }
+            }
+            ?>
+
+            <div class="hero-text">
+                <h1>Where Everything<br>Connects.</h1>
+                <p>Everything you love, everything you need &mdash; unified in a single experience.</p>
+            </div>
+
+            <?php if (count($activeOrders) > 0): ?>
+                <div class="active-orders-slider no-scrollbar"
+                    style="display:flex; overflow-x:auto; scroll-snap-type: x mandatory; gap: 12px; padding-bottom: 8px; margin-bottom: 24px;">
+                    <?php foreach ($activeOrders as $ao):
+                        $statusRaw = strtolower(trim($ao['OrderState'] ?? 'waiting'));
+                        $statusMap = [
+                            'waiting' => 'Waiting for Driver',
+                            'doing' => 'Driver Assigned',
+                            'driver_offer' => 'Driver Offers',
+                            'come to take it' => 'Driver on the way',
+                            'on way' => 'Driver on the way',
+                            'on the way' => 'Driver on the way',
+                            'order pickup' => 'Order Picked Up',
+                            'pickup' => 'Order Picked Up',
+                            'prepared' => 'Order Prepared',
+                            'processed' => 'Order Processed'
+                        ];
+                        $statusStr = $statusMap[$statusRaw] ?? ucfirst($statusRaw);
+
+                        $shopName = htmlspecialchars($ao['ShopName'] ?? 'QOON Shop');
+                        $logoRaw = $ao['ShopLogo'] ?? '';
+                        $logo = '';
+                        if (!empty($logoRaw)) {
+                            if (strpos($logoRaw, 'http') === 0)
+                                $logo = $logoRaw;
+                            else
+                                $logo = 'https://qoon.app/userDriver/UserDriverApi/photo/' . $logoRaw;
+                        } else {
+                            $logo = 'https://ui-avatars.com/api/?name=' . urlencode($shopName) . '&background=random';
+                        }
+                        $desc = htmlspecialchars(mb_strimwidth($ao['OrderDetails'] ?? 'Your order is active', 0, 40, "..."));
+                        ?>
+                        <div class="active-order-card"
+                            style="flex: 0 0 <?= count($activeOrders) > 1 ? 'calc(100% - 32px)' : '100%' ?>; scroll-snap-align: start; min-width: <?= count($activeOrders) > 1 ? 'calc(100% - 32px)' : '100%' ?>; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(16px); border-radius: 20px; padding: 16px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: 0.3s; box-shadow: 0 8px 32px rgba(0,0,0,0.2);"
+                            onclick="window.location.href='track_order.php?orderId=<?= $ao['OrderID'] ?>'">
+                            <img src="<?= $logo ?>" onerror="this.src='https://ui-avatars.com/api/?name=S'"
+                                style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,0.1);">
+                            <div style="flex: 1; min-width: 0;">
+                                <div
+                                    style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                                    <div
+                                        style="font-weight: 800; color: #fff; font-size: 15px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">
+                                        <?= $shopName ?></div>
+                                    <div
+                                        style="background: rgba(46, 204, 113, 0.15); color: #2ecc71; font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 8px; text-transform: uppercase;">
+                                        <i class="fa-solid fa-satellite-dish fa-fade"
+                                            style="margin-right:4px;"></i><?= $statusStr ?></div>
+                                </div>
+                                <div
+                                    style="font-size: 13px; color: rgba(255,255,255,0.6); text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">
+                                    <?= $desc ?></div>
+                            </div>
+                            <div
+                                style="width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0;">
+                                <i class="fa-solid fa-chevron-right" style="font-size: 12px;"></i>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+
+            <div class="search-wrapper">
+                <div class="prompt-container" id="promptBox">
+                    <button class="icon-btn" style="margin-left: 4px;"><i
+                            class="fa-solid fa-magnifying-glass"></i></button>
+
+                    <input type="text" class="prompt-input" readonly onclick="window.location.href='search.php'"
+                        onfocus="window.location.href='search.php'" placeholder="Search shops, products, reels...">
+
+                    <div class="prompt-toolbar">
+                        <div class="platform-toggle">
+                            <button type="button" class="toggle-btn active" id="btn-current-loc">
+                                <i class="fa-solid fa-location-crosshairs"></i> <span>Current Location</span>
+                            </button>
+                            <button type="button" class="toggle-btn" id="btn-teleport">
+                                <i class="fa-solid fa-plane"></i> <span>Teleport Mode</span>
+                            </button>
+                        </div>
+
+                        <button class="submit-btn"><i class="fa-solid fa-arrow-up"></i></button>
+                    </div>
+                </div>
+
+                <!-- NEW: Search Extras (Logo & Glass Buttons) -->
+                <div class="search-extras" style="position: relative; z-index: 50; pointer-events: auto;">
+                    <div class="extra-left">
+                        <img src="qoon_pay_logo.png" alt="QOON Pay" class="qpay-extra-logo"
+                            onclick="<?php echo isset($_COOKIE['qoon_user_id']) ? "openQpayDrawer()" : "openSignup()"; ?>"
+                            style="cursor:pointer;">
+                    </div>
+                    <div class="extra-right">
+                        <button class="glass-action-btn"
+                            onclick="<?php echo isset($_COOKIE['qoon_user_id']) ? "openQpayDrawer()" : "openSignup()"; ?>">
+                            <i class="fa-solid fa-plus"></i> Topup
+                        </button>
+                        <button class="glass-action-btn"
+                            onclick="<?php echo isset($_COOKIE['qoon_user_id']) ? "openQpayDrawer()" : "openSignup()"; ?>">
+                            <i class="fa-solid fa-paper-plane"></i> Transfer
+                        </button>
+                        <button class="glass-action-btn"
+                            onclick="<?php echo isset($_COOKIE['qoon_user_id']) ? "showMyQR()" : "openSignup()"; ?>">
+                            <i class="fa-solid fa-qrcode"></i> QR Code
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+        </main>
 
         <section class="categories-section">
             <div class="cat-header">
@@ -726,128 +865,9 @@ if (empty($posts)) {
             </div>
         </section>
 
-        <main>
-            <?php
-            $activeOrders = [];
-            if ($con && isset($_COOKIE['qoon_user_id'])) {
-                $uid = $con->real_escape_string($_COOKIE['qoon_user_id']);
-                $q = "SELECT o.OrderID, o.OrderState, o.OrderDetails, s.ShopName, s.ShopLogo 
-                      FROM Orders o 
-                      LEFT JOIN Shops s ON o.ShopID = s.ShopID 
-                      WHERE o.UserID = '$uid' 
-                      AND LOWER(o.OrderState) NOT IN ('cancelled', 'canceled', 'finish', 'done', 'rated', 'delivered', 'order delivered', 'cancel')
-                      ORDER BY o.OrderID DESC LIMIT 10";
-                $res = $con->query($q);
-                if($res) {
-                    while($r = $res->fetch_assoc()){
-                        $activeOrders[] = $r;
-                    }
-                }
-            }
-            ?>
-
-            <div class="hero-text">
-                <h1>Where Everything<br>Connects.</h1>
-                <p>Everything you love, everything you need &mdash; unified in a single experience.</p>
-            </div>
-
-            <?php if (count($activeOrders) > 0): ?>
-                <div class="active-orders-slider no-scrollbar" style="display:flex; overflow-x:auto; scroll-snap-type: x mandatory; gap: 12px; padding-bottom: 8px; margin-bottom: 24px;">
-                    <?php foreach($activeOrders as $ao): 
-                        $statusRaw = strtolower(trim($ao['OrderState'] ?? 'waiting'));
-                        $statusMap = [
-                            'waiting' => 'Waiting for Driver',
-                            'doing' => 'Driver Assigned',
-                            'driver_offer' => 'Driver Offers',
-                            'come to take it' => 'Driver on the way',
-                            'on way' => 'Driver on the way',
-                            'on the way' => 'Driver on the way',
-                            'order pickup' => 'Order Picked Up',
-                            'pickup' => 'Order Picked Up',
-                            'prepared' => 'Order Prepared',
-                            'processed' => 'Order Processed'
-                        ];
-                        $statusStr = $statusMap[$statusRaw] ?? ucfirst($statusRaw);
-                        
-                        $shopName = htmlspecialchars($ao['ShopName'] ?? 'QOON Shop');
-                        $logoRaw = $ao['ShopLogo'] ?? '';
-                        $logo = '';
-                        if (!empty($logoRaw)) {
-                            if (strpos($logoRaw, 'http') === 0) $logo = $logoRaw;
-                            else $logo = 'https://qoon.app/userDriver/UserDriverApi/photo/' . $logoRaw;
-                        } else {
-                            $logo = 'https://ui-avatars.com/api/?name='.urlencode($shopName).'&background=random';
-                        }
-                        $desc = htmlspecialchars(mb_strimwidth($ao['OrderDetails'] ?? 'Your order is active', 0, 40, "..."));
-                    ?>
-                        <div class="active-order-card" style="flex: 0 0 <?= count($activeOrders) > 1 ? 'calc(100% - 32px)' : '100%' ?>; scroll-snap-align: start; min-width: <?= count($activeOrders) > 1 ? 'calc(100% - 32px)' : '100%' ?>; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(16px); border-radius: 20px; padding: 16px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: 0.3s; box-shadow: 0 8px 32px rgba(0,0,0,0.2);" onclick="window.location.href='track_order.php?orderId=<?= $ao['OrderID'] ?>'">
-                            <img src="<?= $logo ?>" onerror="this.src='https://ui-avatars.com/api/?name=S'" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,0.1);">
-                            <div style="flex: 1; min-width: 0;">
-                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                                    <div style="font-weight: 800; color: #fff; font-size: 15px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;"><?= $shopName ?></div>
-                                    <div style="background: rgba(46, 204, 113, 0.15); color: #2ecc71; font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 8px; text-transform: uppercase;"><i class="fa-solid fa-satellite-dish fa-fade" style="margin-right:4px;"></i><?= $statusStr ?></div>
-                                </div>
-                                <div style="font-size: 13px; color: rgba(255,255,255,0.6); text-overflow: ellipsis; white-space: nowrap; overflow: hidden;"><?= $desc ?></div>
-                            </div>
-                            <div style="width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0;">
-                                <i class="fa-solid fa-chevron-right" style="font-size: 12px;"></i>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
-
-            <div class="search-wrapper">
-                <div class="prompt-container" id="promptBox">
-                    <button class="icon-btn" style="margin-left: 4px;"><i
-                            class="fa-solid fa-magnifying-glass"></i></button>
-
-                    <input type="text" class="prompt-input" readonly onclick="window.location.href='search.php'"
-                        onfocus="window.location.href='search.php'" placeholder="Search shops, products, reels...">
-
-                    <div class="prompt-toolbar">
-                        <div class="platform-toggle">
-                            <button type="button" class="toggle-btn active" id="btn-current-loc">
-                                <i class="fa-solid fa-location-crosshairs"></i> <span>Current Location</span>
-                            </button>
-                            <button type="button" class="toggle-btn" id="btn-teleport">
-                                <i class="fa-solid fa-plane"></i> <span>Teleport Mode</span>
-                            </button>
-                        </div>
-
-                        <button class="submit-btn"><i class="fa-solid fa-arrow-up"></i></button>
-                    </div>
-                </div>
-
-                <!-- NEW: Search Extras (Logo & Glass Buttons) -->
-                <div class="search-extras" style="position: relative; z-index: 99999; pointer-events: auto;">
-                    <div class="extra-left">
-                        <img src="qoon_pay_logo.png" alt="QOON Pay" class="qpay-extra-logo"
-                            onclick="if(<?= isset($_COOKIE['qoon_user_id']) ? 'true' : 'false' ?>){ if(typeof openQpayDrawer === 'function') openQpayDrawer(); } else { if(typeof openSignup === 'function') openSignup(); else window.location.href='LogOrSign.php'; }" style="cursor:pointer; position: relative; z-index: 99999; pointer-events: auto;">
-                    </div>
-                    <div class="extra-right" style="position: relative; z-index: 99999; pointer-events: auto;">
-                        <button class="glass-action-btn" style="position: relative; z-index: 99999; pointer-events: auto;"
-                            onclick="if(<?= isset($_COOKIE['qoon_user_id']) ? 'true' : 'false' ?>){ if(typeof openQpayDrawer === 'function') openQpayDrawer('topup'); } else { if(typeof openSignup === 'function') openSignup(); else window.location.href='LogOrSign.php'; }">
-                            <i class="fa-solid fa-plus"></i> Topup
-                        </button>
-                        <button class="glass-action-btn" style="position: relative; z-index: 99999; pointer-events: auto;"
-                            onclick="if(<?= isset($_COOKIE['qoon_user_id']) ? 'true' : 'false' ?>){ if(typeof openQpayDrawer === 'function') openQpayDrawer('send'); } else { if(typeof openSignup === 'function') openSignup(); else window.location.href='LogOrSign.php'; }">
-                            <i class="fa-solid fa-paper-plane"></i> Transfer
-                        </button>
-                        <button class="glass-action-btn" style="position: relative; z-index: 99999; pointer-events: auto;"
-                            onclick="if(<?= isset($_COOKIE['qoon_user_id']) ? 'true' : 'false' ?>){ if(typeof openQpayDrawer === 'function') openQpayDrawer('qr'); } else { if(typeof openSignup === 'function') openSignup(); else window.location.href='LogOrSign.php'; }">
-                            <i class="fa-solid fa-qrcode"></i> QR Code
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-
-        </main>
-
         <!-- --- Feed Section --- -->
         <section class="feed-section">
-            <h2 class="section-title s-commerce-anim" style="text-align: center; margin-bottom: 48px;">S-Commerce</h2>
+            <h2 class="section-title" style="text-align: center; margin-bottom: 48px;">S-Commerce</h2>
 
             <?php if ($locationRequired ?? true): ?>
                 <div id="locationOverlay" class="location-overlay">
@@ -870,9 +890,9 @@ if (empty($posts)) {
                     <?php ob_start(); ?>
                     <!-- YouTube Shorts Style Reels Lane -->
                     <div class="feed-inline-reels"
-                        style="width:100%;padding:40px 0;margin-top:20px;margin-bottom:20px;background:transparent;overflow:hidden;border-top:1px solid rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.05);">
+                        style="margin: 20px -20px; padding: 40px 0; background: transparent; border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05);">
                         <h3
-                            style="font-size:18px;font-weight:600;padding:0 20px;margin-bottom:24px;color:var(--text-main);">
+                            style="font-size:18px;font-weight:600;padding:0 max(20px,calc(50vw - 340px));margin-bottom:24px;color:var(--text-main);">
                             Stories &amp; Reels</h3>
 
                         <!-- Track: shimmer cards shown immediately, real cards injected by JS -->
@@ -1154,152 +1174,6 @@ if (empty($posts)) {
                             </div>
                         <?php endif; ?>
 
-                        <!-- ─── ALIEXPRESS SHOP GLOBALLY ─── -->
-                        <?php
-                        if (file_exists('aliexpress_api.php')) {
-                            require_once 'aliexpress_api.php';
-                        } elseif (file_exists('dash/aliexpress_api.php')) {
-                            require_once 'dash/aliexpress_api.php';
-                        } elseif (file_exists('../dash/aliexpress_api.php')) {
-                            require_once '../dash/aliexpress_api.php';
-                        }
-                        
-                        if (function_exists('getAliExpressProducts')) {
-                            $globalProducts = getAliExpressProducts();
-                            if (!empty($globalProducts)): 
-                        ?>
-                            <div class="global-market-section"
-                                style="width:100%;padding:30px 0;margin-top:20px;margin-bottom:20px;background:linear-gradient(to right, rgba(230, 46, 4, 0.1), transparent);overflow:hidden;border-top:1px solid rgba(230,46,4,0.3);border-bottom:1px solid rgba(230,46,4,0.3);">
-                                <div style="display:flex;align-items:center;gap:8px;padding:0;margin-bottom:24px;">
-                                    <i class="fa-solid fa-earth-americas" style="color:#E62E04;font-size:20px;"></i>
-                                    <h3 style="font-size:18px;font-weight:700;color:#fff;margin:0;">Shop Globally <span style="font-size:12px;font-weight:400;color:var(--text-muted);">(AliExpress)</span></h3>
-                                </div>
-                                <div class="no-scrollbar global-products-carousel" id="globalCarousel"
-                                    style="display:flex;gap:16px;overflow-x:auto;padding:0;width:100%;scrollbar-width:none; scroll-snap-type: x mandatory;">
-                                    <?php foreach ($globalProducts as $gp): ?>
-                                        <?php
-                                        $foodJson = json_encode([
-                                            'id' => $gp['id'],
-                                            'name' => $gp['name'],
-                                            'price' => $gp['price'],
-                                            'oldPrice' => $gp['oldPrice'],
-                                            'img' => $gp['img'],
-                                            'desc' => $gp['desc'],
-                                            'cat_id' => 999, // global identifier
-                                            'extra1' => '',
-                                            'extra2' => '',
-                                            'extra1_p' => 0,
-                                            'extra2_p' => 0
-                                        ]);
-                                        ?>
-                                        <div class="gp-card" style="flex: 0 0 160px; scroll-snap-align: start; display: flex; flex-direction: column; gap: 8px; cursor: pointer; border-radius: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); overflow: hidden; padding-bottom: 12px; transition: background 0.2s;"
-                                            onclick="openProductModal(this)"
-                                            data-product='<?= htmlspecialchars($foodJson, ENT_QUOTES, 'UTF-8') ?>'>
-                                            <div style="position:relative;">
-                                                <img src="<?= htmlspecialchars($gp['img']) ?>" referrerpolicy="no-referrer"
-                                                    style="width:100%; aspect-ratio: 1; object-fit: cover; border-bottom: 1px solid rgba(255,255,255,0.05);"
-                                                    onerror="this.src='https://ui-avatars.com/api/?name=AliExpress&background=E62E04&color=fff'">
-                                                <div style="position:absolute;top:8px;right:8px;background:#E62E04;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;">Global</div>
-                                            </div>
-                                            <div style="padding: 0 12px;">
-                                                <div
-                                                    style="font-size: 13px; font-weight: 600; color: #fff; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; margin-bottom: 4px;">
-                                                    <?= htmlspecialchars($gp['name']) ?>
-                                                </div>
-                                                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
-                                                    <img src="<?= htmlspecialchars($gp['shopLogo']) ?>"
-                                                        style="width: 14px; height: 14px; border-radius: 50%; object-fit: cover;">
-                                                    <span
-                                                        style="font-size: 11px; color: var(--text-muted); text-overflow: ellipsis; white-space: nowrap; overflow: hidden;"><?= htmlspecialchars($gp['shopName']) ?></span>
-                                                </div>
-                                                <div style="display:flex; align-items:baseline; gap:6px;">
-                                                    <div style="font-size: 14px; font-weight: 700; color: #E62E04;">
-                                                        <?= htmlspecialchars($gp['price']) ?> MAD
-                                                    </div>
-                                                    <?php if ($gp['oldPrice']): ?>
-                                                        <div style="font-size: 10px; color: var(--text-muted); text-decoration: line-through;">
-                                                            <?= htmlspecialchars($gp['oldPrice']) ?> MAD
-                                                        </div>
-                                                    <?php endif; ?>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            </div>
-                            
-                            <script>
-                            document.addEventListener('DOMContentLoaded', () => {
-                                const carousel = document.getElementById('globalCarousel');
-                                if(!carousel) return;
-                                
-                                let currentPage = 1;
-                                let isLoading = false;
-                                
-                                carousel.addEventListener('scroll', () => {
-                                    // if scrolled to the end (allow 50px threshold)
-                                    if(carousel.scrollLeft + carousel.clientWidth >= carousel.scrollWidth - 50) {
-                                        if(!isLoading) {
-                                            isLoading = true;
-                                            currentPage++;
-                                            
-                                            fetch('ajax_global_products.php?page=' + currentPage)
-                                                .then(r => r.json())
-                                                .then(res => {
-                                                    if(res.status === 'success' && res.data.length > 0) {
-                                                        res.data.forEach(gp => {
-                                                            const gpJson = JSON.stringify({
-                                                                id: gp.id, name: gp.name, price: gp.price, oldPrice: gp.oldPrice,
-                                                                img: gp.img, desc: gp.desc, cat_id: 999, extra1: '', extra2: '', extra1_p: 0, extra2_p: 0
-                                                            }).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
-                                                            
-                                                            const el = document.createElement('div');
-                                                            el.className = 'gp-card';
-                                                            el.style.cssText = 'flex: 0 0 160px; scroll-snap-align: start; display: flex; flex-direction: column; gap: 8px; cursor: pointer; border-radius: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); overflow: hidden; padding-bottom: 12px; transition: background 0.2s;';
-                                                            el.setAttribute('onclick', 'openProductModal(this)');
-                                                            el.setAttribute('data-product', gpJson);
-                                                            
-                                                            el.innerHTML = `
-                                                                <div style="position:relative;">
-                                                                    <img src="${gp.img}" referrerpolicy="no-referrer"
-                                                                        style="width:100%; aspect-ratio: 1; object-fit: cover; border-bottom: 1px solid rgba(255,255,255,0.05);"
-                                                                        onerror="this.src='https://ui-avatars.com/api/?name=AliExpress&background=E62E04&color=fff'">
-                                                                    <div style="position:absolute;top:8px;right:8px;background:#E62E04;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;">Global</div>
-                                                                </div>
-                                                                <div style="padding: 0 12px;">
-                                                                    <div style="font-size: 13px; font-weight: 600; color: #fff; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; margin-bottom: 4px;">
-                                                                        ${gp.name}
-                                                                    </div>
-                                                                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
-                                                                        <img src="${gp.shopLogo}" style="width: 14px; height: 14px; border-radius: 50%; object-fit: cover;">
-                                                                        <span style="font-size: 11px; color: var(--text-muted); text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">${gp.shopName}</span>
-                                                                    </div>
-                                                                    <div style="display:flex; align-items:baseline; gap:6px;">
-                                                                        <div style="font-size: 14px; font-weight: 700; color: #E62E04;">
-                                                                            ${gp.price} MAD
-                                                                        </div>
-                                                                        ${gp.oldPrice ? `<div style="font-size: 10px; color: var(--text-muted); text-decoration: line-through;">${gp.oldPrice} MAD</div>` : ''}
-                                                                    </div>
-                                                                </div>
-                                                            `;
-                                                            carousel.appendChild(el);
-                                                        });
-                                                    }
-                                                    isLoading = false;
-                                                })
-                                                .catch(err => {
-                                                    isLoading = false;
-                                                });
-                                        }
-                                    }
-                                });
-                            });
-                            </script>
-                        <?php 
-                            endif; 
-                        } // end if function_exists
-                        ?>
-
                         <?php if ($index == 0)
                             echo getRandomReelsHtml($reelsHtml); ?>
                         <?php if ($index == 3)
@@ -1307,28 +1181,28 @@ if (empty($posts)) {
                     <?php endforeach; ?>
 
                     <script>
-                    document.addEventListener("DOMContentLoaded", function() {
-                        document.querySelectorAll('.promo-3d-viewport').forEach(vp => {
-                            const slides = vp.querySelectorAll('.promo-3d-slide');
-                            if (slides.length <= 1) return;
-                            let cur = 0;
-                            setInterval(() => {
-                                slides[cur].style.opacity = '0';
-                                slides[cur].style.transform = 'rotateY(-90deg) translateZ(100px)';
-                                slides[cur].style.zIndex = '1';
-                                slides[cur].style.pointerEvents = 'none';
-                                cur = (cur + 1) % slides.length;
-                                slides[cur].style.transition = 'none';
-                                slides[cur].style.transform = 'rotateY(90deg) translateZ(100px)';
-                                void slides[cur].offsetWidth;
-                                slides[cur].style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
-                                slides[cur].style.opacity = '1';
-                                slides[cur].style.transform = 'rotateY(0deg) translateZ(0)';
-                                slides[cur].style.zIndex = '2';
-                                slides[cur].style.pointerEvents = 'auto';
-                            }, 3000 + Math.random() * 1000); // stagger timings
+                        document.addEventListener("DOMContentLoaded", function () {
+                            document.querySelectorAll('.promo-3d-viewport').forEach(vp => {
+                                const slides = vp.querySelectorAll('.promo-3d-slide');
+                                if (slides.length <= 1) return;
+                                let cur = 0;
+                                setInterval(() => {
+                                    slides[cur].style.opacity = '0';
+                                    slides[cur].style.transform = 'rotateY(-90deg) translateZ(100px)';
+                                    slides[cur].style.zIndex = '1';
+                                    slides[cur].style.pointerEvents = 'none';
+                                    cur = (cur + 1) % slides.length;
+                                    slides[cur].style.transition = 'none';
+                                    slides[cur].style.transform = 'rotateY(90deg) translateZ(100px)';
+                                    void slides[cur].offsetWidth;
+                                    slides[cur].style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                                    slides[cur].style.opacity = '1';
+                                    slides[cur].style.transform = 'rotateY(0deg) translateZ(0)';
+                                    slides[cur].style.zIndex = '2';
+                                    slides[cur].style.pointerEvents = 'auto';
+                                }, 3000 + Math.random() * 1000); // stagger timings
+                            });
                         });
-                    });
                     </script>
 
                     <!-- Shimmer Loading Skeletons -->
@@ -1754,11 +1628,11 @@ if (empty($posts)) {
                 }
             }
 
-            window.flyToCity = function(lat, lng) {
+            window.flyToCity = function (lat, lng) {
                 if (map) map.flyTo([lat, lng], 14, { duration: 1.5 });
             };
 
-            window.geolocateOnMap = function() {
+            window.geolocateOnMap = function () {
                 if (navigator.geolocation && map) {
                     navigator.geolocation.getCurrentPosition((pos) => {
                         map.flyTo([pos.coords.latitude, pos.coords.longitude], 14, { duration: 1.5 });
@@ -1766,7 +1640,7 @@ if (empty($posts)) {
                 }
             };
 
-            window.confirmTeleport = function() {
+            window.confirmTeleport = function () {
                 if (!map) return;
                 const pos = map.getCenter();
                 setQoonLocation(pos.lat, pos.lng);
@@ -1916,7 +1790,7 @@ if (empty($posts)) {
         }
 
         if (typeof window.openSignup !== 'function') {
-            window.openSignup = function() {
+            window.openSignup = function () {
                 window.location.href = 'LogOrSign.php';
             };
         }
@@ -2248,34 +2122,31 @@ if (empty($posts)) {
                             {enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
                             );
         }
-        // --- CART RESTORATION AFTER LOGIN ---
-        <?php if (isset($shopId) && !empty($shopId)): ?>
+                            // --- CART RESTORATION AFTER LOGIN ---
+                            <?php if (isset($shopId) && !empty($shopId)): ?>
         document.addEventListener('DOMContentLoaded', () => {
             const pendingCart = localStorage.getItem('qoon_pending_cart_<?= $shopId ?>');
-            if (pendingCart) {
+                            if (pendingCart) {
                 try {
                     if (typeof cartItems !== 'undefined') {
-                        cartItems = JSON.parse(pendingCart);
-                        if (typeof updateCartWidget === 'function') updateCartWidget();
-                        localStorage.removeItem('qoon_pending_cart_<?= $shopId ?>');
-                        const isLoggedIn = <?= isset($_COOKIE['qoon_user_id']) ? 'true' : 'false' ?>;
-                        if (isLoggedIn && typeof openCheckoutModal === 'function') {
-                            openCheckoutModal();
+                                cartItems = JSON.parse(pendingCart);
+                            if (typeof updateCartWidget === 'function') updateCartWidget();
+                            localStorage.removeItem('qoon_pending_cart_<?= $shopId ?>');
+                            const isLoggedIn = <?= isset($_COOKIE['qoon_user_id']) ? 'true' : 'false' ?>;
+                            if (isLoggedIn && typeof openCheckoutModal === 'function') {
+                                openCheckoutModal();
                         }
                     }
                 } catch (e) {
-                    console.error("Failed to restore cart", e);
+                                console.error("Failed to restore cart", e);
                 }
             }
         });
-        <?php endif; ?>
+                            <?php endif; ?>
 
     </script>
 
 
-    <?php if (in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.0.0.1', '::1']) || strpos($_SERVER['HTTP_HOST'] ?? '', 'localhost') !== false): ?>
-        <script src="assets/js/agentation-bundle.js"></script>
-    <?php endif; ?>
 </body>
 
 </html>
