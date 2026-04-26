@@ -1541,6 +1541,43 @@
                     "response": []
                 },
                 {
+                    "name": "AddLike.php",
+                    "request": {
+                        "method": "POST",
+                        "url": {
+                            "raw": "{{base_url}}/AddLike.php",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "AddLike.php"
+                            ],
+                            "query": []
+                        },
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "UserID",
+                                    "value": "<value>",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "ShopID",
+                                    "value": "<value>",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "PostID",
+                                    "value": "<value>",
+                                    "type": "text"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
                     "name": "AddReportPost.php",
                     "request": {
                         "method": "POST",
@@ -1956,6 +1993,115 @@
                                     "key": "PostID",
                                     "value": "<value>",
                                     "type": "text"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "GetReelsApi.php",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/GetReelsApi.php",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "GetReelsApi.php"
+                            ],
+                            "query": []
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "RemoveLike.php",
+                    "request": {
+                        "method": "POST",
+                        "url": {
+                            "raw": "{{base_url}}/RemoveLike.php",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "RemoveLike.php"
+                            ],
+                            "query": []
+                        },
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "PostID",
+                                    "value": "<value>",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "UserID",
+                                    "value": "<value>",
+                                    "type": "text"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "category_reels.php",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/category_reels.php?cat=<value>&id=<value>&type=<value>",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "category_reels.php"
+                            ],
+                            "query": [
+                                {
+                                    "key": "cat",
+                                    "value": "<value>"
+                                },
+                                {
+                                    "key": "id",
+                                    "value": "<value>"
+                                },
+                                {
+                                    "key": "type",
+                                    "value": "<value>"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "getReelsRecommendationAPI.php",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "{{base_url}}/getReelsRecommendationAPI.php?user_id=<value>&limit=<value>&offset=<value>",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "getReelsRecommendationAPI.php"
+                            ],
+                            "query": [
+                                {
+                                    "key": "user_id",
+                                    "value": "<value>"
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "<value>"
+                                },
+                                {
+                                    "key": "offset",
+                                    "value": "<value>"
                                 }
                             ]
                         }
@@ -3102,43 +3248,6 @@
         {
             "name": "General",
             "item": [
-                {
-                    "name": "AddLike.php",
-                    "request": {
-                        "method": "POST",
-                        "url": {
-                            "raw": "{{base_url}}/AddLike.php",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "AddLike.php"
-                            ],
-                            "query": []
-                        },
-                        "body": {
-                            "mode": "formdata",
-                            "formdata": [
-                                {
-                                    "key": "UserID",
-                                    "value": "<value>",
-                                    "type": "text"
-                                },
-                                {
-                                    "key": "ShopID",
-                                    "value": "<value>",
-                                    "type": "text"
-                                },
-                                {
-                                    "key": "PostID",
-                                    "value": "<value>",
-                                    "type": "text"
-                                }
-                            ]
-                        }
-                    },
-                    "response": []
-                },
                 {
                     "name": "AddOrDeleteFollow.php",
                     "request": {
@@ -4413,23 +4522,6 @@
                     "response": []
                 },
                 {
-                    "name": "GetReelsApi.php",
-                    "request": {
-                        "method": "GET",
-                        "url": {
-                            "raw": "{{base_url}}/GetReelsApi.php",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "GetReelsApi.php"
-                            ],
-                            "query": []
-                        }
-                    },
-                    "response": []
-                },
-                {
                     "name": "GetSliderNotHome.php",
                     "request": {
                         "method": "POST",
@@ -4698,38 +4790,6 @@
                     "response": []
                 },
                 {
-                    "name": "RemoveLike.php",
-                    "request": {
-                        "method": "POST",
-                        "url": {
-                            "raw": "{{base_url}}/RemoveLike.php",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "RemoveLike.php"
-                            ],
-                            "query": []
-                        },
-                        "body": {
-                            "mode": "formdata",
-                            "formdata": [
-                                {
-                                    "key": "PostID",
-                                    "value": "<value>",
-                                    "type": "text"
-                                },
-                                {
-                                    "key": "UserID",
-                                    "value": "<value>",
-                                    "type": "text"
-                                }
-                            ]
-                        }
-                    },
-                    "response": []
-                },
-                {
                     "name": "Take.php",
                     "request": {
                         "method": "POST",
@@ -4949,36 +5009,6 @@
                                 "buy_esim.php"
                             ],
                             "query": []
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "category_reels.php",
-                    "request": {
-                        "method": "GET",
-                        "url": {
-                            "raw": "{{base_url}}/category_reels.php?cat=<value>&id=<value>&type=<value>",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "category_reels.php"
-                            ],
-                            "query": [
-                                {
-                                    "key": "cat",
-                                    "value": "<value>"
-                                },
-                                {
-                                    "key": "id",
-                                    "value": "<value>"
-                                },
-                                {
-                                    "key": "type",
-                                    "value": "<value>"
-                                }
-                            ]
                         }
                     },
                     "response": []
@@ -5629,36 +5659,6 @@
                                     "key": "CategoryId",
                                     "value": "<value>",
                                     "type": "text"
-                                }
-                            ]
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "getReelsRecommendationAPI.php",
-                    "request": {
-                        "method": "GET",
-                        "url": {
-                            "raw": "{{base_url}}/getReelsRecommendationAPI.php?user_id=<value>&limit=<value>&offset=<value>",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "getReelsRecommendationAPI.php"
-                            ],
-                            "query": [
-                                {
-                                    "key": "user_id",
-                                    "value": "<value>"
-                                },
-                                {
-                                    "key": "limit",
-                                    "value": "<value>"
-                                },
-                                {
-                                    "key": "offset",
-                                    "value": "<value>"
                                 }
                             ]
                         }
