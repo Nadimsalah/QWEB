@@ -926,7 +926,7 @@ if (empty($posts)) {
 
         <!-- --- Feed Section --- -->
         <section class="feed-section">
-            <h2 class="section-title" style="text-align: center; margin-bottom: 48px;">S-Commerce</h2>
+            <h2 class="section-title" style="font-size: clamp(26px, 3.2vw, 35px); text-align: center; margin-bottom: 48px;">S-Commerce</h2>
 
             <?php if ($locationRequired ?? true): ?>
                 <div id="locationOverlay" class="location-overlay">
