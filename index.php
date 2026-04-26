@@ -625,7 +625,15 @@ if (empty($posts)) {
         .category-grid > a {
             display: block !important;
             flex: 0 0 auto !important;
+            width: clamp(240px, 20vw, 280px) !important;
             scroll-snap-align: start !important;
+            -webkit-user-drag: none !important;
+            user-select: none !important;
+            touch-action: pan-x !important;
+        }
+        .category-grid > a img {
+            -webkit-user-drag: none !important;
+            pointer-events: none !important;
         }
         .category-grid::after {
             display: none !important;
