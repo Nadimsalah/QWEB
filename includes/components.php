@@ -58,6 +58,7 @@ function renderPostCard($post, $DomainNamee) {
             'price' => $pPrice,
             'oldPrice' => floatval($post['FoodOfferPrice'] ?? 0) > 0 ? floatval($post['Price'] ?? 0) : null,
             'img' => $pImgUrl,
+            'images' => !empty($photos) ? $photos : [$pImgUrl],
             'desc' => $post['FoodDescription'] ?? $post['FoodComponent'] ?? '',
             'cat_id' => $post['CategoryID'] ?? $_GET['cat'] ?? 0
         ]);

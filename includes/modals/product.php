@@ -1060,7 +1060,7 @@
                     slides += `<div class="pm-slide" style="min-width: 100%; height: 100%; flex-shrink: 0; scroll-snap-align: start;">
                         <img src="${img}" style="width:100%; height:100%; object-fit: cover;">
                     </div>`;
-                    carouselDots += `<div class="pm-dot" data-idx="${idx}" style="width:8px;height:8px;border-radius:50%;background:${idx === 0 ? '#fff' : 'rgba(255,255,255,0.3)'};margin:0 4px;transition:0.3s;"></div>`;
+                    carouselDots += `<div class="pm-dot" data-idx="${idx}" style="width:8px;height:8px;border-radius:50%;background:${idx === 0 ? '#fff' : 'rgba(255,255,255,0.3)'};transition:0.3s;flex-shrink:0;"></div>`;
                 });
                 
                 carouselHtml = `
@@ -1068,7 +1068,7 @@
                         <div class="pm-slides" id="pm-slides" style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory; height: 100%; scrollbar-width: none; -ms-overflow-style: none;">
                             ${slides}
                         </div>
-                        <div class="pm-dots" style="position: absolute; bottom: 16px; left: 0; right: 0; display: flex; justify-content: center; z-index: 5;">
+                        <div class="pm-dots" style="position: absolute; bottom: 16px; left: 0; right: 0; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 6px; z-index: 5;">
                             ${carouselDots}
                         </div>
                     </div>
