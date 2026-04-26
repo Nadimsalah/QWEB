@@ -736,9 +736,37 @@ if (empty($posts)) {
             background: rgba(255, 255, 255, 0.3);
         }
     </style>
+    <script>
+        // Early definition of auth functions to prevent glitches if clicked before page fully loads
+        if (typeof window.openSignup !== 'function') {
+            window.openSignup = function() {
+                // If clicked early, show a loading spinner on body and redirect if modal doesn't load shortly
+                document.body.style.cursor = 'wait';
+                setTimeout(() => {
+                    if (document.getElementById('signup-overlay')) {
+                        document.body.style.cursor = 'default';
+                        document.getElementById('signup-overlay').style.display = 'flex';
+                        setTimeout(() => {
+                            document.getElementById('signup-overlay').style.opacity = '1';
+                            document.getElementById('signup-modal').style.transform = 'scale(1)';
+                        }, 10);
+                        document.body.style.overflow = 'hidden';
+                    } else {
+                        window.location.href = 'LogOrSign.php';
+                    }
+                }, 400); // Give it a short moment in case the script is currently parsing
+            };
+        }
+    </script>
 </head>
 
 <body>
+    <!-- ALL MODALS & OVERLAYS INJECTED EARLY TO PREVENT JS REFERENCE GLITCHES ON SLOW LOADS -->
+    <?php include 'includes/modals/auth.php'; ?>
+    <?php include 'includes/modals/comments.php'; ?>
+    <?php include 'includes/modals/teleport.php'; ?>
+    <?php include 'includes/modals/product.php'; ?>
+    <?php include 'includes/modals/share.php'; ?>
 
     <!-- Background Elements -->
     <div class="aurora-container">
@@ -1592,8 +1620,7 @@ if (empty($posts)) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 
-    <?php include 'includes/modals/teleport.php'; ?>
-
+    <!-- Teleport modal moved to top -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const btnTeleport = document.getElementById('btn-teleport');
@@ -1761,8 +1788,7 @@ if (empty($posts)) {
         });
     </script>
 
-    <?php include 'includes/modals/comments.php'; ?>
-    <?php include 'includes/modals/auth.php'; ?>
+    <!-- Modals moved to top of body -->
 
     <script>
 
@@ -2122,10 +2148,7 @@ if (empty($posts)) {
 
 
     <!-- PRODUCT MODAL HTML & LOGIC -->
-    <?php include 'includes/modals/product.php'; ?>
-
-    <!-- SHARE MODAL HTML & LOGIC -->
-    <?php include 'includes/modals/share.php'; ?>
+    <!-- Modals moved to top of body -->
     <script>
                             // --- LOCATION REQUEST LOGIC ---
                             async function requestUserLocation() {
