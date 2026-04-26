@@ -681,6 +681,51 @@ if (empty($posts)) {
 
     <!-- Main Application UI -->
     <div class="content-wrapper">
+
+        <section class="categories-section">
+            <div class="cat-header">
+                <h2 class="section-title">Mini Apps</h2>
+                <div class="cat-nav">
+                    <button class="nav-arrow" id="scrollLeft"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button class="nav-arrow" id="scrollRight"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+            </div>
+            <div class="category-grid" id="catGrid">
+                <?php
+                // Split categories 5 per 5 
+                $categoryChunks = array_chunk($categories, 5);
+                foreach ($categoryChunks as $chunk):
+                    ?>
+                    <div class="cat-chunk" style="display: flex; gap: 24px; flex: 0 0 auto; scroll-snap-align: start;">
+                        <?php foreach ($chunk as $cat): ?>
+                            <?php
+                            $catTitle = $cat['EnglishCategory'] ?? $cat['ArabCategory'] ?? $cat['NameEn'] ?? '';
+                            if ($cat['CategoryId'] === 'flights') {
+                                $targetUrl = "flights.php";
+                            } elseif ($cat['CategoryId'] === 'esims') {
+                                $targetUrl = "esim.php";
+                            } else {
+                                $targetUrl = (stripos($catTitle, 'Kenz') !== false) ? "kenz.php?cat=" . $cat['CategoryId'] : "category.php?cat=" . $cat['CategoryId'];
+                            }
+                            ?>
+                            <a href="<?= $targetUrl ?>" style="text-decoration:none; color:inherit;">
+                                <div class="cat-card">
+                                    <div class="cat-img-wrapper">
+                                        <img class="cat-img" loading="lazy" src="<?= htmlspecialchars($cat['Photo'] ?? '') ?>"
+                                            onerror="this.src='https://ui-avatars.com/api/?name=S&background=2cb5e8&color=fff'">
+                                    </div>
+                                    <div class="cat-name">
+                                        <?= htmlspecialchars($cat['EnglishCategory'] ?? $cat['ArabCategory'] ?? $cat['NameEn'] ?? 'Category') ?>
+                                    </div>
+                                    <div class="cat-tag">Explore</div>
+                                </div>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </section>
+
         <main>
             <?php
             $activeOrders = [];
@@ -799,50 +844,6 @@ if (empty($posts)) {
 
 
         </main>
-
-        <section class="categories-section">
-            <div class="cat-header">
-                <h2 class="section-title">Mini Apps</h2>
-                <div class="cat-nav">
-                    <button class="nav-arrow" id="scrollLeft"><i class="fa-solid fa-chevron-left"></i></button>
-                    <button class="nav-arrow" id="scrollRight"><i class="fa-solid fa-chevron-right"></i></button>
-                </div>
-            </div>
-            <div class="category-grid" id="catGrid">
-                <?php
-                // Split categories 5 per 5 
-                $categoryChunks = array_chunk($categories, 5);
-                foreach ($categoryChunks as $chunk):
-                    ?>
-                    <div class="cat-chunk" style="display: flex; gap: 24px; flex: 0 0 auto; scroll-snap-align: start;">
-                        <?php foreach ($chunk as $cat): ?>
-                            <?php
-                            $catTitle = $cat['EnglishCategory'] ?? $cat['ArabCategory'] ?? $cat['NameEn'] ?? '';
-                            if ($cat['CategoryId'] === 'flights') {
-                                $targetUrl = "flights.php";
-                            } elseif ($cat['CategoryId'] === 'esims') {
-                                $targetUrl = "esim.php";
-                            } else {
-                                $targetUrl = (stripos($catTitle, 'Kenz') !== false) ? "kenz.php?cat=" . $cat['CategoryId'] : "category.php?cat=" . $cat['CategoryId'];
-                            }
-                            ?>
-                            <a href="<?= $targetUrl ?>" style="text-decoration:none; color:inherit;">
-                                <div class="cat-card">
-                                    <div class="cat-img-wrapper">
-                                        <img class="cat-img" loading="lazy" src="<?= htmlspecialchars($cat['Photo'] ?? '') ?>"
-                                            onerror="this.src='https://ui-avatars.com/api/?name=S&background=2cb5e8&color=fff'">
-                                    </div>
-                                    <div class="cat-name">
-                                        <?= htmlspecialchars($cat['EnglishCategory'] ?? $cat['ArabCategory'] ?? $cat['NameEn'] ?? 'Category') ?>
-                                    </div>
-                                    <div class="cat-tag">Explore</div>
-                                </div>
-                            </a>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        </section>
 
         <!-- --- Feed Section --- -->
         <section class="feed-section">
