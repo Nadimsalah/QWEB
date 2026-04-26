@@ -69,6 +69,8 @@ if ($con && $orderId !== '0') {
         
         $userLat = isset($row['UserLat']) && is_numeric($row['UserLat']) ? $row['UserLat'] : 33.5650;
         $userLng = isset($row['UserLongt']) && is_numeric($row['UserLongt']) ? $row['UserLongt'] : -7.5950;
+        
+        $isRated = (!empty($row['OrderRate']) || !empty($row['UserRated']));
     }
 }
 if(isset($_GET['ajax_status'])) {
@@ -529,9 +531,10 @@ if (isset($rawStatus)) {
     </div>
 
     <!-- Rating Modal -->
-    <div id="rating-modal" class="modal-overlay <?= (in_array(strtolower($rawStatus), ['done', 'finish', 'order delivered'])) ? 'active' : '' ?>" style="z-index: 9999;">
+    <div id="rating-modal" class="modal-overlay <?= (in_array(strtolower($rawStatus ?? ''), ['done', 'finish', 'order delivered']) && !($isRated ?? false)) ? 'active' : '' ?>" style="z-index: 9999;">
         <!-- Step 1: Shop -->
-        <div class="rating-modal-inner" id="rating-step-shop">
+        <div class="rating-modal-inner" id="rating-step-shop" style="position: relative;">
+            <button class="close-modal" onclick="document.getElementById('rating-modal').classList.remove('active')" style="position:absolute; top:16px; right:20px; font-size:20px; color:rgba(255,255,255,0.5);"><i class="fa-solid fa-xmark"></i></button>
             <h2 style="font-size:22px; font-weight:800;">Order Delivered! 🎉</h2>
             <p style="color:var(--text-muted); font-size:13px; margin-top:-6px;">Please rate your experience to help us improve.</p>
             
@@ -550,7 +553,8 @@ if (isset($rawStatus)) {
         </div>
 
         <!-- Step 2: Driver -->
-        <div class="rating-modal-inner" id="rating-step-driver" style="display:none;">
+        <div class="rating-modal-inner" id="rating-step-driver" style="display:none; position: relative;">
+            <button class="close-modal" onclick="document.getElementById('rating-modal').classList.remove('active')" style="position:absolute; top:16px; right:20px; font-size:20px; color:rgba(255,255,255,0.5);"><i class="fa-solid fa-xmark"></i></button>
             <h2 style="font-size:22px; font-weight:800;">Rate your Driver 🛵</h2>
             <p style="color:var(--text-muted); font-size:13px; margin-top:-6px;">How was the delivery by <?= htmlspecialchars($driverName) ?>?</p>
             
