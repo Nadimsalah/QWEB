@@ -891,7 +891,7 @@ if (empty($posts)) {
         <!-- --- Mini Apps (Categories) Section --- -->
         <section class="categories-section">
             <div class="cat-header">
-                <h3 style="font-size: 18px; font-weight: 600; margin: 0; color: var(--text-main);">Mini Apps</h3>
+                <h3 style="font-size: 20px; font-weight: 600; margin: 0; color: var(--text-main);">Mini Apps</h3>
                 <div class="cat-nav">
                     <button class="nav-arrow" id="scrollLeft"><i class="fa-solid fa-chevron-left"></i></button>
                     <button class="nav-arrow" id="scrollRight"><i class="fa-solid fa-chevron-right"></i></button>
