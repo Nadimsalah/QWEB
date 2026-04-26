@@ -598,6 +598,14 @@ if (empty($posts)) {
         .categories-section {
             overflow: hidden !important;
             padding: 16px 0 0 0 !important;
+            margin-left: -40px !important;
+            margin-right: -40px !important;
+        }
+        @media (max-width: 768px) {
+            .categories-section {
+                margin-left: -20px !important;
+                margin-right: -20px !important;
+            }
         }
         .category-grid {
             padding: 0 !important;
@@ -736,42 +744,6 @@ if (empty($posts)) {
     <!-- Main Application UI -->
     <div class="content-wrapper">
 
-        <section class="categories-section">
-            <div class="cat-header">
-                <h2 class="section-title">Mini Apps</h2>
-                <div class="cat-nav">
-                    <button class="nav-arrow" id="scrollLeft"><i class="fa-solid fa-chevron-left"></i></button>
-                    <button class="nav-arrow" id="scrollRight"><i class="fa-solid fa-chevron-right"></i></button>
-                </div>
-            </div>
-            <div class="category-grid" id="catGrid">
-                <?php foreach ($categories as $cat): ?>
-                    <?php
-                    $catTitle = $cat['EnglishCategory'] ?? $cat['ArabCategory'] ?? $cat['NameEn'] ?? '';
-                    if ($cat['CategoryId'] === 'flights') {
-                        $targetUrl = "flights.php";
-                    } elseif ($cat['CategoryId'] === 'esims') {
-                        $targetUrl = "esim.php";
-                    } else {
-                        $targetUrl = (stripos($catTitle, 'Kenz') !== false) ? "kenz.php?cat=" . $cat['CategoryId'] : "category.php?cat=" . $cat['CategoryId'];
-                    }
-                    ?>
-                    <a href="<?= $targetUrl ?>" style="text-decoration:none; color:inherit;">
-                        <div class="cat-card">
-                            <div class="cat-img-wrapper">
-                                <img class="cat-img" loading="lazy" src="<?= htmlspecialchars($cat['Photo'] ?? '') ?>"
-                                    onerror="this.src='https://ui-avatars.com/api/?name=S&background=2cb5e8&color=fff'">
-                            </div>
-                            <div class="cat-name">
-                                <?= htmlspecialchars($catTitle) ?>
-                            </div>
-                            <div class="cat-tag">Explore</div>
-                        </div>
-                    </a>
-                <?php endforeach; ?>
-            </div>
-        </section>
-
         <main>
             <?php
             $activeOrders = [];
@@ -904,6 +876,41 @@ if (empty($posts)) {
                 </div>
             </div>
 
+            <section class="categories-section">
+                <div class="cat-header">
+                    <h2 class="section-title">Mini Apps</h2>
+                    <div class="cat-nav">
+                        <button class="nav-arrow" id="scrollLeft"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button class="nav-arrow" id="scrollRight"><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                <div class="category-grid" id="catGrid">
+                    <?php foreach ($categories as $cat): ?>
+                        <?php
+                        $catTitle = $cat['EnglishCategory'] ?? $cat['ArabCategory'] ?? $cat['NameEn'] ?? '';
+                        if ($cat['CategoryId'] === 'flights') {
+                            $targetUrl = "flights.php";
+                        } elseif ($cat['CategoryId'] === 'esims') {
+                            $targetUrl = "esim.php";
+                        } else {
+                            $targetUrl = (stripos($catTitle, 'Kenz') !== false) ? "kenz.php?cat=" . $cat['CategoryId'] : "category.php?cat=" . $cat['CategoryId'];
+                        }
+                        ?>
+                        <a href="<?= $targetUrl ?>" style="text-decoration:none; color:inherit;">
+                            <div class="cat-card">
+                                <div class="cat-img-wrapper">
+                                    <img class="cat-img" loading="lazy" src="<?= htmlspecialchars($cat['Photo'] ?? '') ?>"
+                                        onerror="this.src='https://ui-avatars.com/api/?name=S&background=2cb5e8&color=fff'">
+                                </div>
+                                <div class="cat-name">
+                                    <?= htmlspecialchars($catTitle) ?>
+                                </div>
+                                <div class="cat-tag">Explore</div>
+                            </div>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
+            </section>
 
         </main>
 
