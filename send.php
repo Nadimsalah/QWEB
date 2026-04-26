@@ -360,18 +360,128 @@ $uBalance = floatval($userData['Balance'] ?? 0);
             document.getElementById('step' + s).classList.add('active');
         }
 
-        function finishTransfer() {
+        async function finishTransfer() {
             const btn = document.getElementById('btnConfirm');
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing...';
             btn.disabled = true;
 
+            const am = document.getElementById('sendAmount').value;
+
+            const formData = new FormData();
+            formData.append('UserID', currentUserID);
+            formData.append('ReceiverID', selectedUser.UserID);
+            formData.append('Money', am);
+
+            try {
+                const res = await fetch('AddChargeToUser.php', {
+                    method: 'POST',
+                    headers: { 'token': '<?= $userData['UserToken'] ?? "" ?>' },
+                    body: formData
+                });
+                const json = await res.json();
+
+                if(json.success || json.status_code === 200) {
+                    showSuccessAnimation(am, selectedUser.name);
+                } else {
+                    showError(json.message || "Transfer failed. Please try again.");
+                    btn.innerHTML = 'Send Now <i class="fa-solid fa-paper-plane"></i>';
+                    btn.disabled = false;
+                }
+            } catch(e) {
+                showError("Network error. Please try again.");
+                btn.innerHTML = 'Send Now <i class="fa-solid fa-paper-plane"></i>';
+                btn.disabled = false;
+            }
+        }
+
+        function showSuccessAnimation(amount, name) {
+            const overlay = document.createElement('div');
+            overlay.className = 'success-overlay';
+            overlay.innerHTML = `
+                <div class="success-card">
+                    <img src="qoon_pay_logo.png" alt="QOON PAY" class="s-logo">
+                    <div class="check-circle">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                    <h2>Transfer Successful!</h2>
+                    <div class="s-amount">${parseFloat(amount).toFixed(2)} MAD</div>
+                    <p class="s-desc">Sent to <b>${name}</b></p>
+                    <div class="s-loader"></div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            
+            // Trigger reflow
+            void overlay.offsetWidth;
+            overlay.classList.add('active');
+
             setTimeout(() => {
-                alert("Transfer successful! " + document.getElementById('sendAmount').value + " MAD sent to " + selectedUser.name);
                 window.location.href = 'qpay.php';
-            }, 2000);
+            }, 3500);
         }
     </script>
     <style>
+        .success-overlay {
+            position: fixed; inset: 0; z-index: 99999;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+        .success-overlay.active { opacity: 1; pointer-events: auto; }
+        
+        .success-card {
+            background: linear-gradient(135deg, #111 0%, #1a1a1a 100%);
+            border: 1px solid rgba(44, 181, 232, 0.3);
+            border-radius: 30px;
+            padding: 40px 30px;
+            text-align: center;
+            width: 90%; max-width: 380px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 40px rgba(44, 181, 232, 0.15);
+            transform: translateY(40px) scale(0.95);
+            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .success-overlay.active .success-card { transform: translateY(0) scale(1); }
+
+        .s-logo { height: 32px; filter: brightness(0) invert(1); margin-bottom: 30px; }
+        
+        .check-circle {
+            width: 80px; height: 80px; border-radius: 50%;
+            background: linear-gradient(135deg, #34c759 0%, #28a745 100%);
+            display: flex; justify-content: center; align-items: center;
+            margin: 0 auto 25px;
+            box-shadow: 0 15px 30px rgba(52, 199, 89, 0.3);
+            position: relative;
+        }
+        .check-circle::after {
+            content: ''; position: absolute; inset: -10px;
+            border: 2px solid rgba(52, 199, 89, 0.3);
+            border-radius: 50%;
+            animation: pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+        }
+        @keyframes pulse { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(1.3); opacity: 0; } }
+        
+        .check-circle i { font-size: 36px; color: #fff; animation: popIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.3s backwards; }
+        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+        .success-card h2 { font-size: 22px; font-weight: 800; margin-bottom: 8px; color: #fff; }
+        .s-amount { font-size: 38px; font-weight: 800; color: var(--accent-glow); margin-bottom: 10px; letter-spacing: -1px; }
+        .s-desc { font-size: 14px; color: rgba(255,255,255,0.6); margin-bottom: 30px; }
+        .s-desc b { color: #fff; }
+
+        .s-loader {
+            width: 50px; height: 4px; background: rgba(255,255,255,0.1);
+            border-radius: 4px; margin: 0 auto; position: relative; overflow: hidden;
+        }
+        .s-loader::after {
+            content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 0%;
+            background: var(--accent-glow);
+            animation: fillLoader 3.5s linear forwards;
+        }
+        @keyframes fillLoader { to { width: 100%; } }
+
         .error-toast {
             position: fixed;
             top: -100px;
