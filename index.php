@@ -594,6 +594,19 @@ if (empty($posts)) {
             max-width: none !important;
         }
 
+        /* Force category cards to touch screen edges */
+        .category-grid {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+        .category-grid::after {
+            flex: 0 0 0px !important;
+        }
+        .cat-header {
+            padding-left: 16px !important;
+            padding-right: 16px !important;
+        }
+
         @media (max-width: 768px) {
             .content-wrapper > main {
                 padding-left: 20px !important;
