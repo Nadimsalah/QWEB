@@ -572,14 +572,14 @@ if (empty($posts)) {
         /* ─── GUARANTEED FULL-BLEED LAYOUT (BYPASS CACHE) ─── */
         html, body {
             max-width: 100vw !important;
-            overflow-x: hidden !important;
+            overflow-x: clip !important;
             
         }
         
         .content-wrapper {
             padding-left: 0 !important;
             padding-right: 0 !important;
-            overflow-x: hidden !important;
+            overflow-x: clip !important;
         }
         
         .content-wrapper > main {
