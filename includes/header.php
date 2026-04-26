@@ -28,9 +28,22 @@ if (!isset($categories)) {
         'Photo' => 'esim_category.jpg'
     ]);
 
-    // Apply user's custom category order if it exists
-    if (isset($_COOKIE['qoon_cat_order']) && !empty($_COOKIE['qoon_cat_order'])) {
-        $savedOrder = explode(',', $_COOKIE['qoon_cat_order']);
+    // Apply user's custom category order if it exists (DB > Cookie)
+    $savedOrderStr = '';
+    if (isset($_COOKIE['qoon_user_id']) && !empty($_COOKIE['qoon_user_id']) && $con) {
+        $headerUserId = mysqli_real_escape_string($con, $_COOKIE['qoon_user_id']);
+        $headerUserRes = $con->query("SELECT CategoryOrder FROM Users WHERE UserID = '$headerUserId'");
+        if ($headerUserRes && $headerUserRes->num_rows > 0) {
+            $headerUserRow = $headerUserRes->fetch_assoc();
+            $savedOrderStr = $headerUserRow['CategoryOrder'] ?? '';
+        }
+    }
+    if (empty($savedOrderStr) && isset($_COOKIE['qoon_cat_order'])) {
+        $savedOrderStr = $_COOKIE['qoon_cat_order'];
+    }
+
+    if (!empty($savedOrderStr)) {
+        $savedOrder = explode(',', $savedOrderStr);
         $orderedCategories = [];
         foreach ($savedOrder as $savedId) {
             foreach ($categories as $key => $cat) {
@@ -396,7 +409,16 @@ if (!isset($categories)) {
                     var id = item.getAttribute('data-id');
                     if (id) order.push(id);
                 });
-                document.cookie = "qoon_cat_order=" + order.join(',') + "; expires=Thu, 31 Dec 2030 12:00:00 UTC; path=/";
+                var orderStr = order.join(',');
+                document.cookie = "qoon_cat_order=" + orderStr + "; expires=Thu, 31 Dec 2030 12:00:00 UTC; path=/";
+                
+                // Save to database
+                var fd = new FormData();
+                fd.append('order', orderStr);
+                fetch('SaveCategoryOrder.php', { method: 'POST', body: fd })
+                    .then(r => r.json())
+                    .then(res => console.log('Order saved to DB', res))
+                    .catch(e => console.error('Error saving order', e));
                 
                 // Sync the main page carousel horizontally without refresh
                 var mainCatGrid = document.getElementById('catGrid');
