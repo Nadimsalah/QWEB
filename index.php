@@ -618,22 +618,10 @@ if (empty($posts)) {
             scrollbar-width: none !important;
             scroll-snap-type: x mandatory !important;
             -webkit-overflow-scrolling: touch !important;
+            touch-action: pan-x !important;
         }
         .category-grid::-webkit-scrollbar {
             display: none !important;
-        }
-        .category-grid > a {
-            display: block !important;
-            flex: 0 0 auto !important;
-            width: clamp(240px, 20vw, 280px) !important;
-            scroll-snap-align: start !important;
-            -webkit-user-drag: none !important;
-            user-select: none !important;
-            touch-action: pan-x !important;
-        }
-        .category-grid > a img {
-            -webkit-user-drag: none !important;
-            pointer-events: none !important;
         }
         .category-grid::after {
             display: none !important;
@@ -920,18 +908,17 @@ if (empty($posts)) {
                             $targetUrl = (stripos($catTitle, 'Kenz') !== false) ? "kenz.php?cat=" . $cat['CategoryId'] : "category.php?cat=" . $cat['CategoryId'];
                         }
                         ?>
-                        <a href="<?= $targetUrl ?>" style="text-decoration:none; color:inherit;">
-                            <div class="cat-card">
-                                <div class="cat-img-wrapper">
-                                    <img class="cat-img" loading="lazy" src="<?= htmlspecialchars($cat['Photo'] ?? '') ?>"
-                                        onerror="this.src='https://ui-avatars.com/api/?name=S&background=2cb5e8&color=fff'">
-                                </div>
-                                <div class="cat-name">
-                                    <?= htmlspecialchars($catTitle) ?>
-                                </div>
-                                <div class="cat-tag">Explore</div>
+                        <div class="cat-card" onclick="window.location.href='<?= $targetUrl ?>'">
+                            <div class="cat-img-wrapper">
+                                <img class="cat-img" loading="lazy" src="<?= htmlspecialchars($cat['Photo'] ?? '') ?>"
+                                    onerror="this.src='https://ui-avatars.com/api/?name=S&background=2cb5e8&color=fff'"
+                                    style="pointer-events: none; -webkit-user-drag: none;">
                             </div>
-                        </a>
+                            <div class="cat-name">
+                                <?= htmlspecialchars($catTitle) ?>
+                            </div>
+                            <div class="cat-tag">Explore</div>
+                        </div>
                     <?php endforeach; ?>
                 </div>
             </section>
