@@ -2275,6 +2275,27 @@ if (empty($posts)) {
     <?php if (in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.0.0.1', '::1']) || strpos($_SERVER['HTTP_HOST'] ?? '', 'localhost') !== false): ?>
         <script src="assets/js/agentation-bundle.js"></script>
     <?php endif; ?>
+    <script>
+    // ── Block horizontal swipe rubber-banding on mobile browsers ──
+    (function() {
+        var startX = 0;
+        var startY = 0;
+
+        document.addEventListener('touchstart', function(e) {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+        }, { passive: true });
+
+        document.addEventListener('touchmove', function(e) {
+            var dx = Math.abs(e.touches[0].clientX - startX);
+            var dy = Math.abs(e.touches[0].clientY - startY);
+            // If horizontal movement is dominant, block it
+            if (dx > dy && dx > 5) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    })();
+    </script>
 </body>
 
 </html>
