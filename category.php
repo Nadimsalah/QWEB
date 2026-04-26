@@ -2598,60 +2598,11 @@ if (isset($con) && $con)
         }
     </script>
 
-    <!-- Firebase SDK & Config -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    
     <script>
-        try {
-            const firebaseConfig = {
-                apiKey: "AIzaSyBASRuasrBZ3NUIc2HyW8HJ8G3tkxhrmyA",
-                authDomain: "jibler-37339.firebaseapp.com",
-                databaseURL: "https://jibler-37339-default-rtdb.firebaseio.com",
-                projectId: "jibler-37339",
-                storageBucket: "jibler-37339.firebasestorage.app",
-                messagingSenderId: "874793508550",
-                appId: "1:874793508550:web:1e16215a9b53f2314a41c7",
-                measurementId: "G-6NWSEM7BK9"
-            };
-            firebase.initializeApp(firebaseConfig);
-        } catch (e) { console.error("Firebase Init Error:", e); }
+         catch (e) { console.error("Firebase Init Error:", e); }
 
-        window.googleLogin = function () {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            const btn = document.querySelector('.btn-google');
-            const originalHtml = btn.innerHTML;
-
-            firebase.auth().signInWithPopup(provider).then((result) => {
-                const user = result.user;
-                btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Authenticating...';
-
-                const formData = new FormData();
-                formData.append('AccountType', 'Google');
-                formData.append('GoogleID', user.uid);
-                formData.append('name', user.displayName || 'User');
-                formData.append('Email', user.email);
-                formData.append('Photo', user.photoURL || '');
-                formData.append('UserFirebaseToken', '');
-
-                fetch('LogOrSign.php', { method: 'POST', body: formData })
-                .then(res => res.json())
-                .then(json => {
-                    if (json.success) {
-                        btn.innerHTML = '<i class="fa-solid fa-check"></i> Welcome!';
-                        setTimeout(() => location.reload(), 1000);
-                    } else {
-                        btn.innerHTML = originalHtml;
-                        alert('Error: ' + (json.message || 'Unknown error'));
-                    }
-                })
-                .catch(err => {
-                    btn.innerHTML = originalHtml;
-                    alert("Could not connect to server.");
-                });
-            }).catch((error) => {
-                alert("Google Login failed: " + error.message);
-            });
-        };
+        
     </script>
 
     <!-- MODALS -->
@@ -2661,3 +2612,5 @@ if (isset($con) && $con)
 
 </body>
 </html>
+
+

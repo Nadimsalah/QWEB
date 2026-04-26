@@ -652,22 +652,11 @@ if (isset($rawStatus)) {
     <!-- Firebase JS SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="assets/js/firebase-auth.js"></script>
 
     <script>
         // Init Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyBASRuasrBZ3NUIc2HyW8HJ8G3tkxhrmyA",
-            authDomain: "jibler-37339.firebaseapp.com",
-            databaseURL: "https://jibler-37339-default-rtdb.firebaseio.com",
-            projectId: "jibler-37339",
-            storageBucket: "jibler-37339.firebasestorage.app",
-            messagingSenderId: "874793508550",
-            appId: "1:874793508550:web:1e16215a9b53f2314a41c7",
-            measurementId: "G-6NWSEM7BK9"
-        };
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
+        
         const db = firebase.database();
         const chatRef = db.ref('Messages/<?= $orderId ?>');
 
@@ -1126,3 +1115,6 @@ if (isset($rawStatus)) {
     </script>
 </body>
 </html>
+
+
+

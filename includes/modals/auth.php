@@ -243,7 +243,7 @@
                     <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png"
                         style="width:20px; height:20px;"> Continue with Google
                 </a>
-                <a href="login_apple.php" class="social-btn btn-apple">
+                <a href="javascript:void(0)" onclick="appleLogin()" class="social-btn btn-apple">
                     <i class="fa-brands fa-apple"></i> Continue with Apple
                 </a>
                 <a href="javascript:void(0)" onclick="toggleEmailForm(true)" class="social-btn btn-email">
@@ -538,3 +538,8 @@
         });
     }
 </script>
+<!-- Firebase SDK (Compat Version) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="assets/js/firebase-auth.js"></script>
+
