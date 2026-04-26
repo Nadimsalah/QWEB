@@ -869,9 +869,9 @@ if (empty($posts)) {
                     <?php ob_start(); ?>
                     <!-- YouTube Shorts Style Reels Lane -->
                     <div class="feed-inline-reels"
-                        style="width:100vw;position:relative;left:50%;transform:translateX(-50%);padding:40px 0;margin-top:20px;margin-bottom:20px;background:transparent;overflow:hidden;border-top:1px solid rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.05);">
+                        style="width:100%;padding:40px 0;margin-top:20px;margin-bottom:20px;background:transparent;overflow:hidden;border-top:1px solid rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.05);">
                         <h3
-                            style="font-size:18px;font-weight:600;padding:0 max(20px,calc(50vw - 340px));margin-bottom:24px;color:var(--text-main);">
+                            style="font-size:18px;font-weight:600;padding:0 20px;margin-bottom:24px;color:var(--text-main);">
                             Stories &amp; Reels</h3>
 
                         <!-- Track: shimmer cards shown immediately, real cards injected by JS -->
@@ -2275,27 +2275,6 @@ if (empty($posts)) {
     <?php if (in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.0.0.1', '::1']) || strpos($_SERVER['HTTP_HOST'] ?? '', 'localhost') !== false): ?>
         <script src="assets/js/agentation-bundle.js"></script>
     <?php endif; ?>
-    <script>
-    // ── Block horizontal swipe rubber-banding on mobile browsers ──
-    (function() {
-        var startX = 0;
-        var startY = 0;
-
-        document.addEventListener('touchstart', function(e) {
-            startX = e.touches[0].clientX;
-            startY = e.touches[0].clientY;
-        }, { passive: true });
-
-        document.addEventListener('touchmove', function(e) {
-            var dx = Math.abs(e.touches[0].clientX - startX);
-            var dy = Math.abs(e.touches[0].clientY - startY);
-            // If horizontal movement is dominant, block it
-            if (dx > dy && dx > 5) {
-                e.preventDefault();
-            }
-        }, { passive: false });
-    })();
-    </script>
 </body>
 
 </html>
