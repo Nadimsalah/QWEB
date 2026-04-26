@@ -180,8 +180,8 @@ try {
 
                 if (!empty($finalRp)) {
                     $html .= '<div style="width:100%;padding:30px 0;margin-top:20px;margin-bottom:20px;background:transparent;overflow:hidden;border-top:1px solid rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.05);">';
-                    $html .= '<h3 style="font-size:18px;font-weight:600;padding:0 max(20px,calc(50vw - 320px));margin-bottom:24px;color:#f1c40f; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Try before buy</h3>';
-                    $html .= '<div class="no-scrollbar" style="display:flex;gap:16px;overflow-x:auto;padding:0 max(20px,calc(50vw - 320px));width:100%;scrollbar-width:none;">';
+                    $html .= '<h3 style="font-size:18px;font-weight:600;padding:0;margin-bottom:24px;color:#f1c40f; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Try before buy</h3>';
+                    $html .= '<div class="no-scrollbar" style="display:flex;gap:16px;overflow-x:auto;padding:0;width:100%;scrollbar-width:none;">';
                     foreach ($finalRp as $kp) {
                         $kpPhotoRaw = $kp['FoodPhoto'] ?? null;
                         $kpPhoto = get_img_url($kpPhotoRaw, $DomainNamee ?? null);
