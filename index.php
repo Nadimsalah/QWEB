@@ -600,6 +600,7 @@ if (empty($posts)) {
             padding: 16px 0 0 0 !important;
             margin-left: -40px !important;
             margin-right: -40px !important;
+            margin-bottom: 0 !important;
         }
         @media (max-width: 768px) {
             .categories-section {
@@ -608,7 +609,8 @@ if (empty($posts)) {
             }
         }
         .category-grid {
-            padding: 0 !important;
+            padding: 0 0 0 0 !important;
+            margin-bottom: 0 !important;
             gap: 24px !important;
         }
         .category-grid::after {
