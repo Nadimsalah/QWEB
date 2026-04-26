@@ -594,13 +594,16 @@ if (empty($posts)) {
             max-width: none !important;
         }
 
-        /* Force category cards to touch screen edges */
+        /* Force category cards to touch screen edges (match kenz.php) */
+        .categories-section {
+            overflow: hidden !important;
+        }
         .category-grid {
-            padding-left: 0 !important;
-            padding-right: 0 !important;
+            padding: 0 !important;
+            gap: 24px !important;
         }
         .category-grid::after {
-            flex: 0 0 0px !important;
+            display: none !important;
         }
         .cat-header {
             padding-left: 16px !important;
@@ -741,37 +744,29 @@ if (empty($posts)) {
                 </div>
             </div>
             <div class="category-grid" id="catGrid">
-                <?php
-                // Split categories 5 per 5 
-                $categoryChunks = array_chunk($categories, 5);
-                foreach ($categoryChunks as $chunk):
+                <?php foreach ($categories as $cat): ?>
+                    <?php
+                    $catTitle = $cat['EnglishCategory'] ?? $cat['ArabCategory'] ?? $cat['NameEn'] ?? '';
+                    if ($cat['CategoryId'] === 'flights') {
+                        $targetUrl = "flights.php";
+                    } elseif ($cat['CategoryId'] === 'esims') {
+                        $targetUrl = "esim.php";
+                    } else {
+                        $targetUrl = (stripos($catTitle, 'Kenz') !== false) ? "kenz.php?cat=" . $cat['CategoryId'] : "category.php?cat=" . $cat['CategoryId'];
+                    }
                     ?>
-                    <div class="cat-chunk" style="display: flex; gap: 24px; flex: 0 0 auto; scroll-snap-align: start;">
-                        <?php foreach ($chunk as $cat): ?>
-                            <?php
-                            $catTitle = $cat['EnglishCategory'] ?? $cat['ArabCategory'] ?? $cat['NameEn'] ?? '';
-                            if ($cat['CategoryId'] === 'flights') {
-                                $targetUrl = "flights.php";
-                            } elseif ($cat['CategoryId'] === 'esims') {
-                                $targetUrl = "esim.php";
-                            } else {
-                                $targetUrl = (stripos($catTitle, 'Kenz') !== false) ? "kenz.php?cat=" . $cat['CategoryId'] : "category.php?cat=" . $cat['CategoryId'];
-                            }
-                            ?>
-                            <a href="<?= $targetUrl ?>" style="text-decoration:none; color:inherit;">
-                                <div class="cat-card">
-                                    <div class="cat-img-wrapper">
-                                        <img class="cat-img" loading="lazy" src="<?= htmlspecialchars($cat['Photo'] ?? '') ?>"
-                                            onerror="this.src='https://ui-avatars.com/api/?name=S&background=2cb5e8&color=fff'">
-                                    </div>
-                                    <div class="cat-name">
-                                        <?= htmlspecialchars($catTitle) ?>
-                                    </div>
-                                    <div class="cat-tag">Explore</div>
-                                </div>
-                            </a>
-                        <?php endforeach; ?>
-                    </div>
+                    <a href="<?= $targetUrl ?>" style="text-decoration:none; color:inherit;">
+                        <div class="cat-card">
+                            <div class="cat-img-wrapper">
+                                <img class="cat-img" loading="lazy" src="<?= htmlspecialchars($cat['Photo'] ?? '') ?>"
+                                    onerror="this.src='https://ui-avatars.com/api/?name=S&background=2cb5e8&color=fff'">
+                            </div>
+                            <div class="cat-name">
+                                <?= htmlspecialchars($catTitle) ?>
+                            </div>
+                            <div class="cat-tag">Explore</div>
+                        </div>
+                    </a>
                 <?php endforeach; ?>
             </div>
         </section>
