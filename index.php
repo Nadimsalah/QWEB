@@ -594,25 +594,17 @@ if (empty($posts)) {
             max-width: none !important;
         }
 
-        /* Force category cards to touch screen edges (match kenz.php) */
+        /* Force category cards to touch screen edges WITHOUT negative margins */
         .categories-section {
-            width: auto !important; /* 'auto' allows negative margins to expand both sides! */
+            width: 100% !important;
             overflow: hidden !important;
             padding: 16px 0 0 0 !important;
-            margin-left: -40px !important;
-            margin-right: -40px !important;
-            margin-bottom: 0 !important;
-        }
-        @media (max-width: 768px) {
-            .categories-section {
-                margin-left: -20px !important;
-                margin-right: -20px !important;
-            }
+            margin: 0 !important;
         }
         .category-grid {
             display: flex !important;
             overflow-x: auto !important;
-            padding: 0 0 0 0 !important;
+            padding: 0 40px 0 40px !important;
             margin-bottom: 0 !important;
             gap: 24px !important;
             scrollbar-width: none !important;
@@ -624,17 +616,22 @@ if (empty($posts)) {
             display: none !important;
         }
         .category-grid::after {
-            display: none !important;
+            content: '' !important;
+            display: block !important;
+            flex: 0 0 20px !important;
         }
         .cat-header {
-            padding-left: 16px !important;
-            padding-right: 16px !important;
+            padding-left: 40px !important;
+            padding-right: 40px !important;
         }
-
         @media (max-width: 768px) {
-            .content-wrapper > main {
+            .cat-header {
                 padding-left: 20px !important;
                 padding-right: 20px !important;
+            }
+            .category-grid {
+                padding: 0 20px 0 20px !important;
+                gap: 16px !important;
             }
         }
         
@@ -888,42 +885,44 @@ if (empty($posts)) {
                 </div>
             </div>
 
-            <section class="categories-section">
-                <div class="cat-header">
-                    <h2 class="section-title">Mini Apps</h2>
-                    <div class="cat-nav">
-                        <button class="nav-arrow" id="scrollLeft"><i class="fa-solid fa-chevron-left"></i></button>
-                        <button class="nav-arrow" id="scrollRight"><i class="fa-solid fa-chevron-right"></i></button>
-                    </div>
-                </div>
-                <div class="category-grid" id="catGrid">
-                    <?php foreach ($categories as $cat): ?>
-                        <?php
-                        $catTitle = $cat['EnglishCategory'] ?? $cat['ArabCategory'] ?? $cat['NameEn'] ?? '';
-                        if ($cat['CategoryId'] === 'flights') {
-                            $targetUrl = "flights.php";
-                        } elseif ($cat['CategoryId'] === 'esims') {
-                            $targetUrl = "esim.php";
-                        } else {
-                            $targetUrl = (stripos($catTitle, 'Kenz') !== false) ? "kenz.php?cat=" . $cat['CategoryId'] : "category.php?cat=" . $cat['CategoryId'];
-                        }
-                        ?>
-                        <div class="cat-card" onclick="window.location.href='<?= $targetUrl ?>'">
-                            <div class="cat-img-wrapper">
-                                <img class="cat-img" loading="lazy" src="<?= htmlspecialchars($cat['Photo'] ?? '') ?>"
-                                    onerror="this.src='https://ui-avatars.com/api/?name=S&background=2cb5e8&color=fff'"
-                                    style="pointer-events: none; -webkit-user-drag: none;">
-                            </div>
-                            <div class="cat-name">
-                                <?= htmlspecialchars($catTitle) ?>
-                            </div>
-                            <div class="cat-tag">Explore</div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            </section>
-
+            <!-- End of main content block -->
         </main>
+
+        <!-- --- Mini Apps (Categories) Section --- -->
+        <section class="categories-section">
+            <div class="cat-header">
+                <h2 class="section-title">Mini Apps</h2>
+                <div class="cat-nav">
+                    <button class="nav-arrow" id="scrollLeft"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button class="nav-arrow" id="scrollRight"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+            </div>
+            <div class="category-grid" id="catGrid">
+                <?php foreach ($categories as $cat): ?>
+                    <?php
+                    $catTitle = $cat['EnglishCategory'] ?? $cat['ArabCategory'] ?? $cat['NameEn'] ?? '';
+                    if ($cat['CategoryId'] === 'flights') {
+                        $targetUrl = "flights.php";
+                    } elseif ($cat['CategoryId'] === 'esims') {
+                        $targetUrl = "esim.php";
+                    } else {
+                        $targetUrl = (stripos($catTitle, 'Kenz') !== false) ? "kenz.php?cat=" . $cat['CategoryId'] : "category.php?cat=" . $cat['CategoryId'];
+                    }
+                    ?>
+                    <div class="cat-card" onclick="window.location.href='<?= $targetUrl ?>'">
+                        <div class="cat-img-wrapper">
+                            <img class="cat-img" loading="lazy" src="<?= htmlspecialchars($cat['Photo'] ?? '') ?>"
+                                onerror="this.src='https://ui-avatars.com/api/?name=S&background=2cb5e8&color=fff'"
+                                style="pointer-events: none; -webkit-user-drag: none;">
+                        </div>
+                        <div class="cat-name">
+                            <?= htmlspecialchars($catTitle) ?>
+                        </div>
+                        <div class="cat-tag">Explore</div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </section>
 
         <!-- --- Feed Section --- -->
         <section class="feed-section">
