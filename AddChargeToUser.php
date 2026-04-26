@@ -50,28 +50,24 @@ $test=0;
 if($test==4 || empty($result)){	
 
 
-$res = mysqli_query($con,"SELECT SendMoneyPerc FROM OrdersJiblerpercentage");
-                        
-                                        $result = array();
-                        
-                                        while($row = mysqli_fetch_assoc($res)){
-                                       
-											$SendMoneyPerc = $row["SendMoneyPerc"];
-											
-                                                               
-                                        }
+$SendMoneyPerc = 0;
+$res = mysqli_query($con,"SELECT SendMoneyPerc FROM OrdersJiblerpercentage LIMIT 1");
+if($res && mysqli_num_rows($res) > 0){
+    $row = mysqli_fetch_assoc($res);
+    $SendMoneyPerc = floatval($row["SendMoneyPerc"] ?? 0);
+}
 
-$SendMoneyPercww = $Money - ($SendMoneyPerc * $Money / 100); 
+// Calculate the fee correctly
+$SendMoneyPercww = ($SendMoneyPerc * $Money) / 100; 
 $MoneyM = $Money - $SendMoneyPercww;
-$sql="UPDATE Users SET Balance = Balance + $MoneyM WHERE UserID = $ReceiverID";
-  if(mysqli_query($con,$sql))
-  {}
 
-$sql="UPDATE Users SET Balance = Balance - $Money WHERE UserID = $UserID";
-  if(mysqli_query($con,$sql))
-  {}
+$sql="UPDATE Users SET Balance = Balance + $MoneyM WHERE UserID = '$ReceiverID'";
+mysqli_query($con,$sql);
 
-	$res = mysqli_query($con,"SELECT name,UserPhoto,Email FROM Users WHERE UserID = $UserID");
+$sql="UPDATE Users SET Balance = Balance - $Money WHERE UserID = '$UserID'";
+mysqli_query($con,$sql);
+
+	$res = mysqli_query($con,"SELECT name,UserPhoto,Email FROM Users WHERE UserID = '$UserID'");
 	while($row = mysqli_fetch_assoc($res)){
 		
 		$SenderName  = $row["name"];
@@ -79,7 +75,7 @@ $sql="UPDATE Users SET Balance = Balance - $Money WHERE UserID = $UserID";
 		$SenderEmai  = $row["Email"];
 	}
 	
-	$res = mysqli_query($con,"SELECT name,UserFirebaseToken,UserPhoto,Email FROM Users WHERE UserID = $ReceiverID");
+	$res = mysqli_query($con,"SELECT name,UserFirebaseToken,UserPhoto,Email FROM Users WHERE UserID = '$ReceiverID'");
 	while($row = mysqli_fetch_assoc($res)){
 		
 		$RecieverName 		= $row["name"];
