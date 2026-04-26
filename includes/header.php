@@ -397,7 +397,6 @@ if (!isset($categories)) {
                     if (id) order.push(id);
                 });
                 document.cookie = "qoon_cat_order=" + order.join(',') + "; expires=Thu, 31 Dec 2030 12:00:00 UTC; path=/";
-                setTimeout(function() { window.location.reload(); }, 300);
             }
         });
     }
