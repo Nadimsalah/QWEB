@@ -144,6 +144,89 @@ try {
             }
         }
 
+        if (!function_exists('getTryBeforeBuyHtml')) {
+            function getTryBeforeBuyHtml($con, $DomainNamee)
+            {
+                if (!$con)
+                    return '';
+                $html = '';
+
+                // Fetch 10 random Fashion products
+                $rpQuery = "SELECT Foods.FoodID, Foods.FoodName, Foods.FoodPrice, Foods.FoodOfferPrice, Foods.FoodPhoto, Foods.FoodDesc, 
+                            Shops.ShopName, Shops.ShopLogo, Shops.ShopID, Categories.CategoryId, Foods.Extraone, Foods.Extratwo, Foods.ExtraPriceOne, Foods.ExtraPriceTwo
+                            FROM Foods 
+                            JOIN ShopsCategory ON Foods.FoodCatID = ShopsCategory.CategoryShopID
+                            JOIN Shops ON Shops.ShopID = ShopsCategory.ShopID
+                            JOIN Categories ON Categories.CategoryId = Shops.CategoryID
+                            WHERE (Categories.Pro IS NULL OR Categories.Pro != 'Pro')
+                              AND (Categories.Type IS NULL OR Categories.Type != 'B2B')
+                              AND (Categories.EnglishCategory LIKE '%Fashion%' OR Categories.ArabCategory LIKE '%Fashion%' OR Categories.CategoryId = 85)
+                              AND Foods.FoodPhoto != '' AND Foods.FoodPhoto IS NOT NULL AND Foods.FoodPhoto != 'NONE'
+                            ORDER BY RAND() 
+                            LIMIT 10";
+                
+                $finalRp = [];
+                $stmtRP = $con->prepare($rpQuery);
+                if ($stmtRP) {
+                    $stmtRP->execute();
+                    $rpRes = $stmtRP->get_result();
+                    if ($rpRes && $rpRes->num_rows > 0) {
+                        while ($row = $rpRes->fetch_assoc()) {
+                            $finalRp[] = $row;
+                        }
+                    }
+                    $stmtRP->close();
+                }
+
+                if (!empty($finalRp)) {
+                    $html .= '<div style="width:100%;padding:30px 0;margin-top:20px;margin-bottom:20px;background:transparent;overflow:hidden;border-top:1px solid rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.05);">';
+                    $html .= '<h3 style="font-size:18px;font-weight:600;padding:0 max(20px,calc(50vw - 320px));margin-bottom:24px;color:#f1c40f; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Try before buy</h3>';
+                    $html .= '<div class="no-scrollbar" style="display:flex;gap:16px;overflow-x:auto;padding:0 max(20px,calc(50vw - 320px));width:100%;scrollbar-width:none;">';
+                    foreach ($finalRp as $kp) {
+                        $kpPhotoRaw = $kp['FoodPhoto'] ?? null;
+                        $kpPhoto = get_img_url($kpPhotoRaw, $DomainNamee ?? null);
+                        $kpShopLogo = get_img_url($kp['ShopLogo'] ?? null, $DomainNamee ?? null);
+                        $kpName = htmlspecialchars($kp['FoodName'] ?? 'Fashion Item');
+                        $kpImg = htmlspecialchars($kpPhoto ?: 'https://ui-avatars.com/api/?name=Item&background=222&color=fff');
+                        $kpSLogo = htmlspecialchars($kpShopLogo ?: 'https://ui-avatars.com/api/?name=S');
+                        $kpSName = htmlspecialchars($kp['ShopName'] ?? 'Shop');
+                        $kpPriceHtml = (!empty($kp['FoodPrice']) && $kp['FoodPrice'] > 0) ? '<div style="font-size: 12px; font-weight: 700; color: #f1c40f;">' . htmlspecialchars($kp['FoodPrice']) . ' MAD</div>' : '';
+                        $kpPriceVal = floatval($kp['FoodOfferPrice'] ?? 0) > 0 ? floatval($kp['FoodOfferPrice']) : floatval($kp['FoodPrice'] ?? 0);
+                        $kpOldPrice = floatval($kp['FoodOfferPrice'] ?? 0) > 0 ? floatval($kp['FoodPrice'] ?? 0) : null;
+                        $foodJson = json_encode([
+                            'id' => $kp['FoodID'] ?? 0,
+                            'name' => $kp['FoodName'] ?? 'Product',
+                            'price' => $kpPriceVal,
+                            'oldPrice' => $kpOldPrice,
+                            'img' => $kpImg,
+                            'desc' => $kp['FoodDesc'] ?? '',
+                            'cat_id' => $kp['CategoryId'] ?? 0,
+                            'extra1' => $kp['Extraone'] ?? '',
+                            'extra2' => $kp['Extratwo'] ?? '',
+                            'extra1_p' => floatval($kp['ExtraPriceOne'] ?? 0),
+                            'extra2_p' => floatval($kp['ExtraPriceTwo'] ?? 0)
+                        ]);
+                        $html .= '<div style="flex: 0 0 160px; scroll-snap-align: start; display: flex; flex-direction: column; gap: 8px; cursor: pointer; border-radius: 16px; background: rgba(241, 196, 15, 0.05); border: 1px solid rgba(241, 196, 15, 0.2); overflow: hidden; padding-bottom: 12px; transition: background 0.2s;" onclick="openProductModal(this)" data-product=\'' . htmlspecialchars($foodJson, ENT_QUOTES, 'UTF-8') . '\'>
+                                      <div style="position:relative; width:100%; aspect-ratio:3/4;">
+                                          <img src="' . $kpImg . '" onerror="this.src=\'https://ui-avatars.com/api/?name=Item&background=222&color=fff\'" style="width:100%; height:100%; object-fit: cover; border-bottom: 1px solid rgba(241, 196, 15, 0.1);">
+                                          <div style="position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); color:#fff; font-size:10px; font-weight:700; padding:4px 8px; border-radius:99px; border:1px solid rgba(255,255,255,0.2);"><i class="fa-solid fa-vr-cardboard"></i> AR</div>
+                                      </div>
+                                      <div style="padding: 0 12px;">
+                                          <div style="font-size: 13px; font-weight: 600; color: #fff; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; margin-bottom: 4px;">' . $kpName . '</div>
+                                          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                                              <img src="' . $kpSLogo . '" onerror="this.src=\'https://ui-avatars.com/api/?name=S\'" style="width: 14px; height: 14px; border-radius: 50%; object-fit: cover;">
+                                              <span style="font-size: 11px; color: var(--text-muted); text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">' . $kpSName . '</span>
+                                          </div>
+                                          ' . $kpPriceHtml . '
+                                      </div>
+                                  </div>';
+                    }
+                    $html .= '</div></div>';
+                }
+                return $html;
+            }
+        }
+
         if (!function_exists('getDynamicReelsHtml')) {
             function getDynamicReelsHtml($con, $DomainNamee)
             {
@@ -291,6 +374,9 @@ try {
                         }
                         if ($globalIndex % 4 == 0 && $globalIndex >= 4) {
                             $htmlOut .= getRandomProductsHtml($con, $DomainNamee);
+                        }
+                        if ($globalIndex % 10 == 8 && $globalIndex >= 8) {
+                            $htmlOut .= getTryBeforeBuyHtml($con, $DomainNamee);
                         }
                         $ajaxIndex++;
                     }
