@@ -573,12 +573,18 @@
             justify-content: space-between;
             box-shadow: 0 10px 25px rgba(245, 0, 87, 0.4);
             z-index: 99000;
-            transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s, visibility 0.5s;
             cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            visibility: hidden;
         }
 
         #floating-cart-widget.visible {
             transform: translateX(-50%) translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+            visibility: visible;
         }
 
         .fc-info {
