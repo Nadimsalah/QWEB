@@ -161,8 +161,8 @@
         }
 
         html {
-            overscroll-behavior-y: none; /* Prevents pull-to-refresh bouncy scrolling */
-            overscroll-behavior-x: none; /* Prevents horizontal rubber-banding */
+            
+            
         }
         
         body {
@@ -172,7 +172,7 @@
             width: 100%;
             max-width: 100%;
             overflow-x: hidden !important; /* Block horizontal swipe */
-            overscroll-behavior-x: none; /* Prevents horizontal rubber-banding */
+            
             position: relative;
             margin: 0;
             padding: 0;

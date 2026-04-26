@@ -101,7 +101,7 @@ try {
                 if (!empty($finalRp)) {
                     $html .= '<div style="width:100%;padding:30px 0;margin-top:20px;margin-bottom:20px;background:transparent;overflow:hidden;border-top:1px solid rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.05);">';
                     $html .= '<h3 style="font-size:18px;font-weight:600;padding:0;margin-bottom:24px;color:var(--text-main);">Discover Products</h3>';
-                    $html .= '<div class="no-scrollbar" style="display:flex;gap:16px;overflow-x:auto;padding:0;width:100%;scrollbar-width:none; scroll-snap-type: x mandatory;">';
+                    $html .= '<div class="no-scrollbar" style="display:flex;gap:16px;overflow-x:auto;padding:0;width:100%;scrollbar-width:none; ">';
                     foreach ($finalRp as $kp) {
                         $kpPhotoRaw = $kp['FoodPhoto'] ?? $kp['PostPhoto'] ?? $kp['PostPhoto1'] ?? null;
                         $kpPhoto = get_img_url($kpPhotoRaw, $DomainNamee ?? null);
@@ -175,7 +175,7 @@ try {
 
                 $html = '<div class="feed-inline-reels" style="width:100vw;position:relative;left:50%;transform:translateX(-50%);padding:40px 0;margin-top:20px;margin-bottom:20px;background:transparent;overflow:hidden;border-top:1px solid rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.05);">';
                 $html .= '<h3 style="font-size:18px;font-weight:600;padding:0 max(20px,calc(50vw - 340px));margin-bottom:24px;color:var(--text-main);">Suggested Reels</h3>';
-                $html .= '<div id="reels-track-' . $uuid . '" class="reels-track" style="display:flex;gap:16px;overflow-x:auto;padding:0 max(20px,calc(50vw - 340px));scroll-padding-inline:max(20px,calc(50vw - 340px));width:100%;scrollbar-width:none;scroll-snap-type:x mandatory;">';
+                $html .= '<div id="reels-track-' . $uuid . '" class="reels-track" style="display:flex;gap:16px;overflow-x:auto;padding:0 max(20px,calc(50vw - 340px));scroll-padding-inline:max(20px,calc(50vw - 340px));width:100%;scrollbar-width:none;">';
 
                 while ($row = $res->fetch_assoc()) {
                     $rawThumb = str_replace('jibler.app', 'qoon.app', trim($row['Thumbnail'] ?? ''));
@@ -573,7 +573,7 @@ if (empty($posts)) {
         html, body {
             max-width: 100vw !important;
             overflow-x: hidden !important;
-            overscroll-behavior-x: none !important;
+            
         }
         
         .content-wrapper {
@@ -608,9 +608,7 @@ if (empty($posts)) {
             margin-bottom: 0 !important;
             gap: 24px !important;
             scrollbar-width: none !important;
-            scroll-snap-type: x mandatory !important;
             -webkit-overflow-scrolling: touch !important;
-            touch-action: pan-x !important;
         }
         .category-grid::-webkit-scrollbar {
             display: none !important;
@@ -808,7 +806,7 @@ if (empty($posts)) {
 
             <?php if (count($activeOrders) > 0): ?>
                 <div class="active-orders-slider no-scrollbar"
-                    style="display:flex; overflow-x:auto; scroll-snap-type: x mandatory; gap: 12px; padding-bottom: 8px; margin-bottom: 24px;">
+                    style="display:flex; overflow-x:auto;  gap: 12px; padding-bottom: 8px; margin-bottom: 24px;">
                     <?php foreach ($activeOrders as $ao):
                         $statusRaw = strtolower(trim($ao['OrderState'] ?? 'waiting'));
                         $statusMap = [
@@ -984,7 +982,7 @@ if (empty($posts)) {
 
                         <!-- Track: shimmer cards shown immediately, real cards injected by JS -->
                         <div id="reels-track" class="reels-track"
-                            style="display:flex;gap:16px;overflow-x:auto;padding:0 max(20px,calc(50vw - 320px));scroll-padding-inline:max(20px,calc(50vw - 320px));width:100%;scrollbar-width:none;scroll-snap-type:x mandatory;">
+                            style="display:flex;gap:16px;overflow-x:auto;padding:0 max(20px,calc(50vw - 320px));scroll-padding-inline:max(20px,calc(50vw - 320px));width:100%;scrollbar-width:none;">
 
                             <?php
                             /* â”€â”€ Pre-render shimmer placeholders (shown before JS loads) â”€â”€ */
@@ -1209,7 +1207,7 @@ if (empty($posts)) {
                                 <h3 style="font-size:18px;font-weight:600;padding:0;margin-bottom:24px;color:var(--text-main);">
                                     Suggested from Kenz Madinty</h3>
                                 <div class="no-scrollbar"
-                                    style="display:flex;gap:16px;overflow-x:auto;padding:0;width:100%;scrollbar-width:none; scroll-snap-type: x mandatory;">
+                                    style="display:flex;gap:16px;overflow-x:auto;padding:0;width:100%;scrollbar-width:none; ">
                                     <?php foreach ($kenzProducts as $kp): ?>
                                         <?php
                                         $kpPhotoRaw = $kp['FoodPhoto'] ?? $kp['PostPhoto'] ?? $kp['PostPhoto1'] ?? null;
@@ -1402,79 +1400,6 @@ if (empty($posts)) {
         });
 
 
-        // --- Continuous Smooth Auto-Scrolling (Right to Left flow) ---
-        const carousel = document.getElementById('promo-carousel');
-        let autoScrollSpeed = 0.8; // Moving scrollbar right makes content glide Leftwards!
-        let isUserHovering = false;
-
-        function autoScrollCarousel() {
-            if (!carousel) return;
-
-            if (!isUserHovering) {
-                carousel.scrollLeft += autoScrollSpeed;
-
-                // Calculate max boundaries safely
-                const maxScroll = carousel.scrollWidth - carousel.clientWidth;
-
-                // Ping-pong softly if it hits the edges, but ONLY if the track is actually wider than the screen
-                if (maxScroll > 10) {
-                    if (carousel.scrollLeft >= maxScroll - 2) {
-                        autoScrollSpeed = -0.8; // Reverse backwards smoothly
-                    } else if (carousel.scrollLeft <= 0) {
-                        autoScrollSpeed = 0.8; // Forwards again (Right to left)
-                    }
-                }
-            }
-            requestAnimationFrame(autoScrollCarousel);
-        }
-
-        if (carousel) {
-            // Start the buttery continuous scroll
-            requestAnimationFrame(autoScrollCarousel);
-
-            // Allow manual swipe on mobile without fighting the bot
-            carousel.addEventListener('touchstart', () => isUserHovering = true, { passive: true });
-            carousel.addEventListener('touchend', () => setTimeout(() => isUserHovering = false, 1500));
-            carousel.addEventListener('wheel', () => {
-                isUserHovering = true;
-                setTimeout(() => isUserHovering = false, 500);
-            }, { passive: true });
-
-            // --- Mouse Drag-To-Scroll Logic (Desktop) ---
-            let isDragging = false;
-            let startX;
-            let startScrollLeft;
-
-            carousel.style.cursor = 'grab';
-
-            carousel.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                isUserHovering = true; // Pause auto-scroll while physically grabbing
-                startX = e.pageX - carousel.offsetLeft;
-                startScrollLeft = carousel.scrollLeft;
-                carousel.style.cursor = 'grabbing';
-            });
-
-            carousel.addEventListener('mouseleave', () => {
-                isDragging = false;
-                isUserHovering = false; // Resume auto-scroll
-                carousel.style.cursor = 'grab';
-            });
-
-            carousel.addEventListener('mouseup', () => {
-                isDragging = false;
-                isUserHovering = false; // Resume auto-scroll
-                carousel.style.cursor = 'grab';
-            });
-
-            carousel.addEventListener('mousemove', (e) => {
-                if (!isDragging) return;
-                e.preventDefault();
-                const x = e.pageX - carousel.offsetLeft;
-                const dragDistance = (x - startX) * 1.5;
-                carousel.scrollLeft = startScrollLeft - dragDistance;
-            });
-        } // end if(carousel)
     </script>
 
     <!-- Reel Immersive Shorts Modal (outside script) -->
