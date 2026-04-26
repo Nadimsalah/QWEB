@@ -397,6 +397,15 @@ if (!isset($categories)) {
                     if (id) order.push(id);
                 });
                 document.cookie = "qoon_cat_order=" + order.join(',') + "; expires=Thu, 31 Dec 2030 12:00:00 UTC; path=/";
+                
+                // Sync the main page carousel horizontally without refresh
+                var mainCatGrid = document.getElementById('catGrid');
+                if (mainCatGrid) {
+                    order.forEach(function(id) {
+                        var card = mainCatGrid.querySelector('.cat-card[data-id="' + id + '"]');
+                        if (card) mainCatGrid.appendChild(card);
+                    });
+                }
             }
         });
     }

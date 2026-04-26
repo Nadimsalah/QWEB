@@ -918,7 +918,7 @@ if (empty($posts)) {
                         $targetUrl = (stripos($catTitle, 'Kenz') !== false) ? "kenz.php?cat=" . $cat['CategoryId'] : "category.php?cat=" . $cat['CategoryId'];
                     }
                     ?>
-                    <div class="cat-card" onclick="window.location.href='<?= $targetUrl ?>'">
+                    <div class="cat-card" data-id="<?= htmlspecialchars($cat['CategoryId']) ?>" onclick="window.location.href='<?= $targetUrl ?>'">
                         <div class="cat-img-wrapper">
                             <img class="cat-img" loading="lazy" src="<?= htmlspecialchars($cat['Photo'] ?? '') ?>"
                                 onerror="this.src='https://ui-avatars.com/api/?name=S&background=2cb5e8&color=fff'"
