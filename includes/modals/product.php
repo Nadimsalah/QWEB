@@ -460,6 +460,13 @@
             width: 100%; aspect-ratio: 1; position: relative;
             background: #111; flex-shrink: 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow: hidden;
+        }
+        .pm-img-wrap.scrolled {
+            aspect-ratio: 21/9;
+            opacity: 0.8;
+            border-bottom: 1px solid rgba(245, 0, 87, 0.3);
         }
         .pm-close {
             position: absolute; top: 20px; right: 20px;
@@ -1073,10 +1080,10 @@
             // Build Base Layout immediately
             modal.innerHTML = `
                 <button class="pm-close" onclick="closeProductModal()"><i class="fa-solid fa-xmark"></i></button>
-                <div class="pm-img-wrap">
+                <div class="pm-img-wrap" id="pm-img-wrap">
                     ${carouselHtml}
                 </div>
-                <div class="pm-scrollable">
+                <div class="pm-scrollable" id="pm-scroll-area">
                     <div class="pm-title">${data.name}</div>
                     <div class="pm-price-row">
                         <div class="pm-price" id="pm-display-price">${data.price} MAD</div>
@@ -1139,6 +1146,18 @@
             document.body.style.overflow = 'hidden';
 
             setTimeout(() => {
+                const scrollArea = document.getElementById('pm-scroll-area');
+                const imgWrap = document.getElementById('pm-img-wrap');
+                if (scrollArea && imgWrap) {
+                    scrollArea.addEventListener('scroll', () => {
+                        if (scrollArea.scrollTop > 30) {
+                            imgWrap.classList.add('scrolled');
+                        } else {
+                            imgWrap.classList.remove('scrolled');
+                        }
+                    });
+                }
+
                 const slidesContainer = document.getElementById('pm-slides');
                 if (slidesContainer) {
                     slidesContainer.addEventListener('scroll', () => {
