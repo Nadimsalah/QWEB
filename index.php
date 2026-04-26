@@ -562,7 +562,7 @@ if (empty($posts)) {
             console.error("Firebase Initialization Error:", e);
         }
     </script>
-    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/main.css?v=<?= time() ?>">
     <style>
         /* ─── PREMIUM UI ENHANCEMENTS ─── */
 
