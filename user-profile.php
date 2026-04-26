@@ -370,7 +370,7 @@ $uOrders = intval($userData['UserOrdersNum'] ?? 0);
             <a href="orders.php" style="background:#fff; color:#000; padding:16px; border-radius:20px; font-weight:700; text-decoration:none; text-align:center; display:flex; align-items:center; justify-content:center; gap:8px;">
                 <i class="fa-solid fa-clock-rotate-left"></i> My Orders
             </a>
-            <a href="logout.php" style="background:rgba(255, 59, 48, 0.1); color:#ff3b30; padding:16px; border-radius:20px; font-weight:700; text-decoration:none; text-align:center; border:1px solid rgba(255, 59, 48, 0.2);">
+            <a href="logout.php" target="_parent" style="background:rgba(255, 59, 48, 0.1); color:#ff3b30; padding:16px; border-radius:20px; font-weight:700; text-decoration:none; text-align:center; border:1px solid rgba(255, 59, 48, 0.2);">
                 <i class="fa-solid fa-right-from-bracket"></i> Logout
             </a>
         </div>
