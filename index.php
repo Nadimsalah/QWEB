@@ -891,7 +891,7 @@ if (empty($posts)) {
         <!-- --- Mini Apps (Categories) Section --- -->
         <section class="categories-section">
             <div class="cat-header">
-                <h2 class="section-title">Mini Apps</h2>
+                <h3 style="font-size: 18px; font-weight: 600; margin: 0; color: var(--text-main);">Mini Apps</h3>
                 <div class="cat-nav">
                     <button class="nav-arrow" id="scrollLeft"><i class="fa-solid fa-chevron-left"></i></button>
                     <button class="nav-arrow" id="scrollRight"><i class="fa-solid fa-chevron-right"></i></button>
@@ -949,14 +949,14 @@ if (empty($posts)) {
                     <?php ob_start(); ?>
                     <!-- YouTube Shorts Style Reels Lane -->
                     <div class="feed-inline-reels"
-                        style="margin: 20px -20px; padding: 40px 0; background: transparent; border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        style="margin: 20px calc(-50vw + 50%); width: 100vw; padding: 40px 0; background: transparent; border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05);">
                         <h3
-                            style="font-size:18px;font-weight:600;padding:0 max(20px,calc(50vw - 340px));margin-bottom:24px;color:var(--text-main);">
+                            style="font-size:18px;font-weight:600;padding:0 max(20px,calc(50vw - 320px));margin-bottom:24px;color:var(--text-main);">
                             Stories &amp; Reels</h3>
 
                         <!-- Track: shimmer cards shown immediately, real cards injected by JS -->
                         <div id="reels-track" class="reels-track"
-                            style="display:flex;gap:16px;overflow-x:auto;padding:0 max(20px,calc(50vw - 340px));scroll-padding-inline:max(20px,calc(50vw - 340px));width:100%;scrollbar-width:none;scroll-snap-type:x mandatory;">
+                            style="display:flex;gap:16px;overflow-x:auto;padding:0 max(20px,calc(50vw - 320px));scroll-padding-inline:max(20px,calc(50vw - 320px));width:100%;scrollbar-width:none;scroll-snap-type:x mandatory;">
 
                             <?php
                             /* â”€â”€ Pre-render shimmer placeholders (shown before JS loads) â”€â”€ */
