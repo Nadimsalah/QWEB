@@ -597,6 +597,7 @@ if (empty($posts)) {
         /* Force category cards to touch screen edges (match kenz.php) */
         .categories-section {
             overflow: hidden !important;
+            padding: 16px 0 0 0 !important;
         }
         .category-grid {
             padding: 0 !important;
