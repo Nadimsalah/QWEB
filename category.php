@@ -148,8 +148,6 @@ if ($con && count($shops)) {
             $reels[] = $row;
 }
 
-if (isset($con) && $con)
-    mysqli_close($con);
 ?><!DOCTYPE html>
 <html lang="en">
 

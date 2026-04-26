@@ -3,16 +3,11 @@ if (!isset($categories)) {
     $categories = [];
     try {
         if ($con) {
-            $stmtC = $con->prepare("SELECT * FROM Categories WHERE Type='Top' AND Pro != 'Pro' ORDER BY priority DESC LIMIT 20");
-            if ($stmtC) {
-                $stmtC->execute();
-                $result = $stmtC->get_result();
-                if ($result && $result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
-                        $categories[] = $row;
-                    }
+            $resC = $con->query("SELECT * FROM Categories WHERE Type='Top' AND Pro != 'Pro' ORDER BY priority DESC LIMIT 20");
+            if ($resC && $resC->num_rows > 0) {
+                while ($row = $resC->fetch_assoc()) {
+                    $categories[] = $row;
                 }
-                $stmtC->close();
             }
         }
     } catch (Throwable $e) {}
