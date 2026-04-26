@@ -2091,6 +2091,12 @@ if (empty($posts)) {
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has('auth_required')) {
+                // Remove auth_required from URL immediately to prevent reopening on back/forward swipes
+                urlParams.delete('auth_required');
+                const newQuery = urlParams.toString();
+                const newUrl = window.location.pathname + (newQuery ? '?' + newQuery : '');
+                window.history.replaceState({}, document.title, newUrl);
+
                 // If the user was redirected here from a protected page
                 setTimeout(() => {
                     if (typeof openSignup === 'function') openSignup();
