@@ -610,9 +610,22 @@ if (empty($posts)) {
             }
         }
         .category-grid {
+            display: flex !important;
+            overflow-x: auto !important;
             padding: 0 0 0 0 !important;
             margin-bottom: 0 !important;
             gap: 24px !important;
+            scrollbar-width: none !important;
+            scroll-snap-type: x mandatory !important;
+            -webkit-overflow-scrolling: touch !important;
+        }
+        .category-grid::-webkit-scrollbar {
+            display: none !important;
+        }
+        .category-grid > a {
+            display: block !important;
+            flex: 0 0 auto !important;
+            scroll-snap-align: start !important;
         }
         .category-grid::after {
             display: none !important;
