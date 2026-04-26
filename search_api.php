@@ -15,15 +15,19 @@ $safe = $con->real_escape_string($q);
 
 $results = ['shops' => [], 'products' => [], 'posts' => [], 'reels' => []];
 
-function getSearchImage($photoRaw, $name, $domain) {
-    if (!$photoRaw || $photoRaw === '0') return 'https://ui-avatars.com/api/?name='.urlencode($name).'&background=222&color=fff';
+function getSearchImage($photoRaw, $name, $domain)
+{
+    if (!$photoRaw || $photoRaw === '0')
+        return 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&background=222&color=fff';
     if (strpos($photoRaw, '[') === 0) {
         $decoded = json_decode($photoRaw, true);
-        if (is_array($decoded) && count($decoded) > 0) $photoRaw = $decoded[0];
+        if (is_array($decoded) && count($decoded) > 0)
+            $photoRaw = $decoded[0];
     }
     // Return direct HTTP links immediately, bypassing localhost rewrites
-    if (strpos($photoRaw, 'http') === 0) return $photoRaw;
-    
+    if (strpos($photoRaw, 'http') === 0)
+        return $photoRaw;
+
     return rtrim($domain, '/') . '/photo/' . ltrim($photoRaw, '/');
 }
 
@@ -37,9 +41,9 @@ $sql = "SELECT ShopID, ShopName, ShopLogo, ShopCover, CategoryId
 $r = $con->query($sql);
 if ($r) {
     while ($row = $r->fetch_assoc()) {
-        $row['ShopLogo']  = getSearchImage($row['ShopLogo'],  $row['ShopName'], $DomainNamee);
+        $row['ShopLogo'] = getSearchImage($row['ShopLogo'], $row['ShopName'], $DomainNamee);
         $row['ShopCover'] = getSearchImage($row['ShopCover'], $row['ShopName'], $DomainNamee);
-        $row['ShopDesc']  = 'Shop';
+        $row['ShopDesc'] = 'Shop';
         $results['shops'][] = $row;
     }
 }
@@ -58,40 +62,10 @@ $r = $con->query($sql);
 if ($r) {
     while ($row = $r->fetch_assoc()) {
         $row['FoodImage'] = getSearchImage($row['FoodImage'], $row['FoodName'], $DomainNamee);
-        $row['ShopLogo']  = getSearchImage($row['ShopLogo'],  $row['ShopName'], $DomainNamee);
-        $row['is_global'] = false;
+        $row['ShopLogo'] = getSearchImage($row['ShopLogo'], $row['ShopName'], $DomainNamee);
         $results['products'][] = $row;
     }
 }
-
-// ─── 2.5 ALIEXPRESS PRODUCTS (GLOBAL SEARCH) ─────────────────────────────────
-// ─── 2.5 ALIEXPRESS PRODUCTS (GLOBAL SEARCH) ─────────────────────────────────
-if (file_exists('aliexpress_api.php')) {
-    require_once 'aliexpress_api.php';
-} elseif (file_exists('dash/aliexpress_api.php')) {
-    require_once 'dash/aliexpress_api.php';
-} elseif (file_exists('../dash/aliexpress_api.php')) {
-    require_once '../dash/aliexpress_api.php';
-}
-
-if (function_exists('getAliExpressSearch')) {
-    $globalSearch = getAliExpressSearch($q);
-    foreach ($globalSearch as $g) {
-        $results['products'][] = [
-            'FoodID' => $g['id'],
-            'FoodName' => $g['name'],
-            'FoodDesc' => $g['desc'],
-            'FoodPrice' => $g['price'],
-            'oldPrice' => $g['oldPrice'],
-            'FoodImage' => $g['img'],
-            'ShopID' => 'ali',
-            'ShopName' => $g['shopName'],
-            'ShopLogo' => $g['shopLogo'],
-            'is_global' => true
-        ];
-    }
-}
-
 
 // ─── 3. POSTS ─────────────────────────────────────────────────────────────────
 $sql = "SELECT p.PostId AS PostID, p.PostText, p.PostPhoto as Photo, p.CreatedAtPosts as PostDate,
@@ -107,7 +81,7 @@ $sql = "SELECT p.PostId AS PostID, p.PostText, p.PostPhoto as Photo, p.CreatedAt
 $r = $con->query($sql);
 if ($r) {
     while ($row = $r->fetch_assoc()) {
-        $row['Photo']    = getSearchImage($row['Photo'],    '', $DomainNamee);
+        $row['Photo'] = getSearchImage($row['Photo'], '', $DomainNamee);
         $row['ShopLogo'] = getSearchImage($row['ShopLogo'], $row['ShopName'], $DomainNamee);
         $results['posts'][] = $row;
     }
@@ -128,7 +102,7 @@ $r = $con->query($sql);
 if ($r) {
     while ($row = $r->fetch_assoc()) {
         $row['Thumbnail'] = getSearchImage($row['BunnyS'] ?: $row['Video'], '', $DomainNamee);
-        $row['ShopLogo']  = getSearchImage($row['ShopLogo'], $row['ShopName'], $DomainNamee);
+        $row['ShopLogo'] = getSearchImage($row['ShopLogo'], $row['ShopName'], $DomainNamee);
         $results['reels'][] = $row;
     }
 }

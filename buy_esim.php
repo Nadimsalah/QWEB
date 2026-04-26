@@ -9,19 +9,14 @@ if (empty($offerId)) {
     exit;
 }
 
-$accessCode = '473ead5bb2944631b9c313ae4713a450';
-$apiUrl = "https://api.esimaccess.com/api/v1/open/esim/order";
+$token = 'sand_81a14687-4596-4d2f-a3c5-e238d873057869ed4aebbf7c25ab4cfc9e19';
+$apiUrl = "https://api.zendit.io/v1/esim/purchases";
 
 $transactionId = "qoon_esim_" . time() . "_" . rand(1000, 9999);
 
 $payload = json_encode([
-    "transactionId" => $transactionId,
-    "packageInfoList" => [
-        [
-            "packageCode" => $offerId,
-            "count" => 1
-        ]
-    ]
+    "offerId" => $offerId,
+    "transactionId" => $transactionId
 ]);
 
 $ch = curl_init();
@@ -30,37 +25,27 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    "RT-AccessCode: $accessCode",
+    "Authorization: Bearer $token",
     "Content-Type: application/json",
     "Accept: application/json"
 ]);
-curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+curl_setopt($ch, CURLOPT_TIMEOUT, 15);
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
 $response = curl_exec($ch);
 $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
 
-$data = json_decode($response, true);
-
-if ($httpCode === 200 && isset($data['success']) && $data['success'] == true) {
-    // The API might return the order details, esim details, etc.
+if ($httpCode === 200 || $httpCode === 201) {
     echo json_encode([
         'success' => true,
-        'transactionId' => $data['obj']['orderNo'] ?? $transactionId, // Using their orderNo or our transactionId
-        'providerResponse' => $data['obj'] ?? null
+        'transactionId' => $transactionId
     ]);
 } else {
-    // Server-side logging for failed purchase payloads
-    $logMsg = date('[Y-m-d H:i:s]') . " eSIM Access Purchase Failed - TransactionID: $transactionId - OfferID: $offerId - HTTP: $httpCode - Response: $response\n";
-    file_put_contents(__DIR__ . '/esim_purchase_errors.log', $logMsg, FILE_APPEND);
-
-    $errorDisplay = isset($data['errorMsg']) ? $data['errorMsg'] : 'API Error';
-    
+    $err = json_decode($response, true);
     echo json_encode([
         'success' => false,
-        'message' => $errorDisplay,
-        'debug' => 'Check server error logs for details.'
+        'message' => $err['message'] ?? 'API Error'
     ]);
 }
 ?>

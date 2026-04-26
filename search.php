@@ -707,46 +707,15 @@ $isLoggedIn = !empty($userId);
 
             const productsSec = document.getElementById('sec-products');
             productsSec.style.display = products.length ? 'block' : 'none';
-            document.getElementById('products-grid').innerHTML = products.map(p => {
-                if (p.is_global) {
-                    const foodJson = JSON.stringify({
-                        id: p.FoodID,
-                        name: p.FoodName,
-                        price: p.FoodPrice,
-                        oldPrice: p.oldPrice || null,
-                        img: p.FoodImage,
-                        desc: p.FoodDesc,
-                        cat_id: 999,
-                        extra1: '',
-                        extra2: '',
-                        extra1_p: 0,
-                        extra2_p: 0
-                    }).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
-
-                    return `
-                    <div class="product-card" onclick="openProductModal(this)" data-product="${foodJson}">
-                      <div style="position:relative;">
-                        <img class="product-img" src="${p.FoodImage}" onerror="this.src='https://ui-avatars.com/api/?name=Global&background=E62E04&color=fff'" alt="" referrerpolicy="no-referrer">
-                        <div style="position:absolute;top:8px;right:8px;background:#E62E04;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;">Global</div>
-                      </div>
-                      <div class="product-body">
-                        <div class="product-name">${hl(p.FoodName, q)}</div>
-                        <div class="product-price">${parseFloat(p.FoodPrice || 0).toFixed(0)} MAD</div>
-                        <div class="product-shop">${p.ShopName}</div>
-                      </div>
-                    </div>`;
-                } else {
-                    return `
-                    <div class="product-card" onclick="window.location.href='shop.php?id=${p.ShopID}'">
-                      <img class="product-img" src="${p.FoodImage}" onerror="this.src='https://ui-avatars.com/api/?name=Item&background=222&color=fff'" alt="">
-                      <div class="product-body">
-                        <div class="product-name">${hl(p.FoodName, q)}</div>
-                        <div class="product-price">${parseFloat(p.FoodPrice || 0).toFixed(0)} MAD</div>
-                        <div class="product-shop">${p.ShopName}</div>
-                      </div>
-                    </div>`;
-                }
-            }).join('');
+            document.getElementById('products-grid').innerHTML = products.map(p => `
+    <div class="product-card" onclick="window.location.href='shop.php?id=${p.ShopID}'">
+      <img class="product-img" src="${p.FoodImage}" onerror="this.src='https://ui-avatars.com/api/?name=Item&background=222&color=fff'" alt="">
+      <div class="product-body">
+        <div class="product-name">${hl(p.FoodName, q)}</div>
+        <div class="product-price">${parseFloat(p.FoodPrice || 0).toFixed(0)} MAD</div>
+        <div class="product-shop">${p.ShopName}</div>
+      </div>
+    </div>`).join('');
 
             const postsSec = document.getElementById('sec-posts');
             postsSec.style.display = posts.length ? 'block' : 'none';
@@ -773,7 +742,6 @@ $isLoggedIn = !empty($userId);
     </script>
 
     <?php require_once 'includes/modals/auth.php'; ?>
-    <?php include 'includes/modals/product.php'; ?>
 </body>
 
 </html>

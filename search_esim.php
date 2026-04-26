@@ -10,21 +10,14 @@ if (empty($countryCode)) {
     exit;
 }
 
-$accessCode = '473ead5bb2944631b9c313ae4713a450';
-$apiUrl = "https://api.esimaccess.com/api/v1/open/package/list";
-
-$payload = json_encode([
-    'locationCode' => $countryCode
-]);
+$token = 'sand_81a14687-4596-4d2f-a3c5-e238d873057869ed4aebbf7c25ab4cfc9e19';
+$apiUrl = "https://api.zendit.io/v1/esim/offers?_limit=50&_offset=0&country=" . urlencode($countryCode);
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $apiUrl);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-curl_setopt($ch, CURLOPT_POST, 1);
-curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    "RT-AccessCode: $accessCode",
-    "Content-Type: application/json",
+    "Authorization: Bearer $token",
     "Accept: application/json"
 ]);
 curl_setopt($ch, CURLOPT_TIMEOUT, 15);
@@ -38,64 +31,46 @@ $plans = [];
 
 if ($httpCode === 200 && $response) {
     $data = json_decode($response, true);
-    if (isset($data['success']) && $data['success'] == true && isset($data['obj']['packageList'])) {
-        foreach ($data['obj']['packageList'] as $offer) {
-            
-            // Volume is in bytes (usually), let's parse it to GB or MB
-            $volumeBytes = isset($offer['volume']) ? floatval($offer['volume']) : 0;
-            $dataAmount = "Unlimited Data";
-            if ($volumeBytes > 0) {
-                $gb = $volumeBytes / (1024 * 1024 * 1024); // Assuming bytes
-                // Sometimes volume is in Megabytes? Actually the API doc says "Data values are in Bytes."
-                if ($gb >= 1) {
-                    $dataAmount = round($gb, 1) . " GB";
-                } else {
-                    $mb = $volumeBytes / (1024 * 1024);
-                    $dataAmount = round($mb) . " MB";
-                }
+    if (isset($data['list']) && is_array($data['list'])) {
+        foreach ($data['list'] as $offer) {
+            $dataAmount = ($offer['dataUnlimited'] ?? false) ? "Unlimited Data" : ($offer['dataGB'] ?? 0) . " GB";
+            $validity = ($offer['durationDays'] ?? 0) . " Days";
+
+            // Format price using price details or fallback to cost if price missing
+            $priceVal = 0;
+            $divisor = 1;
+
+            if (isset($offer['price']) && isset($offer['price']['suggestedFixed'])) {
+                $priceVal = $offer['price']['suggestedFixed'];
+                $divisor = isset($offer['price']['currencyDivisor']) ? $offer['price']['currencyDivisor'] : 1;
+            } elseif (isset($offer['cost']) && isset($offer['cost']['fixed'])) {
+                $priceVal = $offer['cost']['fixed'] * 1.3;
+                $divisor = isset($offer['cost']['currencyDivisor']) ? $offer['cost']['currencyDivisor'] : 1;
             }
-            
-            $validity = ($offer['duration'] ?? 0) . " " . ($offer['durationUnit'] ?? "Days");
-            
-            // eSIM Access API price is typically in cents or directly in currency?
-            // "retailPrice": 71000 => usually this means cents if it's high, wait, 71000 might be $7.1 or something.
-            // Documentation says "price: 10000". It's likely 4 decimals or cents.
-            // Let's divide by 10000 for a realistic price, usually APIs use 10000 for $1.0000
-            $rawPrice = isset($offer['retailPrice']) ? floatval($offer['retailPrice']) : (isset($offer['price']) ? floatval($offer['price']) : 50000);
-            $priceVal = $rawPrice / 10000;
-            if ($priceVal < 0.1) $priceVal = $rawPrice / 100; // fallback if it was cents
-            
-            // Add a 20% margin
-            $priceVal = $priceVal * 1.20;
+
+            if ($divisor > 1 && $priceVal > 0) {
+                $priceVal = $priceVal / $divisor;
+            }
+
+            if ($priceVal <= 0)
+                $priceVal = 5.00; // Failsafe
+
             $priceStr = "$" . number_format($priceVal, 2);
 
-            // Extract operator from locationNetworkList
-            $operator = "Multiple Networks";
-            if (isset($offer['locationNetworkList']) && is_array($offer['locationNetworkList'])) {
-                foreach ($offer['locationNetworkList'] as $loc) {
-                    if (strtoupper($loc['locationCode'] ?? '') === $countryCode) {
-                        if (isset($loc['operatorList']) && is_array($loc['operatorList']) && count($loc['operatorList']) > 0) {
-                            $operatorNames = array_map(function($op) { return $op['operatorName']; }, $loc['operatorList']);
-                            $operator = implode(", ", $operatorNames);
-                        }
-                    }
-                }
-            }
-
             $plans[] = [
-                "id" => $offer['packageCode'] ?? '',
+                "id" => $offer['offerId'],
                 "data" => $dataAmount,
                 "validity" => $validity,
                 "price" => $priceStr,
                 "country" => ucfirst($country ?: "Global"),
-                "provider" => $operator
+                "provider" => $offer['brandName'] ?? "Zendit"
             ];
         }
     }
 }
 
 // Sort plans by price (cheapest first)
-usort($plans, function($a, $b) {
+usort($plans, function ($a, $b) {
     $pa = floatval(str_replace('$', '', $a['price']));
     $pb = floatval(str_replace('$', '', $b['price']));
     return $pa <=> $pb;
