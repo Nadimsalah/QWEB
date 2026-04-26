@@ -1,36 +1,87 @@
 <?php
-$url = "https://docs.esimaccess.com/api/collections/11154627/2s93mBxf3q?environment=11154627-1a6283c8-0422-49ea-adea-0919cf18c0cc&segregateAuth=true&versionTag=latest";
+$files = glob('*.php');
+$collection = [
+    'info' => [
+        'name' => 'QOON Backend API Collection',
+        'description' => 'Auto-generated API documentation for the QOON mobile application.',
+        'schema' => 'https://schema.getpostman.com/json/collection/v2.1.0/collection.json'
+    ],
+    'item' => []
+];
 
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $url);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-    "Accept: application/json"
-]);
-$data = curl_exec($ch);
-curl_close($ch);
+$exclude = ['index.php', 'conn.php', 'scratch_db.php', 'settings.php', 'profile.php', 'shop.php', 'category.php', 'reel.php', 'flights.php', 'esim.php', 'hotels.php', 'track_order.php', 'topup.php', 'send.php', 'qpay.php', 'parse_postman.php', 'restore.py'];
 
-$json = json_decode($data, true);
+foreach ($files as $file) {
+    if (in_array(strtolower($file), array_map('strtolower', $exclude)) || strpos($file, 'test_') === 0 || strpos($file, 'ui_') === 0) continue;
+    
+    $content = file_get_contents($file);
+    
+    // Quick heuristic: does it have json_encode or look like an API?
+    if (strpos($content, 'json_encode') === false && strpos($content, '$_POST') === false && strpos($content, '$_GET') === false) continue;
+    
+    preg_match_all('/\$_POST\s*\[\s*[\'"](.*?)[\'"]\s*\]/', $content, $postMatches);
+    preg_match_all('/\$_GET\s*\[\s*[\'"](.*?)[\'"]\s*\]/', $content, $getMatches);
+    preg_match_all('/\$_FILES\s*\[\s*[\'"](.*?)[\'"]\s*\]/', $content, $filesMatches);
+    
+    $postParams = array_unique($postMatches[1]);
+    $getParams = array_unique($getMatches[1]);
+    $fileParams = array_unique($filesMatches[1]);
+    
+    // Check inside extract($_POST)
+    if (strpos($content, 'extract($_POST)') !== false) {
+        $postParams[] = 'EXTRACT_POST_VARS (Manual Check Required)';
+    }
 
-if (!$json || !isset($json['collection']['item'])) {
-    echo "Failed to get collection data.\n";
-    echo $data;
-    exit;
-}
-
-function extractUrls($items) {
-    foreach ($items as $item) {
-        if (isset($item['item'])) {
-            extractUrls($item['item']);
-        } elseif (isset($item['request']['url']['raw'])) {
-            echo $item['name'] . ": " . $item['request']['method'] . " " . $item['request']['url']['raw'] . "\n";
-        } elseif (isset($item['request']['url'])) {
-            $url = is_string($item['request']['url']) ? $item['request']['url'] : (isset($item['request']['url']['raw']) ? $item['request']['url']['raw'] : json_encode($item['request']['url']));
-            echo $item['name'] . ": " . $item['request']['method'] . " " . $url . "\n";
+    // Grouping
+    $folder = 'General';
+    if (strpos(strtolower($file), 'driver') !== false) $folder = 'Driver';
+    elseif (strpos(strtolower($file), 'shop') !== false) $folder = 'Shop';
+    elseif (strpos(strtolower($file), 'user') !== false) $folder = 'User';
+    elseif (strpos(strtolower($file), 'order') !== false) $folder = 'Orders';
+    elseif (strpos(strtolower($file), 'post') !== false || strpos(strtolower($file), 'comment') !== false) $folder = 'Posts & Comments';
+    elseif (strpos(strtolower($file), 'jibler') !== false) $folder = 'Jibler';
+    
+    $request = [
+        'name' => $file,
+        'request' => [
+            'method' => (!empty($postParams) || !empty($fileParams)) ? 'POST' : 'GET',
+            'url' => [
+                'raw' => '{{base_url}}/' . $file . (!empty($getParams) ? '?' . implode('&', array_map(function($p){return $p.'=<value>';}, $getParams)) : ''),
+                'host' => ['{{base_url}}'],
+                'path' => [$file],
+                'query' => []
+            ]
+        ],
+        'response' => []
+    ];
+    
+    foreach ($getParams as $param) {
+        $request['request']['url']['query'][] = ['key' => $param, 'value' => '<value>'];
+    }
+    
+    if (!empty($postParams) || !empty($fileParams)) {
+        $request['request']['body'] = [
+            'mode' => 'formdata',
+            'formdata' => []
+        ];
+        foreach ($postParams as $param) {
+            $request['request']['body']['formdata'][] = ['key' => $param, 'value' => '<value>', 'type' => 'text'];
+        }
+        foreach ($fileParams as $param) {
+            $request['request']['body']['formdata'][] = ['key' => $param, 'type' => 'file'];
         }
     }
+    
+    if (!isset($collection['item'][$folder])) {
+        $collection['item'][$folder] = [
+            'name' => $folder,
+            'item' => []
+        ];
+    }
+    $collection['item'][$folder]['item'][] = $request;
 }
 
-extractUrls($json['collection']['item']);
+$collection['item'] = array_values($collection['item']);
+
+file_put_contents('QOON_Postman_Collection.json', json_encode($collection, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+echo 'Success';
