@@ -32,9 +32,17 @@ $history = [];
 // 1. Transactions
 $res = $con->query("SELECT *, 'tx' as type FROM UserTransaction WHERE UserID = '$userId' ORDER BY UserTransactionID DESC LIMIT 50");
 if($res) {
+    $now = time();
+    $i = 0;
     while($row = $res->fetch_assoc()) {
-        $row['sort_date'] = $row['CreatedAt'] ?? '2024-01-01';
+        $date = $row['CreatedAt'] ?? $row['Date'] ?? $row['Time'] ?? null;
+        if (!$date || $date == '0000-00-00 00:00:00') {
+            // Give it a recent date that decreases slightly so sorting works chronologically
+            $date = date('Y-m-d H:i:s', $now - ($i * 60)); 
+        }
+        $row['sort_date'] = $date;
         $history[] = $row;
+        $i++;
     }
 }
 
@@ -266,34 +274,68 @@ usort($history, function($a, $b) {
                     $isOrder = ($item['type'] == 'order');
                     if($item['type'] == 'tx'):
                         $isIncome = (isset($item['MoneyPlusOrLess']) && strtolower($item['MoneyPlusOrLess']) !== 'less');
-                        $icon = $isIncome ? 'fa-arrow-down-long' : 'fa-arrow-up-long';
                         $class = $isIncome ? 'income' : 'expense';
                         
-                        $otherParty = $isIncome ? $item['DistnationName'] : $item['DriverName'];
-                        $title = !empty($otherParty) ? $otherParty : ($isIncome ? 'Top-up' : 'Payment');
+                        // Extract name and photo based on transaction direction
+                        $otherPartyName = $isIncome ? $item['DistnationName'] : $item['DriverName'];
+                        $otherPartyPhoto = $isIncome ? $item['DistnationPhoto'] : $item['Driverphoto'];
                         
+                        $title = !empty($otherPartyName) ? $otherPartyName : ($isIncome ? 'Top-up' : 'Payment');
                         if($title == 'Jibler') $title = 'QOON';
+
+                        // Process the photo URL
+                        if (!$otherPartyPhoto || $otherPartyPhoto == 'NONE' || $otherPartyPhoto == '0' || $otherPartyPhoto == 'Jibler') {
+                            if($title == 'QOON') {
+                                $avatarHtml = '<img src="qoon_pay_logo.png" style="width:100%; height:100%; object-fit:contain; padding:5px; background:#fff; border-radius:50%;">';
+                            } else {
+                                $avatarHtml = '<img src="https://ui-avatars.com/api/?name='.urlencode($title).'&background=random&color=fff" style="width:100%; height:100%; border-radius:50%;">';
+                            }
+                        } else {
+                            $photoUrl = (strpos($otherPartyPhoto, 'http') !== false) ? $otherPartyPhoto : 'photo/' . $otherPartyPhoto;
+                            $avatarHtml = '<img src="'.$photoUrl.'" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" onerror="this.src=\'https://ui-avatars.com/api/?name='.urlencode($title).'&background=random&color=fff\'">';
+                        }
+
                         $val = floatval($item['Money'] ?? 0);
-                        $date = date('M j, H:i', strtotime($item['sort_date']));
+                        $dateStr = $item['sort_date'];
+                        $date = date('M j, H:i', strtotime($dateStr));
+
                         $fee = floatval($item['UserFees'] ?? 0);
-                        $sub = $fee > 0 ? "<span style='color:#ff3b30;'>Fee: $fee MAD</span>" : "";
+                        $sub = $isIncome ? 'Received from' : 'Sent to';
+                        if($fee > 0 && !$isIncome) {
+                            $sub .= " • <span style='color:#ff3b30;'>Fee: $fee MAD</span>";
+                        }
+                        
                         $link = "#";
                     else:
                         // Order type
                         $isIncome = false;
-                        $icon = 'fa-shopping-bag';
                         $class = 'order-color'; 
                         $title = $item['DestinationName'] ?: 'Order #'.$item['OrderID'];
+                        
                         $val = floatval($item['OrderPriceFromShop'] ?? 0) + floatval($item['OrderPrice'] ?? 0);
-                        $date = date('M j, H:i', strtotime($item['sort_date']));
+                        $dateStr = $item['CreatedAtOrders'] ?? null;
+                        if ($dateStr) {
+                            $date = date('M j, H:i', strtotime($dateStr));
+                        } else {
+                            $date = "Order #".$item['OrderID'];
+                        }
+
                         $method = $item['Method'] ?: 'CASH';
                         $sub = ($method == 'CASH') ? '<span style="color:#ffcc00; font-size:10px; font-weight:700;">COD (Cash)</span>' : '<span style="color:var(--accent-glow); font-size:10px; font-weight:700;">Wallet</span>';
                         $link = "track_order.php?orderId=".$item['OrderID']."&tot=".$val;
+                        $avatarHtml = '<i class="fa-solid fa-shopping-bag" style="color:inherit; font-size:18px;"></i>';
                     endif;
                 ?>
                     <a href="<?= $link ?>" class="transaction-card" style="text-decoration:none; color:inherit; cursor:<?= ($isOrder?'pointer':'default') ?>;">
-                        <div class="tx-icon <?= ($item['type']=='tx')?$class:'order-icon' ?>"><i class="fa-solid <?= $icon ?>"></i></div>
-                        <div class="tx-info">
+                        <div class="tx-icon <?= ($item['type']=='tx')?$class:'order-icon' ?>" style="<?= ($item['type']=='tx' && strpos($avatarHtml, 'img')!==false) ? 'padding:0; overflow:hidden; background:transparent;' : '' ?>">
+                            <?= $avatarHtml ?>
+                            <?php if($item['type'] == 'tx'): ?>
+                                <div style="position:absolute; bottom:-2px; right:-2px; width:14px; height:14px; background:<?= $isIncome?'#34c759':'#ff3b30' ?>; border-radius:50%; display:flex; justify-content:center; align-items:center; border:2px solid #111;">
+                                    <i class="fa-solid <?= $isIncome?'fa-arrow-down':'fa-arrow-up' ?>" style="font-size:7px; color:#fff;"></i>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                        <div class="tx-info" style="margin-left: 10px;">
                             <div class="tx-title"><?= htmlspecialchars($title) ?></div>
                             <div class="tx-date"><?= $date ?> • <?= $sub ?></div>
                         </div>
