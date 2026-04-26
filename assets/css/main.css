@@ -369,16 +369,15 @@
 
         .cat-card {
             flex: 0 0 auto;
-            width: clamp(240px, 20vw, 280px);
-            /* Slightly smaller to fit 5 cleanly */
+            width: 160px; /* Matched to S-Commerce size */
             height: auto;
             /* Shrink to fit without empty bottom space */
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 32px;
-            padding: 32px;
+            border-radius: 24px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
             scroll-snap-align: start;
@@ -434,7 +433,7 @@
         }
 
         .cat-name {
-            font-size: 20px;
+            font-size: 14px;
             font-weight: 600;
             color: var(--text-main);
             line-height: 1.2;
@@ -442,7 +441,7 @@
         }
 
         .cat-tag {
-            font-size: 13px;
+            font-size: 10px;
             color: var(--text-muted);
             background: rgba(255, 255, 255, 0.08);
             padding: 4px 12px;
@@ -1439,22 +1438,20 @@
             }
 
             .cat-card {
-                width: 140px;
-                border-radius: 24px;
-                padding: 16px;
+                width: 120px;
+                border-radius: 20px;
+                padding: 12px;
                 background-image: none;
                 background: rgba(255, 255, 255, 0.05);
             }
 
-            .cat-img-wrapper {
-                border-radius: 16px;
+            .cat-name {
+                font-size: 12px;
+                margin-top: 8px;
             }
 
-            .cat-name {
-                font-size: 13px;
-                margin-top: 10px;
-                font-weight: 600;
-                text-align: center;
+            .cat-img-wrapper {
+                border-radius: 16px;
             }
 
             .cat-tag {
