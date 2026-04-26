@@ -265,14 +265,18 @@ usort($history, function($a, $b) {
                 <?php foreach($history as $item): 
                     $isOrder = ($item['type'] == 'order');
                     if($item['type'] == 'tx'):
-                        $isIncome = (floatval($item['TransactionValue'] ?? 0) > 0);
+                        $isIncome = (isset($item['MoneyPlusOrLess']) && strtolower($item['MoneyPlusOrLess']) !== 'less');
                         $icon = $isIncome ? 'fa-arrow-down-long' : 'fa-arrow-up-long';
                         $class = $isIncome ? 'income' : 'expense';
-                        $title = $item['DistnationName'] ?: ($isIncome ? 'Top-up' : 'Payment');
+                        
+                        $otherParty = $isIncome ? $item['DistnationName'] : $item['DriverName'];
+                        $title = !empty($otherParty) ? $otherParty : ($isIncome ? 'Top-up' : 'Payment');
+                        
                         if($title == 'Jibler') $title = 'QOON';
-                        $val = floatval($item['TransactionValue'] ?? 0);
+                        $val = floatval($item['Money'] ?? 0);
                         $date = date('M j, H:i', strtotime($item['sort_date']));
-                        $sub = "";
+                        $fee = floatval($item['UserFees'] ?? 0);
+                        $sub = $fee > 0 ? "<span style='color:#ff3b30;'>Fee: $fee MAD</span>" : "";
                         $link = "#";
                     else:
                         // Order type
