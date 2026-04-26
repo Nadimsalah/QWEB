@@ -1583,34 +1583,52 @@ if (empty($posts)) {
         if ("IntersectionObserver" in window) {
             let feedObserver = new IntersectionObserver((entries) => {
                 if (entries[0].isIntersecting && !isLoadingPosts && !endOfFeed) {
-                    isLoadingPosts = true;
-                    feedShimmer.style.display = "flex";
-
-                    fetch(window.location.pathname + "?ajax_load_posts=1&offset=" + currentPostOffset)
-                        .then(r => r.text())
-                        .then(html => {
-                            feedShimmer.style.display = "none";
-                            if (html.trim() === "END_OF_FEED" || html.includes("END_OF_FEED")) {
-                                endOfFeed = true;
-                                // Remove the trigger
-                                document.getElementById("feed-bottom-trigger").remove();
-                            } else {
-                                // Inject raw HTML immediately before the shimmer loader
-                                feedShimmer.insertAdjacentHTML('beforebegin', html);
-                                currentPostOffset += 5;
-                            }
-                            isLoadingPosts = false;
-                        })
-                        .catch(e => {
-                            console.error("Feed load failed", e);
-                            feedShimmer.style.display = "none";
-                            isLoadingPosts = false;
-                        });
+                    triggerFeedLoad();
                 }
-            }, { rootMargin: "0px 0px 400px 0px" }); // Trigger earlier before user hits rock bottom
+            }, { rootMargin: "0px 0px 600px 0px" });
 
             const bottomTrigger = document.getElementById("feed-bottom-trigger");
             if (bottomTrigger) feedObserver.observe(bottomTrigger);
+        }
+
+        // Robust fallback: if user scrolls aggressively while page is still loading
+        window.addEventListener('scroll', () => {
+            if (!isLoadingPosts && !endOfFeed) {
+                const scrollY = window.scrollY || window.pageYOffset;
+                const docHeight = document.documentElement.scrollHeight;
+                const winHeight = window.innerHeight;
+                if (docHeight - scrollY - winHeight < 800) {
+                    triggerFeedLoad();
+                }
+            }
+        }, { passive: true });
+
+        function triggerFeedLoad() {
+            if (isLoadingPosts || endOfFeed) return;
+            isLoadingPosts = true;
+            feedShimmer.style.display = "flex";
+
+            fetch(window.location.pathname + "?ajax_load_posts=1&offset=" + currentPostOffset, {
+                priority: 'high' // Force browser to prioritize this over lazy images
+            })
+                .then(r => r.text())
+                .then(html => {
+                    feedShimmer.style.display = "none";
+                    if (html.trim() === "END_OF_FEED" || html.includes("END_OF_FEED")) {
+                        endOfFeed = true;
+                        const triggerEl = document.getElementById("feed-bottom-trigger");
+                        if (triggerEl) triggerEl.remove();
+                    } else {
+                        feedShimmer.insertAdjacentHTML('beforebegin', html);
+                        currentPostOffset += 5;
+                    }
+                    isLoadingPosts = false;
+                })
+                .catch(e => {
+                    console.error("Feed load failed", e);
+                    feedShimmer.style.display = "none";
+                    isLoadingPosts = false;
+                });
         }
     </script>
 
