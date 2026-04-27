@@ -22,7 +22,7 @@ echo "Cache writable:  " . (is_writable(dirname($cacheDir)) ? 'YES' : 'NO ‚ùå ‚Ä
 
 // 3. Try direct API call
 $appKey    = "532966";
-$appSecret = "OuzUIdMqmJ9qsnkid6w9RWLB7eNmwDjB";
+$appSecret = "cTzCrj5XNUjx9lXKsrD6Fo1AuUf1Th2J";
 $token     = "50000100827ezZgp7jnnaRwf9df2jpqaTpD9dcT1df32eaaBtxveHgwIXDOqM94vK3KQ";
 
 echo "App Key:         $appKey\n";
