@@ -3,8 +3,8 @@ define('FROM_UI', true);
 require_once 'conn.php';
 require_once 'includes/AliExpressAPI.php';
 
-header('Content-Type: application/json');
-
+header('Content-Type: application/json; charset=utf-8');
+header('Cache-Control: public, max-age=7200'); // browser caches 2 hrs
 if (session_status() === PHP_SESSION_NONE) session_start();
 
 if (!isset($_GET['product_id'])) {
@@ -49,13 +49,17 @@ if (!$resp) {
 // Clean up product data for the frontend
 $images = $resp['ae_multimedia_info_dto']['image_urls'] ?? "";
 $imageArray = array_filter(array_map('trim', explode(';', $images)));
+// Limit to 20 images max — beyond that, nobody scrolls
+$imageArray = array_slice($imageArray, 0, 20);
 
 $mainImage = !empty($imageArray) ? $imageArray[0] : "";
 $rawPrice = $resp['ae_item_sku_info_dtos']['ae_item_sku_info_d_t_o'][0]['offer_sale_price'] ?? 0;
 $title = $resp['ae_item_base_info_dto']['subject'] ?? "Unknown Product";
 $desc1 = $resp['ae_item_base_info_dto']['detail'] ?? "";
 $desc2 = $resp['ae_item_base_info_dto']['mobile_detail'] ?? "";
-$desc = strlen($desc1) > strlen($desc2) ? $desc1 : $desc2;
+// Prefer mobile_detail (shorter); cap at 120KB to avoid massive JSON
+$desc = strlen($desc2) > 200 ? $desc2 : $desc1;
+if (strlen($desc) > 120000) $desc = substr($desc, 0, 120000) . '<!-- trimmed -->';
 
 // Add 30% margin for QOON display
 $qoonPrice = round(floatval($rawPrice) * 1.30, 2);

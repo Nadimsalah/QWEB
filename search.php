@@ -340,36 +340,106 @@ $isLoggedIn = !empty($userId);
             background: rgba(255, 255, 255, 0.07) !important;
         }
 
-        /* ─── MOBILE RESPONSIVE OPTIMIZATIONS ─── */
+        /* ─── MOBILE RESPONSIVE ─── */
         @media (max-width: 600px) {
+            /* Grid: 2 columns on mobile */
             .products-grid {
-                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)) !important;
+                grid-template-columns: repeat(2, 1fr) !important;
                 gap: 10px !important;
             }
-
             .reels-grid {
-                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)) !important;
-                gap: 10px !important;
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 8px !important;
             }
 
+            /* Search bar full-width */
             .prompt-container {
                 width: 100% !important;
                 border-radius: 20px !important;
             }
 
-            .content-wrapper {
-                padding: 12px !important;
+            /* Content padding */
+            .content-wrapper { padding: 0 !important; }
+            .search-page-wrapper { padding: 0 12px !important; }
+
+            /* Logo smaller */
+            .brand-logo-container img { height: 44px !important; }
+
+            /* Tabs */
+            .tab-pill { font-size: 12px !important; padding: 6px 14px !important; }
+
+            /* Product card text */
+            .product-name  { font-size: 12px !important; }
+            .product-price { font-size: 13px !important; }
+            .product-body  { padding: 8px !important; }
+
+            /* Section header spacing */
+            .section-header { margin: 18px 0 10px !important; }
+
+            /* Back button bigger touch target */
+            .search-back-btn { padding: 10px 14px; }
+
+            /* ── Force camera button visible on mobile ──
+               main.css sets .icon-btn { display:none } on mobile — override it */
+            #imgSearchBtn {
+                display: flex !important;
+                flex-shrink: 0;
+                width: 44px !important;
+                height: 44px !important;
+                border-radius: 50% !important;
+                background: linear-gradient(135deg, #a855f7, #6366f1) !important;
+                color: #fff !important;
+                align-items: center;
+                justify-content: center;
+                font-size: 17px !important;
+                box-shadow: 0 4px 16px rgba(168,85,247,0.45);
+                border: none;
+                cursor: pointer;
             }
 
-            .brand-logo {
-                height: 50px !important;
-                margin-top: 10px;
+            /* ── Modal: bottom sheet on mobile ── */
+            #img-search-overlay {
+                align-items: flex-end !important;
+                padding: 0 !important;
             }
+            #img-search-modal {
+                width: 100% !important;
+                max-width: 100% !important;
+                border-radius: 28px 28px 0 0 !important;
+                padding: 24px 20px max(20px, env(safe-area-inset-bottom)) !important;
+                max-height: 90vh;
+                overflow-y: auto;
+                animation: sheetUp 0.35s cubic-bezier(0.34,1.2,0.64,1) !important;
+            }
+            @keyframes sheetUp {
+                from { transform: translateY(100%); opacity: 0.7; }
+                to   { transform: translateY(0);    opacity: 1; }
+            }
+            /* Drag handle bar on modal */
+            #img-search-modal::after {
+                content: '';
+                display: block;
+                width: 40px; height: 4px;
+                background: rgba(255,255,255,0.2);
+                border-radius: 2px;
+                margin: 0 auto 20px;
+                order: -1;
+                position: absolute;
+                top: 10px; left: 50%; transform: translateX(-50%);
+            }
+            /* Smaller drop zone padding on mobile */
+            #img-drop-area { padding: 24px 16px !important; }
+            #img-preview { max-height: 180px !important; }
 
-            .tab-pill {
-                font-size: 13px !important;
-                padding: 6px 16px !important;
-            }
+            /* Bigger touch targets for pill buttons */
+            .img-pill-btn { padding: 13px 16px !important; font-size: 14px !important; }
+            #img-search-go { padding: 15px !important; font-size: 16px !important; }
+        }
+
+        /* Very small phones */
+        @media (max-width: 360px) {
+            .products-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+            .product-name  { font-size: 11px !important; }
         }
     </style>
 </head>
@@ -382,72 +452,94 @@ $isLoggedIn = !empty($userId);
     <?php require_once 'includes/header.php'; ?>
 
     <div class="content-wrapper">
-        <div class="search-top-nav"
-            style="display: flex; align-items: flex-start; justify-content: space-between; position: relative; z-index: 10;">
-            <div class="back-nav" onclick="window.location.href='index.php'" style="padding: 10px; z-index: 10;">
-                <i class="fa-solid fa-arrow-left" style="font-size: 24px; color: #fff;"></i>
-            </div>
-        </div>
+
+
 
         <style>
             .search-page-wrapper {
+                position: relative;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                min-height: calc(100vh - 80px);
-                padding: 0 16px;
+                /* Use dvh (dynamic) so mobile keyboard doesn't break layout */
+                min-height: calc(100dvh - 64px);
+                height: calc(100dvh - 64px);
+                width: 100%;
+                padding: 0 20px;
                 box-sizing: border-box;
+                overflow: hidden;
             }
-
             .search-wrapper {
-                transition: all 0.55s cubic-bezier(0.25, 0.8, 0.25, 1);
+                transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 width: 100%;
                 max-width: 860px;
-                /* Animate up when user starts searching */
-                transform: translateY(0);
             }
-
             body.is-searching .search-page-wrapper {
                 justify-content: flex-start;
-                padding-top: 20px;
+                padding-top: 16px;
+                height: auto;
+                min-height: unset;
+                overflow: visible;
             }
-
-            body.is-searching .search-wrapper {
-                transform: translateY(0);
-            }
-
             .brand-logo-container {
-                transition: all 0.55s cubic-bezier(0.25, 0.8, 0.25, 1);
-                margin-bottom: 18px;
+                transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+                margin-bottom: 20px;
                 transform-origin: bottom center;
                 pointer-events: none;
-                z-index: 15;
             }
-
             body.is-searching .brand-logo-container {
-                transform: scale(0.6);
-                margin-bottom: -6px;
+                transform: scale(0.62);
+                margin-bottom: -4px;
             }
-
-            /* Wide search bar */
+            .search-back-btn {
+                position: absolute;
+                top: 14px; left: 14px;
+                z-index: 20; cursor: pointer;
+                padding: 8px; color: #fff;
+            }
             #promptBox {
-                width: 100%;
+                width: 100% !important;
                 max-width: 860px !important;
+                border-radius: 24px !important;
             }
-
             @media (max-width: 600px) {
+                .search-page-wrapper {
+                    padding: 0 12px;
+                    height: 100dvh !important;
+                    min-height: 100dvh;
+                    padding-top: 64px; /* header height */
+                    justify-content: center;
+                    box-sizing: border-box;
+                }
+                body.is-searching .search-page-wrapper {
+                    height: auto !important;
+                    min-height: unset;
+                    padding-top: 16px;
+                    justify-content: flex-start;
+                }
                 #promptBox { max-width: 100% !important; }
-                .brand-logo-container img { height: 52px !important; }
+                .brand-logo-container { margin-bottom: 12px; }
+                .brand-logo-container img { height: 44px !important; }
+                body.is-searching .brand-logo-container {
+                    transform: scale(0.55);
+                    margin-bottom: -8px;
+                }
+                .results { padding: 0 4px 120px; }
             }
         </style>
 
         <main class="search-page-wrapper">
 
-            <!-- Logo + Search Bar - Centered -->
+            <!-- Back btn: absolute so it never affects flex centering -->
+            <div class="search-back-btn" onclick="window.location.href='index.php'">
+                <i class="fa-solid fa-arrow-left" style="font-size:22px;"></i>
+            </div>
+
+            <!-- Logo + Search Centered -->
             <div class="search-wrapper">
 
                 <div class="brand-logo-container">
@@ -482,62 +574,281 @@ $isLoggedIn = !empty($userId);
                 <i class="fa-solid fa-circle-notch fa-spin" style="font-size:32px; color:#f50057;"></i>
             </div>
 
-            <!-- Image Search Modal -->
-            <div id="img-search-overlay" onclick="closeImageSearch(event)" style="
-                display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85);
-                z-index:2000; align-items:center; justify-content:center; backdrop-filter:blur(8px);">
-                <div id="img-search-modal" style="
-                    background:#1a1a2e; border-radius:28px; padding:28px; width:90%; max-width:480px;
-                    box-shadow:0 32px 80px rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.08);">
 
-                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
-                        <div style="font-size:18px; font-weight:700;">🔍 Search by Image</div>
-                        <button onclick="closeImageSearch()" style="background:rgba(255,255,255,0.08); border:none; color:#fff; width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:16px;">✕</button>
+            <!-- ══ IMAGE SEARCH MODAL ══════════════════════════════════════════ -->
+            <style>
+                /* ── Overlay ── */
+                #img-search-overlay {
+                    display: none;
+                    position: fixed; inset: 0; z-index: 3000;
+                    align-items: center; justify-content: center;
+                    background: rgba(0,0,0,0.5);
+                    backdrop-filter: blur(20px) saturate(180%);
+                    -webkit-backdrop-filter: blur(20px) saturate(180%);
+                    animation: overlayIn 0.3s ease;
+                }
+                @keyframes overlayIn { from { opacity:0; } to { opacity:1; } }
+
+                /* ── Liquid Glass Card ── */
+                #img-search-modal {
+                    position: relative;
+                    width: 92%; max-width: 460px;
+                    border-radius: 32px;
+                    padding: 28px 24px 24px;
+                    background: linear-gradient(135deg,
+                        rgba(255,255,255,0.13) 0%,
+                        rgba(255,255,255,0.06) 50%,
+                        rgba(168,85,247,0.08) 100%);
+                    border: 1px solid rgba(255,255,255,0.18);
+                    box-shadow:
+                        0 40px 100px rgba(0,0,0,0.55),
+                        0 0 0 0.5px rgba(255,255,255,0.1) inset,
+                        0 1px 0 rgba(255,255,255,0.25) inset;
+                    backdrop-filter: blur(40px) saturate(200%);
+                    -webkit-backdrop-filter: blur(40px) saturate(200%);
+                    animation: modalSlideIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+                    overflow: hidden;
+                }
+                /* Glass glare streak */
+                #img-search-modal::before {
+                    content: '';
+                    position: absolute; top: 0; left: -60%;
+                    width: 50%; height: 100%;
+                    background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.08) 50%, transparent 70%);
+                    pointer-events: none;
+                }
+                @keyframes modalSlideIn {
+                    from { opacity:0; transform: translateY(28px) scale(0.94); }
+                    to   { opacity:1; transform: translateY(0)   scale(1); }
+                }
+
+                /* ── Drop Zone ── */
+                #img-drop-area {
+                    position: relative;
+                    border: 1.5px dashed rgba(168,85,247,0.45);
+                    border-radius: 22px;
+                    padding: 32px 20px;
+                    text-align: center;
+                    cursor: pointer;
+                    transition: all 0.25s ease;
+                    background: rgba(168,85,247,0.04);
+                    overflow: hidden;
+                }
+                #img-drop-area:hover {
+                    border-color: rgba(168,85,247,0.85);
+                    background: rgba(168,85,247,0.09);
+                    transform: scale(1.01);
+                }
+                #img-drop-area.drag-over {
+                    border-color: #a855f7;
+                    background: rgba(168,85,247,0.12);
+                    box-shadow: 0 0 30px rgba(168,85,247,0.25);
+                }
+                /* Shimmer sweep on hover */
+                #img-drop-area::after {
+                    content:''; position:absolute; inset:0;
+                    background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.06) 50%, transparent 70%);
+                    background-size: 200% 100%;
+                    opacity: 0; transition: opacity 0.3s;
+                }
+                #img-drop-area:hover::after { opacity: 1; animation: shimmerSweep 1.2s infinite; }
+                @keyframes shimmerSweep {
+                    0%   { background-position: -100% 0; }
+                    100% { background-position: 200% 0; }
+                }
+
+                /* ── Preview Container ── */
+                #img-preview-wrap { display: none; }
+                .img-preview-glass {
+                    position: relative;
+                    border-radius: 20px;
+                    overflow: hidden;
+                    margin-bottom: 14px;
+                    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+                }
+                #img-preview {
+                    width: 100%; max-height: 220px;
+                    object-fit: cover; display: block;
+                    border-radius: 20px;
+                    transition: filter 0.5s ease;
+                }
+
+                /* ── Google Lens Scan Animation ── */
+                .scan-overlay {
+                    position: absolute; inset: 0;
+                    border-radius: 20px;
+                    display: none;
+                    overflow: hidden;
+                    pointer-events: none;
+                }
+                /* Scanning beam */
+                .scan-beam {
+                    position: absolute; left: 0; right: 0;
+                    height: 3px;
+                    background: linear-gradient(90deg, transparent, #a855f7, #6366f1, #a855f7, transparent);
+                    box-shadow: 0 0 18px 6px rgba(168,85,247,0.6);
+                    animation: scanBeam 1.8s cubic-bezier(0.4,0,0.6,1) infinite;
+                    top: 0;
+                }
+                @keyframes scanBeam {
+                    0%   { top: 0%;   opacity: 1; }
+                    48%  { top: 100%; opacity: 1; }
+                    50%  { top: 100%; opacity: 0; }
+                    52%  { top: 0%;   opacity: 0; }
+                    54%  { top: 0%;   opacity: 1; }
+                    100% { top: 100%; opacity: 1; }
+                }
+                /* Corner brackets */
+                .scan-corner {
+                    position: absolute; width: 22px; height: 22px;
+                    border-color: #a855f7; border-style: solid;
+                    border-width: 0; opacity: 0.9;
+                }
+                .sc-tl { top:8px; left:8px;   border-top-width:2.5px; border-left-width:2.5px;  border-radius:4px 0 0 0; }
+                .sc-tr { top:8px; right:8px;   border-top-width:2.5px; border-right-width:2.5px; border-radius:0 4px 0 0; }
+                .sc-bl { bottom:8px; left:8px;  border-bottom-width:2.5px; border-left-width:2.5px; border-radius:0 0 0 4px; }
+                .sc-br { bottom:8px; right:8px; border-bottom-width:2.5px; border-right-width:2.5px; border-radius:0 0 4px 0; }
+                /* Ripple grid */
+                .scan-grid {
+                    position: absolute; inset: 0;
+                    background-image:
+                        linear-gradient(rgba(168,85,247,0.07) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(168,85,247,0.07) 1px, transparent 1px);
+                    background-size: 28px 28px;
+                    animation: gridFade 1.8s ease infinite;
+                }
+                @keyframes gridFade {
+                    0%,100% { opacity:0; } 50% { opacity:1; }
+                }
+                /* Blur/desaturate image while scanning */
+                .is-scanning #img-preview { filter: brightness(0.75) saturate(0.4); }
+
+                /* ── Status text ── */
+                #img-status-text {
+                    font-size: 13px; color: rgba(255,255,255,0.55);
+                    text-align: center; margin-top: 4px; min-height: 18px;
+                    letter-spacing: 0.3px;
+                    transition: color 0.3s;
+                }
+
+                /* ── Buttons ── */
+                #img-search-go {
+                    width: 100%;
+                    padding: 13px;
+                    border: none;
+                    border-radius: 16px;
+                    background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
+                    color: #fff;
+                    font-size: 15px; font-weight: 700;
+                    cursor: pointer;
+                    box-shadow: 0 6px 24px rgba(168,85,247,0.4);
+                    transition: all 0.2s ease;
+                    letter-spacing: 0.2px;
+                }
+                #img-search-go:hover:not(:disabled) {
+                    transform: translateY(-2px);
+                    box-shadow: 0 10px 32px rgba(168,85,247,0.55);
+                }
+                #img-search-go:disabled { opacity: 0.6; cursor: default; transform: none; }
+
+                .img-action-row {
+                    display: flex; gap: 10px; margin-top: 12px;
+                }
+                .img-pill-btn {
+                    flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
+                    padding: 10px 16px; border-radius: 50px;
+                    background: rgba(255,255,255,0.07);
+                    border: 1px solid rgba(255,255,255,0.12);
+                    color: rgba(255,255,255,0.75);
+                    font-size: 13px; font-weight: 500;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                }
+                .img-pill-btn:hover {
+                    background: rgba(168,85,247,0.15);
+                    border-color: rgba(168,85,247,0.4);
+                    color: #fff;
+                    transform: translateY(-1px);
+                }
+                .img-pill-btn i { color: #a855f7; }
+
+                /* Close btn */
+                .img-close-btn {
+                    position: absolute; top: 16px; right: 16px;
+                    width: 30px; height: 30px; border-radius: 50%;
+                    background: rgba(255,255,255,0.1);
+                    border: 1px solid rgba(255,255,255,0.14);
+                    color: rgba(255,255,255,0.7);
+                    font-size: 14px; cursor: pointer;
+                    display: flex; align-items: center; justify-content: center;
+                    transition: all 0.2s;
+                    backdrop-filter: blur(8px);
+                }
+                .img-close-btn:hover { background: rgba(255,255,255,0.18); color: #fff; transform: scale(1.1); }
+            </style>
+
+            <div id="img-search-overlay" onclick="closeImageSearch(event)">
+                <div id="img-search-modal">
+
+                    <!-- Close -->
+                    <button class="img-close-btn" onclick="closeImageSearch()">✕</button>
+
+                    <!-- Title -->
+                    <div style="margin-bottom:20px; padding-right:36px;">
+                        <div style="font-size:17px; font-weight:700; letter-spacing:-0.3px;">
+                            <i class="fa-solid fa-camera-viewfinder" style="color:#a855f7; margin-right:8px;"></i>Search by Image
+                        </div>
+                        <div style="font-size:12px; color:rgba(255,255,255,0.4); margin-top:4px;">
+                            Upload any product photo to find similar items on QOON
+                        </div>
                     </div>
 
-                    <!-- Upload Area -->
-                    <div id="img-drop-area" onclick="document.getElementById('img-file-input').click()" style="
-                        border:2px dashed rgba(168,85,247,0.5); border-radius:20px; padding:28px 20px;
-                        text-align:center; cursor:pointer; transition:0.2s;
-                        background:rgba(168,85,247,0.04);" 
-                        ondragover="event.preventDefault(); this.style.borderColor='#a855f7';" 
-                        ondragleave="this.style.borderColor='rgba(168,85,247,0.5)';"
+                    <!-- Drop Zone -->
+                    <div id="img-drop-area"
+                        onclick="document.getElementById('img-file-input').click()"
+                        ondragover="event.preventDefault(); this.classList.add('drag-over');"
+                        ondragleave="this.classList.remove('drag-over');"
                         ondrop="handleImgDrop(event)">
-                        <i class="fa-solid fa-image" style="font-size:40px; color:#a855f7; margin-bottom:12px; display:block;"></i>
-                        <div style="font-size:15px; font-weight:600; margin-bottom:6px;">Drop an image or click to upload</div>
-                        <div style="font-size:12px; color:rgba(255,255,255,0.4); margin-bottom:10px;">Any image format — auto-converted to JPEG</div>
-                        <div style="font-size:11px; color:rgba(168,85,247,0.8); background:rgba(168,85,247,0.1); border-radius:8px; padding:8px 12px; text-align:left;">
-                            <b>💡 Best results:</b> Use product photos with clear white/neutral background. Screenshot from any shopping site works great!
-                        </div>
+                        <i class="fa-solid fa-cloud-arrow-up" style="font-size:38px; color:#a855f7; margin-bottom:12px; display:block;"></i>
+                        <div style="font-size:15px; font-weight:600; margin-bottom:5px;">Drop image here</div>
+                        <div style="font-size:12px; color:rgba(255,255,255,0.38);">Any format — auto-converted to JPEG</div>
                     </div>
 
-                    <!-- Preview -->
-                    <div id="img-preview-wrap" style="display:none; margin-top:16px; text-align:center;">
-                        <img id="img-preview" style="max-height:180px; border-radius:14px; max-width:100%; object-fit:contain;">
-                        <div style="margin-top:12px;">
-                            <button onclick="runImageSearch()" id="img-search-go" style="
-                                background:linear-gradient(135deg,#a855f7,#6366f1); color:#fff; border:none;
-                                padding:12px 32px; border-radius:14px; font-size:15px; font-weight:700;
-                                cursor:pointer; width:100%;">
-                                <i class="fa-solid fa-magnifying-glass" style="margin-right:8px;"></i>
-                                Find Similar Products
-                            </button>
-                        </div>
-                    </div>
+                    <!-- Preview + Scan Animation -->
+                    <div id="img-preview-wrap">
+                        <div class="img-preview-glass" id="img-preview-glass">
+                            <img id="img-preview" alt="Preview">
 
-                    <!-- Or take a photo (mobile) -->
-                    <div style="margin-top:14px; text-align:center;">
-                        <button onclick="document.getElementById('img-camera-input').click()" style="
-                            background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
-                            color:rgba(255,255,255,0.7); padding:10px 20px; border-radius:12px;
-                            cursor:pointer; font-size:13px;">
-                            <i class="fa-solid fa-camera" style="margin-right:6px; color:#a855f7;"></i>
-                            Take a Photo
+                            <!-- Google Lens-style scan overlay -->
+                            <div class="scan-overlay" id="scan-overlay">
+                                <div class="scan-grid"></div>
+                                <div class="scan-beam"></div>
+                                <div class="scan-corner sc-tl"></div>
+                                <div class="scan-corner sc-tr"></div>
+                                <div class="scan-corner sc-bl"></div>
+                                <div class="scan-corner sc-br"></div>
+                            </div>
+                        </div>
+
+                        <div id="img-status-text">Image ready — tap below to search</div>
+
+                        <button onclick="runImageSearch()" id="img-search-go">
+                            <i class="fa-solid fa-magnifying-glass" style="margin-right:8px;"></i>Find Similar Products
                         </button>
                     </div>
 
-                    <input type="file" id="img-file-input" accept="image/*" style="display:none" onchange="handleImgFile(this)">
-                    <input type="file" id="img-camera-input" accept="image/*" capture="environment" style="display:none" onchange="handleImgFile(this)">
+                    <!-- Action pills -->
+                    <div class="img-action-row" id="img-action-row">
+                        <button class="img-pill-btn" onclick="document.getElementById('img-file-input').click()">
+                            <i class="fa-solid fa-folder-open"></i> Browse Files
+                        </button>
+                        <button class="img-pill-btn" onclick="document.getElementById('img-camera-input').click()">
+                            <i class="fa-solid fa-camera"></i> Take Photo
+                        </button>
+                    </div>
+
+                    <input type="file" id="img-file-input"    accept="image/*"                     style="display:none" onchange="handleImgFile(this)">
+                    <input type="file" id="img-camera-input"  accept="image/*" capture="environment" style="display:none" onchange="handleImgFile(this)">
                 </div>
             </div>
 
@@ -690,8 +1001,23 @@ $isLoggedIn = !empty($userId);
 
         // Extract query from URL if exists
         const urlParams = new URLSearchParams(window.location.search);
-        const initialQ = urlParams.get('q');
-        if (initialQ) {
+        const initialQ  = urlParams.get('q');
+        const mode      = urlParams.get('mode');
+
+        // ── Image search results arriving from index page ──
+        if (mode === 'img_results') {
+            try {
+                const stored = sessionStorage.getItem('imgSearchResults');
+                if (stored) {
+                    const data = JSON.parse(stored);
+                    sessionStorage.removeItem('imgSearchResults'); // consume once
+                    renderAliExpressResults(data.products || [], data.total || 0);
+                } else {
+                    // Nothing stored – just show empty
+                    showEmpty();
+                }
+            } catch(e) { showEmpty(); }
+        } else if (initialQ) {
             input.value = initialQ;
             doSearch(initialQ);
         }
@@ -997,16 +1323,27 @@ $isLoggedIn = !empty($userId);
                 alert('Image too large. Max 10MB.'); return;
             }
 
-            imgFile = null; // reset until conversion completes
+            imgFile = null;
             const btn = document.getElementById('img-search-go');
+            const statusText = document.getElementById('img-status-text');
             if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin" style="margin-right:8px;"></i>Converting...'; }
 
             const reader = new FileReader();
             reader.onload = (e) => {
                 const dataUrl = e.target.result;
+
+                // Show preview
                 document.getElementById('img-preview').src = dataUrl;
                 document.getElementById('img-preview-wrap').style.display = 'block';
                 document.getElementById('img-drop-area').style.display = 'none';
+                document.getElementById('img-action-row').style.display = 'none';
+
+                // 🔴 Start scan animation immediately
+                const scanOverlay = document.getElementById('scan-overlay');
+                const glass = document.getElementById('img-preview-glass');
+                scanOverlay.style.display = 'block';
+                glass.classList.add('is-scanning');
+                if (statusText) statusText.textContent = 'Analysing image...';
 
                 const img = new Image();
                 img.onload = () => {
@@ -1023,12 +1360,17 @@ $isLoggedIn = !empty($userId);
                     canvas.toBlob((blob) => {
                         if (!blob) { alert('Could not convert image.'); return; }
                         imgFile = new File([blob], 'search.jpg', { type: 'image/jpeg' });
-                        console.log(`✅ Converted: ${file.type} → JPEG ${(imgFile.size/1024).toFixed(1)}KB @ ${w}×${h}px`);
-                        // Now enable the search button
-                        if (btn) {
-                            btn.disabled = false;
-                            btn.innerHTML = '<i class="fa-solid fa-magnifying-glass" style="margin-right:8px;"></i>Find Similar Products';
-                        }
+
+                        // ✅ Stop scan — image ready
+                        setTimeout(() => {
+                            scanOverlay.style.display = 'none';
+                            glass.classList.remove('is-scanning');
+                            if (statusText) statusText.textContent = '✓ Image ready — ' + (imgFile.size/1024).toFixed(0) + ' KB';
+                            if (btn) {
+                                btn.disabled = false;
+                                btn.innerHTML = '<i class="fa-solid fa-magnifying-glass" style="margin-right:8px;"></i>Find Similar Products';
+                            }
+                        }, 900); // brief pause so user sees the scan finish
                     }, 'image/jpeg', 0.88);
                 };
                 img.onerror = () => alert('Could not read image file.');
@@ -1040,10 +1382,26 @@ $isLoggedIn = !empty($userId);
         function runImageSearch() {
             if (!imgFile) { alert('Please select an image first.'); return; }
             const btn = document.getElementById('img-search-go');
-            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin" style="margin-right:8px;"></i>Searching...';
+            const statusText = document.getElementById('img-status-text');
+            const scanOverlay = document.getElementById('scan-overlay');
+            const glass = document.getElementById('img-preview-glass');
+
+            // Re-trigger scan animation during API call
+            scanOverlay.style.display = 'block';
+            glass.classList.add('is-scanning');
+
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin" style="margin-right:8px;"></i>Searching AliExpress...';
             btn.disabled = true;
 
-            // Use FormData — much more reliable than base64 JSON for large files
+            // Animate status text
+            const msgs = ['Scanning image...', 'Identifying product...', 'Matching catalogue...', 'Almost there...'];
+            let mIdx = 0;
+            if (statusText) statusText.textContent = msgs[0];
+            const statusInterval = setInterval(() => {
+                mIdx = (mIdx + 1) % msgs.length;
+                if (statusText) statusText.textContent = msgs[mIdx];
+            }, 1400);
+
             const fd = new FormData();
             fd.append('image',    imgFile);
             fd.append('country',  'MA');
@@ -1053,8 +1411,12 @@ $isLoggedIn = !empty($userId);
             fetch('ajax_image_search.php', { method: 'POST', body: fd })
             .then(r => r.json())
             .then(data => {
+                clearInterval(statusInterval);
+                scanOverlay.style.display = 'none';
+                glass.classList.remove('is-scanning');
                 btn.innerHTML = '<i class="fa-solid fa-magnifying-glass" style="margin-right:8px;"></i>Find Similar Products';
                 btn.disabled = false;
+                if (statusText) statusText.textContent = '';
 
                 if (data.error) {
                     alert('Image search error: ' + data.error); return;

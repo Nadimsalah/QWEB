@@ -974,8 +974,9 @@ if (empty($posts)) {
                     <button class="icon-btn" style="margin-left: 4px;"><i
                             class="fa-solid fa-magnifying-glass"></i></button>
 
-                    <input type="text" class="prompt-input" readonly onclick="window.location.href='search.php'"
-                        onfocus="window.location.href='search.php'" placeholder="Search shops, products, reels...">
+                    <input type="text" class="prompt-input" readonly
+                        onclick="window.location.href='search.php'"
+                        placeholder="Search shops, products, reels...">
 
                     <div class="prompt-toolbar">
                         <div class="platform-toggle">
@@ -987,7 +988,9 @@ if (empty($posts)) {
                             </button>
                         </div>
 
-                        <button class="submit-btn"><i class="fa-solid fa-arrow-up"></i></button>
+                        <button class="submit-btn" onclick="event.stopPropagation(); openImageSearch();" title="Search by image" style="background:linear-gradient(135deg,#a855f7,#6366f1); color:#fff;">
+                            <i class="fa-solid fa-camera" id="idx-cam-icon"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -1452,7 +1455,10 @@ if (empty($posts)) {
         const root = document.documentElement;
         const promptBox = document.getElementById('promptBox');
         if (promptBox) {
-            promptBox.addEventListener('click', () => {
+            promptBox.addEventListener('click', (e) => {
+                // If click came from camera button or any button in the toolbar — don't navigate
+                if (e.target.closest('.prompt-toolbar') || e.target.closest('.submit-btn') || e.target.closest('.toggle-btn')) return;
+
                 // Smooth transition effect
                 promptBox.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
                 promptBox.style.transform = 'scale(1.05)';
@@ -2305,6 +2311,307 @@ if (empty($posts)) {
     </script>
 
 
+
+<!-- ══ IMAGE SEARCH MODAL — index page ══ -->
+<style>
+    /* Overlay */
+    #idx-overlay {
+        display: none; position: fixed; inset: 0; z-index: 9000;
+        align-items: center; justify-content: center;
+        background: rgba(0,0,0,0.55);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+    }
+    /* Liquid glass card */
+    #idx-modal {
+        position: relative; width: 92%; max-width: 460px;
+        border-radius: 32px; padding: 28px 24px 24px;
+        background: linear-gradient(135deg,rgba(255,255,255,0.13) 0%,rgba(255,255,255,0.06) 50%,rgba(168,85,247,0.08) 100%);
+        border: 1px solid rgba(255,255,255,0.18);
+        box-shadow: 0 40px 100px rgba(0,0,0,0.55),0 0 0 0.5px rgba(255,255,255,0.1) inset,0 1px 0 rgba(255,255,255,0.25) inset;
+        backdrop-filter: blur(40px) saturate(200%);
+        -webkit-backdrop-filter: blur(40px) saturate(200%);
+        animation: idxIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+        overflow: hidden;
+    }
+    @keyframes idxIn { from{opacity:0;transform:translateY(28px) scale(0.94)} to{opacity:1;transform:translateY(0) scale(1)} }
+    #idx-modal::before {
+        content:''; position:absolute; top:0; left:-60%; width:50%; height:100%;
+        background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,0.08) 50%,transparent 70%);
+        pointer-events:none;
+    }
+    /* Drop zone */
+    #idx-drop {
+        position:relative; border:1.5px dashed rgba(168,85,247,0.45); border-radius:22px;
+        padding:32px 20px; text-align:center; cursor:pointer;
+        transition:all 0.25s ease; background:rgba(168,85,247,0.04); overflow:hidden;
+    }
+    #idx-drop:hover { border-color:rgba(168,85,247,0.85); background:rgba(168,85,247,0.09); transform:scale(1.01); }
+    #idx-drop.drag-over { border-color:#a855f7; background:rgba(168,85,247,0.12); box-shadow:0 0 30px rgba(168,85,247,0.25); }
+    /* Preview */
+    #idx-prev-wrap { display:none; }
+    .idx-pg { position:relative; border-radius:20px; overflow:hidden; margin-bottom:14px; box-shadow:0 12px 40px rgba(0,0,0,0.4); }
+    #idx-prev-img { width:100%; max-height:220px; object-fit:cover; display:block; border-radius:20px; transition:filter 0.5s ease; }
+    /* Scan overlay */
+    .idx-scan { position:absolute; inset:0; border-radius:20px; display:none; overflow:hidden; pointer-events:none; }
+    .idx-beam { position:absolute; left:0; right:0; height:3px; top:0;
+        background:linear-gradient(90deg,transparent,#a855f7,#6366f1,#a855f7,transparent);
+        box-shadow:0 0 18px 6px rgba(168,85,247,0.6);
+        animation:idxBeam 1.8s cubic-bezier(0.4,0,0.6,1) infinite; }
+    @keyframes idxBeam { 0%{top:0%;opacity:1}48%{top:100%;opacity:1}50%{top:100%;opacity:0}52%{top:0%;opacity:0}54%{top:0%;opacity:1}100%{top:100%;opacity:1} }
+    .idx-corner { position:absolute; width:22px; height:22px; border-color:#a855f7; border-style:solid; border-width:0; opacity:0.9; }
+    .idx-tl{top:8px;left:8px;border-top-width:2.5px;border-left-width:2.5px;border-radius:4px 0 0 0}
+    .idx-tr{top:8px;right:8px;border-top-width:2.5px;border-right-width:2.5px;border-radius:0 4px 0 0}
+    .idx-bl{bottom:8px;left:8px;border-bottom-width:2.5px;border-left-width:2.5px;border-radius:0 0 0 4px}
+    .idx-br{bottom:8px;right:8px;border-bottom-width:2.5px;border-right-width:2.5px;border-radius:0 0 4px 0}
+    .idx-grid { position:absolute; inset:0;
+        background-image:linear-gradient(rgba(168,85,247,0.07) 1px,transparent 1px),linear-gradient(90deg,rgba(168,85,247,0.07) 1px,transparent 1px);
+        background-size:28px 28px; animation:idxGridFade 1.8s ease infinite; }
+    @keyframes idxGridFade{0%,100%{opacity:0}50%{opacity:1}}
+    .idx-scanning #idx-prev-img { filter:brightness(0.75) saturate(0.4); }
+    /* Status / buttons */
+    #idx-status { font-size:13px; color:rgba(255,255,255,0.55); text-align:center; margin-top:4px; min-height:18px; letter-spacing:0.3px; transition:color 0.3s; }
+    #idx-go { width:100%; padding:13px; border:none; border-radius:16px;
+        background:linear-gradient(135deg,#a855f7,#6366f1); color:#fff;
+        font-size:15px; font-weight:700; cursor:pointer;
+        box-shadow:0 6px 24px rgba(168,85,247,0.4); transition:all 0.2s ease; }
+    #idx-go:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 32px rgba(168,85,247,0.55)}
+    #idx-go:disabled{opacity:0.6;cursor:default;transform:none}
+    .idx-pills { display:flex; gap:10px; margin-top:12px; }
+    .idx-pill { flex:1; display:flex; align-items:center; justify-content:center; gap:7px;
+        padding:10px 16px; border-radius:50px;
+        background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12);
+        color:rgba(255,255,255,0.75); font-size:13px; font-weight:500;
+        cursor:pointer; transition:all 0.2s ease; }
+    .idx-pill:hover{background:rgba(168,85,247,0.15);border-color:rgba(168,85,247,0.4);color:#fff;transform:translateY(-1px)}
+    .idx-pill i{color:#a855f7}
+    .idx-x { position:absolute; top:16px; right:16px; width:30px; height:30px; border-radius:50%;
+        background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.14);
+        color:rgba(255,255,255,0.7); font-size:14px; cursor:pointer;
+        display:flex; align-items:center; justify-content:center;
+        transition:all 0.2s; backdrop-filter:blur(8px); }
+    .idx-x:hover{background:rgba(255,255,255,0.18);color:#fff;transform:scale(1.1)}
+    /* Mobile: bottom sheet */
+    @media(max-width:600px){
+        #idx-overlay{align-items:flex-end}
+        #idx-modal{width:100%;max-width:100%;border-radius:28px 28px 0 0;
+            padding:24px 20px max(20px,env(safe-area-inset-bottom));
+            max-height:90vh;overflow-y:auto;
+            animation:idxSheet 0.35s cubic-bezier(0.34,1.2,0.64,1)}
+        @keyframes idxSheet{from{transform:translateY(100%);opacity:.8}to{transform:translateY(0);opacity:1}}
+        #idx-modal::after{content:'';display:block;width:40px;height:4px;background:rgba(255,255,255,0.2);
+            border-radius:2px;position:absolute;top:10px;left:50%;transform:translateX(-50%)}
+        #idx-drop{padding:24px 16px}
+        #idx-prev-img{max-height:180px}
+        .idx-pill{padding:13px 16px;font-size:14px}
+        #idx-go{padding:15px;font-size:16px}
+    }
+</style>
+
+<!-- Modal HTML -->
+<div id="idx-overlay" onclick="idxClose(event)">
+    <div id="idx-modal">
+        <button class="idx-x" onclick="idxClose()">✕</button>
+
+        <div style="margin-bottom:20px;padding-right:36px;">
+            <div style="font-size:17px;font-weight:700;letter-spacing:-0.3px;">
+                <i class="fa-solid fa-camera-viewfinder" style="color:#a855f7;margin-right:8px;"></i>Search by Image
+            </div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:4px;">
+                Upload any product photo to find similar items on QOON
+            </div>
+        </div>
+
+        <!-- Drop zone -->
+        <div id="idx-drop"
+            onclick="document.getElementById('idx-file').click()"
+            ondragover="event.preventDefault();this.classList.add('drag-over')"
+            ondragleave="this.classList.remove('drag-over')"
+            ondrop="idxDrop(event)">
+            <i class="fa-solid fa-cloud-arrow-up" style="font-size:38px;color:#a855f7;margin-bottom:12px;display:block;"></i>
+            <div style="font-size:15px;font-weight:600;margin-bottom:5px;">Drop image here</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.38);">Any format — auto-converted to JPEG</div>
+        </div>
+
+        <!-- Preview + scan -->
+        <div id="idx-prev-wrap">
+            <div class="idx-pg" id="idx-pg">
+                <img id="idx-prev-img" alt="Preview">
+                <div class="idx-scan" id="idx-scan">
+                    <div class="idx-grid"></div>
+                    <div class="idx-beam"></div>
+                    <div class="idx-corner idx-tl"></div>
+                    <div class="idx-corner idx-tr"></div>
+                    <div class="idx-corner idx-bl"></div>
+                    <div class="idx-corner idx-br"></div>
+                </div>
+            </div>
+            <div id="idx-status">Image ready — tap below to search</div>
+            <button id="idx-go" onclick="idxSearch()">
+                <i class="fa-solid fa-magnifying-glass" style="margin-right:8px;"></i>Find Similar Products
+            </button>
+        </div>
+
+        <!-- Action pills -->
+        <div class="idx-pills" id="idx-pills">
+            <button class="idx-pill" onclick="document.getElementById('idx-file').click()">
+                <i class="fa-solid fa-folder-open"></i> Browse Files
+            </button>
+            <button class="idx-pill" onclick="document.getElementById('idx-cam').click()">
+                <i class="fa-solid fa-camera"></i> Take Photo
+            </button>
+        </div>
+
+        <input type="file" id="idx-file" accept="image/*"               style="display:none" onchange="idxFile(this)">
+        <input type="file" id="idx-cam"  accept="image/*" capture="environment" style="display:none" onchange="idxFile(this)">
+    </div>
+</div>
+
+<script>
+(function(){
+    let imgFile = null;
+
+    /* ── Open / Close ── */
+    window.openImageSearch = function() {
+        const ov = document.getElementById('idx-overlay');
+        ov.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        // Reset
+        document.getElementById('idx-drop').style.display = 'block';
+        document.getElementById('idx-prev-wrap').style.display = 'none';
+        document.getElementById('idx-pills').style.display = 'flex';
+        document.getElementById('idx-status').textContent = '';
+        document.getElementById('idx-status').style.color = '';
+        imgFile = null;
+    };
+    window.idxClose = function(e) {
+        if (e instanceof Event && e.target !== document.getElementById('idx-overlay')) return;
+        document.getElementById('idx-overlay').style.display = 'none';
+        document.body.style.overflow = '';
+    };
+
+    /* ── Drag & drop ── */
+    window.idxDrop = function(e) {
+        e.preventDefault();
+        document.getElementById('idx-drop').classList.remove('drag-over');
+        const f = e.dataTransfer.files[0];
+        if (f) idxProcess(f);
+    };
+    window.idxFile = function(input) {
+        if (input.files && input.files[0]) idxProcess(input.files[0]);
+    };
+
+    /* ── Process: read → convert to JPEG → show preview + scan ── */
+    function idxProcess(file) {
+        if (!file.type.startsWith('image/')) { alert('Please select an image file.'); return; }
+        if (file.size > 15 * 1024 * 1024) { alert('Image too large. Max 15MB.'); return; }
+        imgFile = null;
+        const go = document.getElementById('idx-go');
+        const st = document.getElementById('idx-status');
+        go.disabled = true;
+        go.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin" style="margin-right:8px;"></i>Converting…';
+
+        const reader = new FileReader();
+        reader.onload = ev => {
+            document.getElementById('idx-prev-img').src = ev.target.result;
+            document.getElementById('idx-prev-wrap').style.display = 'block';
+            document.getElementById('idx-drop').style.display = 'none';
+            document.getElementById('idx-pills').style.display = 'none';
+
+            const scan = document.getElementById('idx-scan');
+            const pg   = document.getElementById('idx-pg');
+            scan.style.display = 'block';
+            pg.classList.add('idx-scanning');
+            st.textContent = 'Analysing image…';
+
+            const img = new Image();
+            img.onload = () => {
+                let w = img.width, h = img.height;
+                const MAX = 800;
+                if (w > MAX || h > MAX) {
+                    if (w > h) { h = Math.round(h*MAX/w); w = MAX; }
+                    else       { w = Math.round(w*MAX/h); h = MAX; }
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = w; canvas.height = h;
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                canvas.toBlob(blob => {
+                    if (!blob) { alert('Could not convert image.'); return; }
+                    imgFile = new File([blob], 'search.jpg', { type: 'image/jpeg' });
+                    setTimeout(() => {
+                        scan.style.display = 'none';
+                        pg.classList.remove('idx-scanning');
+                        st.textContent = '✓ Ready — ' + (imgFile.size/1024).toFixed(0) + ' KB';
+                        go.disabled = false;
+                        go.innerHTML = '<i class="fa-solid fa-magnifying-glass" style="margin-right:8px;"></i>Find Similar Products';
+                    }, 900);
+                }, 'image/jpeg', 0.88);
+            };
+            img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    /* ── Search: upload → redirect ── */
+    window.idxSearch = function() {
+        if (!imgFile) { alert('Please select an image first.'); return; }
+        const go   = document.getElementById('idx-go');
+        const st   = document.getElementById('idx-status');
+        const scan = document.getElementById('idx-scan');
+        const pg   = document.getElementById('idx-pg');
+
+        scan.style.display = 'block';
+        pg.classList.add('idx-scanning');
+        go.disabled = true;
+        go.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin" style="margin-right:8px;"></i>Searching AliExpress…';
+
+        const msgs = ['Scanning image…','Identifying product…','Matching catalogue…','Almost there…'];
+        let mi = 0;
+        st.textContent = msgs[0];
+        const iv = setInterval(() => { st.textContent = msgs[++mi % msgs.length]; }, 1400);
+
+        const fd = new FormData();
+        fd.append('image', imgFile);
+        fd.append('country', 'MA');
+        fd.append('currency', 'MAD');
+        fd.append('page', '1');
+
+        fetch('ajax_image_search.php', { method:'POST', body:fd })
+        .then(r => r.json())
+        .then(data => {
+            clearInterval(iv);
+            scan.style.display = 'none';
+            pg.classList.remove('idx-scanning');
+            go.disabled = false;
+            go.innerHTML = '<i class="fa-solid fa-magnifying-glass" style="margin-right:8px;"></i>Find Similar Products';
+
+            if (data.error) { st.textContent = 'Error: ' + data.error; st.style.color='#f87171'; return; }
+            if (data.products && data.products.length > 0) {
+                sessionStorage.setItem('imgSearchResults', JSON.stringify(data));
+                window.location.href = 'search.php?mode=img_results';
+            } else {
+                st.textContent = 'No results found. Try a clearer product photo.';
+                st.style.color = '#f87171';
+            }
+        })
+        .catch(() => {
+            clearInterval(iv);
+            scan.style.display = 'none';
+            pg.classList.remove('idx-scanning');
+            go.disabled = false;
+            go.innerHTML = '<i class="fa-solid fa-magnifying-glass" style="margin-right:8px;"></i>Find Similar Products';
+            st.textContent = 'Search failed. Please try again.';
+            st.style.color = '#f87171';
+        });
+    };
+
+    /* ESC to close */
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') idxClose();
+    });
+})();
+</script>
+
 </body>
 
 </html>
@@ -2313,6 +2620,3 @@ if (isset($con) && $con) {
     mysqli_close($con);
 }
 ?>
-
-
-

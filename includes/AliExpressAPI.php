@@ -48,6 +48,13 @@ class AliExpressAPI {
         curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($allParams));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        // ── Performance: timeouts, HTTP/2, compression, keepalive ──
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);   // fail fast if unreachable
+        curl_setopt($ch, CURLOPT_TIMEOUT, 15);          // max 15s total
+        curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2_0); // HTTP/2
+        curl_setopt($ch, CURLOPT_ENCODING, '');         // accept gzip/deflate
+        curl_setopt($ch, CURLOPT_TCP_KEEPALIVE, 1);
+        curl_setopt($ch, CURLOPT_TCP_FASTOPEN, true);
         $res = curl_exec($ch);
         
         if (curl_errno($ch)) {
@@ -56,7 +63,7 @@ class AliExpressAPI {
         
         curl_close($ch);
         
-        return json_decode($res, true) ?? ["error" => "Invalid JSON response", "raw" => $res];
+        return json_decode($res, true) ?? ["error" => "Invalid JSON response", "raw" => substr($res, 0, 500)];
     }
 
     public function getFeedNames() {

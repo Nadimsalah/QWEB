@@ -21,68 +21,58 @@ $isLoggedIn = !empty($userId);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/main.css">
     <style>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
         body {
             background-color: #0d0d12;
             color: #fff;
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             font-family: 'Inter', sans-serif;
             -webkit-tap-highlight-color: transparent;
-            padding-bottom: 120px; /* Space for bottom bar */
+            padding-bottom: 100px;
+            overflow-x: hidden;
         }
-        
-        /* Shimmer Loading */
-        .shimmer {
-            background: rgba(255,255,255,0.05);
-            position: relative;
-            overflow: hidden;
-            border-radius: 8px;
-        }
+
+        /* ── Shimmer ── */
+        .shimmer { background: rgba(255,255,255,0.05); position: relative; overflow: hidden; border-radius: 8px; }
         .shimmer::after {
-            content: ''; position: absolute; inset: 0;
+            content:''; position:absolute; inset:0;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
-            transform: translateX(-100%);
-            animation: shimmerAnim 1.5s infinite;
+            transform: translateX(-100%); animation: shimmerAnim 1.5s infinite;
         }
         @keyframes shimmerAnim { 100% { transform: translateX(100%); } }
 
-        /* Top Nav Mobile */
+        /* ── Mobile Top Nav ── */
         .mobile-nav {
-            display: none;
-            padding: 16px 20px;
-            justify-content: space-between;
-            align-items: center;
+            display: flex; padding: 12px 16px;
+            justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 50;
+            background: rgba(13,13,18,0.85); backdrop-filter: blur(16px);
         }
         .btn-icon {
             width: 40px; height: 40px; border-radius: 50%;
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
             display: flex; align-items: center; justify-content: center;
             color: #fff; font-size: 16px; cursor: pointer; transition: 0.2s;
         }
-        .btn-icon:hover { background: rgba(255,255,255,0.1); }
+        .btn-icon:hover { background: rgba(255,255,255,0.12); }
 
-        /* Layout */
+        /* ══ LAYOUT ══════════════════════════════════════════════════════════ */
         .layout-container {
             max-width: 1200px;
-            margin: 40px auto;
+            margin: 0 auto;
             padding: 0 20px;
             display: flex;
             gap: 30px;
             align-items: flex-start;
         }
 
-        /* Left: Images */
-        .left-col {
-            flex: 1;
-            display: flex;
-            gap: 20px;
-        }
+        /* ── Desktop Gallery ── */
+        .left-col { flex: 1; display: flex; gap: 20px; }
         .thumbnails-wrap {
-            width: 80px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            position: relative;
+            width: 80px; display: flex; flex-direction: column;
+            gap: 12px; position: relative;
         }
         .thumb-nav {
             width: 100%; height: 24px; display: flex; align-items: center; justify-content: center;
@@ -90,56 +80,137 @@ $isLoggedIn = !empty($userId);
             color: rgba(255,255,255,0.5); font-size: 12px;
         }
         .thumb-nav:hover { background: rgba(255,255,255,0.1); color: #fff; }
-        
-        .thumbnails {
-            display: flex; flex-direction: column; gap: 12px;
-            max-height: 500px; overflow-y: auto; scrollbar-width: none;
-        }
+        .thumbnails { display: flex; flex-direction: column; gap: 12px; max-height: 500px; overflow-y: auto; scrollbar-width: none; }
         .thumbnails::-webkit-scrollbar { display: none; }
-        
         .thumb-img {
             width: 80px; height: 80px; border-radius: 12px; object-fit: cover;
-            cursor: pointer; border: 2px solid transparent; transition: 0.2s;
-            background: #1a1a24;
+            cursor: pointer; border: 2px solid transparent; transition: 0.2s; background: #1a1a24;
         }
         .thumb-img.active { border-color: #a855f7; }
 
+        /* ── Main Image ── */
         .main-img-wrap {
-            flex: 1;
-            background: #1a1a24;
-            border-radius: 24px;
-            overflow: hidden;
-            position: relative;
-            aspect-ratio: 1/1;
+            flex: 1; background: #1a1a24; border-radius: 24px; overflow: hidden;
+            position: relative; aspect-ratio: 1/1;
             display: flex; align-items: center; justify-content: center;
         }
-        .main-img {
-            width: 100%; height: 100%; object-fit: cover;
-        }
+        .main-img { width: 100%; height: 100%; object-fit: cover; }
         .img-counter {
             position: absolute; bottom: 16px; right: 16px;
             background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
             padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
         }
 
-        /* Middle: Details */
-        .right-col {
-            width: 400px;
-            background: #1a1a24;
-            border-radius: 24px;
-            padding: 32px;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            overflow: visible;
-            position: relative;
-            z-index: 1;
+        /* ── MOBILE IMAGE SWIPE GALLERY ── */
+        .mobile-gallery { display: none; position: relative; width: 100%; background: #111118; }
+        .mobile-gallery-track {
+            display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
+            scrollbar-width: none; -webkit-overflow-scrolling: touch;
         }
-        
-        .pd-title { font-size: 24px; font-weight: 700; line-height: 1.3; }
-        /* Reviews Row */
-        .reviews { display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,0.6); transition: 0.2s; }
+        .mobile-gallery-track::-webkit-scrollbar { display: none; }
+        .mobile-gallery-slide {
+            flex: 0 0 100%; scroll-snap-align: start;
+            aspect-ratio: 1/1; background: #111118;
+            display: flex; align-items: center; justify-content: center;
+            cursor: zoom-in;
+        }
+        .mobile-gallery-slide img {
+            width: 100%; height: 100%; object-fit: contain;
+            transition: transform 0.2s;
+            pointer-events: none;
+            user-select: none;
+        }
+        /* Prev / Next arrows */
+        .mob-arrow {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            width: 38px; height: 38px; border-radius: 50%;
+            background: rgba(0,0,0,0.45); backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff; font-size: 14px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; z-index: 10; transition: 0.2s;
+        }
+        .mob-arrow:hover { background: rgba(168,85,247,0.5); }
+        .mob-arrow.prev { left: 12px; }
+        .mob-arrow.next { right: 12px; }
+        .mob-arrow.hidden { opacity: 0; pointer-events: none; }
+        /* Image counter pill */
+        .mob-counter {
+            position: absolute; bottom: 52px; right: 14px;
+            background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);
+            color: #fff; font-size: 12px; font-weight: 600;
+            padding: 3px 10px; border-radius: 20px;
+        }
+        /* Dots */
+        .mob-img-dots {
+            display: flex; justify-content: center; gap: 6px; padding: 8px 0;
+            background: #111118;
+        }
+        .mob-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: rgba(255,255,255,0.2); transition: all 0.3s;
+            cursor: pointer;
+        }
+        .mob-dot.active { background: #a855f7; width: 18px; border-radius: 3px; }
+
+        /* ── FULLSCREEN LIGHTBOX ── */
+        #mob-lightbox {
+            display: none; position: fixed; inset: 0; z-index: 9999;
+            background: rgba(0,0,0,0.96);
+            flex-direction: column; align-items: center; justify-content: center;
+            touch-action: none;
+        }
+        #mob-lightbox.open { display: flex; }
+        #mob-lightbox-img {
+            max-width: 100%; max-height: 85vh;
+            object-fit: contain; border-radius: 8px;
+            transition: transform 0.2s;
+            user-select: none; -webkit-user-drag: none;
+        }
+        .lb-close {
+            position: absolute; top: 16px; right: 16px;
+            width: 38px; height: 38px; border-radius: 50%;
+            background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
+            color: #fff; font-size: 18px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .lb-counter {
+            position: absolute; top: 22px; left: 50%; transform: translateX(-50%);
+            font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.6);
+        }
+        .lb-arrow {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            width: 44px; height: 44px; border-radius: 50%;
+            background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+            color: #fff; font-size: 16px; cursor: pointer; display: flex;
+            align-items: center; justify-content: center; transition: 0.2s;
+        }
+        .lb-arrow:hover { background: rgba(168,85,247,0.4); }
+        .lb-arrow.prev { left: 12px; }
+        .lb-arrow.next { right: 12px; }
+        .lb-strip {
+            position: absolute; bottom: 16px; left: 0; right: 0;
+            display: flex; gap: 8px; overflow-x: auto; padding: 0 16px;
+            scrollbar-width: none; justify-content: center;
+        }
+        .lb-strip::-webkit-scrollbar { display: none; }
+        .lb-thumb {
+            width: 52px; height: 52px; border-radius: 8px; object-fit: cover;
+            cursor: pointer; border: 2px solid transparent; transition: 0.2s; flex-shrink: 0;
+            opacity: 0.55;
+        }
+        .lb-thumb.active { border-color: #a855f7; opacity: 1; }
+
+        /* ── Right / Details ── */
+        .right-col {
+            width: 400px; background: #1a1a24; border-radius: 24px; padding: 32px;
+            display: flex; flex-direction: column; gap: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .pd-title { font-size: 22px; font-weight: 700; line-height: 1.35; }
+
+        /* Reviews */
+        .reviews { display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,0.6); cursor: pointer; }
         .reviews:hover { color: rgba(255,255,255,0.9); }
         .stars i { color: #f59e0b; font-size: 12px; }
 
@@ -159,10 +230,12 @@ $isLoggedIn = !empty($userId);
         .reviews-modal-overlay.open .reviews-modal { transform: translateY(0); }
         .rm-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
         .rm-title { font-size: 20px; font-weight: 700; }
-        .rm-close { width: 36px; height: 36px; border-radius: 50%; border: none; background: rgba(255,255,255,0.08);
-            color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-        .rm-score { display: flex; align-items: center; gap: 20px; background: rgba(255,255,255,0.04);
-            border-radius: 20px; padding: 20px; margin-bottom: 24px; }
+        .rm-close {
+            width: 36px; height: 36px; border-radius: 50%; border: none;
+            background: rgba(255,255,255,0.08); color: #fff; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 16px;
+        }
+        .rm-score { display: flex; align-items: center; gap: 20px; background: rgba(255,255,255,0.04); border-radius: 20px; padding: 20px; margin-bottom: 24px; }
         .rm-big-score { font-size: 52px; font-weight: 800; line-height: 1; }
         .rm-bars { flex: 1; display: flex; flex-direction: column; gap: 6px; }
         .rm-bar-row { display: flex; align-items: center; gap: 8px; font-size: 12px; }
@@ -170,13 +243,11 @@ $isLoggedIn = !empty($userId);
         .rm-bar-fill { height: 100%; border-radius: 3px; background: #f59e0b; }
         .rm-photo-strip { display: flex; gap: 10px; overflow-x: auto; margin-bottom: 24px; scrollbar-width: none; padding-bottom: 4px; }
         .rm-photo-strip::-webkit-scrollbar { display: none; }
-        .rm-photo { width: 80px; height: 80px; border-radius: 12px; object-fit: cover; cursor: pointer;
-            border: 2px solid transparent; transition: 0.2s; flex-shrink: 0; }
+        .rm-photo { width: 80px; height: 80px; border-radius: 12px; object-fit: cover; cursor: pointer; border: 2px solid transparent; transition: 0.2s; flex-shrink: 0; }
         .rm-photo:hover { border-color: #a855f7; }
         .rm-review-card { background: rgba(255,255,255,0.04); border-radius: 16px; padding: 16px; margin-bottom: 14px; }
         .rm-reviewer { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .rm-avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg,#a855f7,#6366f1);
-            display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink:0; }
+        .rm-avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg,#a855f7,#6366f1); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink:0; }
         .rm-reviewer-name { font-weight: 600; font-size: 14px; }
         .rm-reviewer-date { font-size: 11px; color: rgba(255,255,255,0.4); }
         .rm-review-stars { color: #f59e0b; font-size: 11px; }
@@ -184,142 +255,125 @@ $isLoggedIn = !empty($userId);
         .rm-review-imgs { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
         .rm-review-img { width: 64px; height: 64px; border-radius: 10px; object-fit: cover; cursor: pointer; }
 
-        .price-wrap { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin: 6px 0; }
-        .pd-price { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; color: #fff; }
-        .discount-badge { background: #a855f7; color: #fff; padding: 3px 7px; border-radius: 8px; font-size: 11px; font-weight: 700; align-self: center; }
+        /* Price */
+        .price-wrap { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+        .pd-price { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
+        .discount-badge { background: #a855f7; color: #fff; padding: 3px 8px; border-radius: 8px; font-size: 12px; font-weight: 700; align-self: center; }
         .old-price { text-decoration: line-through; color: rgba(255,255,255,0.35); font-size: 13px; }
 
-        .section-label { font-size: 14px; color: rgba(255,255,255,0.6); margin-bottom: 12px; }
-        
+        .section-label { font-size: 13px; color: rgba(255,255,255,0.55); margin-bottom: 10px; }
+
         /* Variants */
         .variant-group { display: flex; flex-wrap: wrap; gap: 10px; }
-        .color-opt {
-            width: 44px; height: 44px; border-radius: 12px; overflow: hidden; cursor: pointer;
-            border: 2px solid transparent; transition: 0.2s; background: rgba(255,255,255,0.05);
-        }
+        .color-opt { width: 44px; height: 44px; border-radius: 12px; overflow: hidden; cursor: pointer; border: 2px solid transparent; transition: 0.2s; background: rgba(255,255,255,0.05); }
         .color-opt img { width: 100%; height: 100%; object-fit: cover; }
         .color-opt.active { border-color: #a855f7; }
-        
-        .size-opt {
-            width: 44px; height: 44px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            border: 1px solid rgba(255,255,255,0.1); cursor: pointer;
-            font-size: 14px; font-weight: 600; transition: 0.2s;
-            background: transparent; color: #fff;
-        }
-        .size-opt.active { border-color: #fff; background: transparent; }
-        
-        .size-guide { font-size: 13px; text-decoration: underline; color: rgba(255,255,255,0.6); cursor: pointer; margin-top: -10px; display: inline-block; }
+        .size-opt { min-width: 44px; height: 44px; border-radius: 50%; padding: 0 6px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; font-size: 13px; font-weight: 600; transition: 0.2s; background: transparent; color: #fff; }
+        .size-opt.active { border-color: #fff; }
+        .size-guide { font-size: 13px; text-decoration: underline; color: rgba(255,255,255,0.6); cursor: pointer; display: inline-block; }
 
         /* Qty */
-        .qty-controls {
-            display: flex; align-items: center; justify-content: space-between;
-            width: 140px; height: 48px; border-radius: 24px;
-            border: 2px solid rgba(255,255,255,0.2); padding: 0 4px;
-            position: relative; z-index: 10; pointer-events: all;
-        }
-        .qty-btn {
-            width: 40px; height: 40px; border-radius: 50%; border: none; background: rgba(255,255,255,0.08);
-            color: #fff; font-size: 18px; cursor: pointer !important; display: flex; align-items: center; justify-content: center;
-            pointer-events: all !important; z-index: 11; position: relative;
-            -webkit-tap-highlight-color: transparent;
-        }
+        .qty-controls { display: flex; align-items: center; justify-content: space-between; width: 140px; height: 48px; border-radius: 24px; border: 2px solid rgba(255,255,255,0.2); padding: 0 4px; }
+        .qty-btn { width: 40px; height: 40px; border-radius: 50%; border: none; background: rgba(255,255,255,0.08); color: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.15s; }
         .qty-btn:hover { background: rgba(168,85,247,0.3); }
         .qty-btn:active { background: rgba(168,85,247,0.6); transform: scale(0.9); }
         .qty-val { font-weight: 700; font-size: 16px; min-width: 28px; text-align: center; }
 
         /* Shipping */
-        .shipping-box {
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 16px; padding: 16px; font-size: 14px;
-            display: flex; justify-content: space-between; align-items: center;
-            cursor: pointer;
-        }
-        .shipping-box span { color: rgba(255,255,255,0.7); }
+        .shipping-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 16px; font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
 
-        /* Far Right Actions (floating) */
-        .actions-col {
-            display: flex; flex-direction: column; gap: 12px;
-        }
-        .action-btn {
-            width: 48px; height: 48px; border-radius: 16px; background: #1a1a24;
-            display: flex; align-items: center; justify-content: center;
-            color: rgba(255,255,255,0.7); cursor: pointer; border: 1px solid rgba(255,255,255,0.05);
-            transition: 0.2s; position: relative;
-        }
+        /* Desktop Actions Col */
+        .actions-col { display: flex; flex-direction: column; gap: 12px; }
+        .action-btn { width: 48px; height: 48px; border-radius: 16px; background: #1a1a24; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.7); cursor: pointer; border: 1px solid rgba(255,255,255,0.05); transition: 0.2s; position: relative; }
         .action-btn:hover { background: rgba(255,255,255,0.05); color: #fff; }
-        .action-tooltip {
-            position: absolute; right: calc(100% + 10px); background: #000; color: #fff;
-            padding: 4px 8px; border-radius: 6px; font-size: 12px; pointer-events: none;
-            opacity: 0; transition: 0.2s; white-space: nowrap;
-        }
+        .action-tooltip { position: absolute; right: calc(100% + 10px); background: #000; color: #fff; padding: 4px 8px; border-radius: 6px; font-size: 12px; pointer-events: none; opacity: 0; transition: 0.2s; white-space: nowrap; }
         .action-btn:hover .action-tooltip { opacity: 1; }
 
-        /* Reviews Box */
-        .reviews-box {
-            background: #1a1a24; border-radius: 20px; padding: 24px;
-            margin-top: 30px; display: flex; gap: 40px; align-items: center;
-        }
-
-        /* Sticky Bottom Bar */
-        .bottom-bar {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: #1a1a24; padding: 16px 24px; border-radius: 24px;
-            display: flex; align-items: center; gap: 20px; z-index: 100;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05);
-            width: 90%; max-width: 1000px;
-        }
-        .bb-total-label { color: rgba(255,255,255,0.5); font-size: 14px; margin-right: 8px; }
-        .bb-total-val { font-size: 20px; font-weight: 800; color: #fff; }
-        .bb-spacer { flex: 1; }
-        
-        .bb-chips { display: flex; gap: 12px; }
-        .bb-chip { 
-            padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600;
-            border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03);
-            display: flex; align-items: center; gap: 8px;
-        }
-        .color-dot { width: 10px; height: 10px; border-radius: 50%; background: #ff9800; }
-
-        .btn-outline {
-            padding: 12px 24px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2);
-            background: transparent; color: #fff; font-weight: 600; cursor: pointer; transition: 0.2s;
-        }
+        /* Buttons */
+        .btn-outline { padding: 12px 24px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: #fff; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 15px; }
         .btn-outline:hover { background: rgba(255,255,255,0.05); }
-        .btn-primary {
-            padding: 12px 32px; border-radius: 12px; border: none;
-            background: #a855f7; color: #fff; font-weight: 700; cursor: pointer; transition: 0.2s;
-        }
-        .btn-primary:hover { background: #9333ea; }
+        .btn-primary { padding: 14px 32px; border-radius: 14px; border: none; background: linear-gradient(135deg,#a855f7,#6366f1); color: #fff; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 15px; box-shadow: 0 4px 20px rgba(168,85,247,0.35); }
+        .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        .btn-primary:active { transform: scale(0.97); }
 
-        /* Description Area */
-        .desc-area { padding: 30px; background: #1a1a24; border-radius: 24px; line-height: 1.8; overflow-x: auto; }
+        /* Description */
+        .desc-area { padding: 24px; background: #1a1a24; border-radius: 24px; line-height: 1.8; overflow-x: hidden; }
         #pd-desc, #pd-desc * { color: #ffffff !important; background: transparent !important; font-size: 15px !important; }
         #pd-desc img { max-width: 100% !important; height: auto !important; border-radius: 12px; display: block; margin: 16px auto; }
         #pd-desc iframe { max-width: 100% !important; }
-        #pd-desc p, #pd-desc li, #pd-desc div, #pd-desc span { color: #ffffff !important; }
-        #pd-desc { overflow-x: auto; word-wrap: break-word; }
 
-        /* Responsive */
-        @media (max-width: 900px) {
-            .layout-container { flex-direction: column; margin-top: 20px; }
-            .right-col { width: 100%; padding: 24px; }
+        /* ── STICKY BOTTOM BAR ── */
+        .bottom-bar {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(22,22,34,0.97);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            padding: 14px 20px env(safe-area-inset-bottom, 0px);
+            display: flex; align-items: center; gap: 16px; z-index: 200;
+            border-top: 1px solid rgba(255,255,255,0.07);
+            box-shadow: 0 -8px 32px rgba(0,0,0,0.4);
+        }
+        .bb-total-label { color: rgba(255,255,255,0.5); font-size: 13px; }
+        .bb-total-val { font-size: 22px; font-weight: 800; color: #fff; }
+        .bb-spacer { flex: 1; }
+        .bb-chips { display: flex; gap: 10px; }
+        .bb-chip { padding: 7px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); display: flex; align-items: center; gap: 7px; }
+        .color-dot { width: 10px; height: 10px; border-radius: 50%; background: #ff9800; }
+
+        /* ══ MOBILE BREAKPOINT (<= 768px) ══════════════════════════════════ */
+        @media (max-width: 768px) {
+            body { padding-bottom: 90px; }
+
+            /* Hide desktop elements */
+            .thumbnails-wrap { display: none; }
+            .main-img-wrap.desktop-main { display: none; }
             .actions-col { display: none; }
-            .mobile-nav { display: flex; }
-            
-            .left-col { flex-direction: column-reverse; width: 100%; }
-            .thumbnails-wrap { width: 100%; flex-direction: row; }
-            .thumbnails { flex-direction: row; overflow-x: auto; max-height: none; width: 100%; padding-bottom: 10px; }
-            .thumb-img { width: 60px; height: 60px; flex-shrink: 0; }
-            .thumb-nav { display: none; }
-            
-            .bottom-bar { 
-                bottom: 0; width: 100%; border-radius: 24px 24px 0 0; 
-                flex-wrap: wrap; justify-content: space-between; padding: 16px;
+            .layout-container { flex-direction: column; gap: 0; padding: 0; margin: 0; }
+
+            /* Show mobile gallery */
+            .mobile-gallery { display: block; }
+
+            /* Push gallery below the fixed header */
+            #main-content { padding-top: 90px !important; }
+
+            /* Details card: full-width, rounded top, no side gaps */
+            .right-col {
+                width: 100%; border-radius: 20px 20px 0 0;
+                padding: 20px 16px; gap: 18px;
+                box-shadow: none; margin-top: -8px;
+                border: none;
             }
-            .bb-chips { display: none; } /* Hide chips on mobile bar to save space */
+            .pd-title { font-size: 18px; }
+            .pd-price { font-size: 26px; font-weight: 800; }
+
+            /* Description */
+            #desc-section { padding: 0 0 100px !important; margin-top: 0 !important; }
+            .desc-area { border-radius: 0; padding: 20px 16px; margin: 0; }
+
+            /* Bottom bar: tighter on mobile */
+            .bottom-bar { padding: 12px 16px env(safe-area-inset-bottom, 0px); gap: 10px; }
+            .bb-chips { display: none; }
+            .bb-total-val { font-size: 20px; }
+            .btn-primary { padding: 13px 20px; font-size: 14px; white-space: nowrap; }
+            .btn-outline { padding: 13px 16px; font-size: 14px; white-space: nowrap; }
+
+            /* Qty controls full-width on mobile */
+            .qty-controls { width: 130px; }
+
+            /* Country select */
+            #country-select { font-size: 11px; padding: 3px 6px; }
+
+            /* Reviews modal */
+            .reviews-modal { padding: 20px 16px; }
+            .rm-big-score { font-size: 42px; }
+        }
+
+        @media (max-width: 380px) {
+            .right-col { padding: 16px 12px; }
+            .pd-title { font-size: 16px; }
+            .btn-primary, .btn-outline { padding: 12px 12px; font-size: 13px; }
         }
     </style>
+
 </head>
 <body>
 
@@ -338,6 +392,34 @@ $isLoggedIn = !empty($userId);
 
     <!-- Main Content -->
     <div id="main-content" style="display:none; padding-top: 80px;">
+
+        <!-- ═══ MOBILE SWIPE GALLERY (hidden on desktop) ═══ -->
+        <div class="mobile-gallery" id="mobile-gallery">
+            <!-- prev/next arrows -->
+            <button class="mob-arrow prev hidden" id="mob-prev" onclick="mobGalleryNav(-1)">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <button class="mob-arrow next" id="mob-next" onclick="mobGalleryNav(1)">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+            <!-- counter pill -->
+            <div class="mob-counter" id="mob-counter">1/1</div>
+            <!-- slides -->
+            <div class="mobile-gallery-track" id="mob-gallery-track"></div>
+            <!-- dots -->
+            <div class="mob-img-dots" id="mob-img-dots"></div>
+        </div>
+
+        <!-- FULLSCREEN LIGHTBOX -->
+        <div id="mob-lightbox">
+            <div class="lb-close" onclick="closeLightbox()"><i class="fa-solid fa-xmark"></i></div>
+            <div class="lb-counter" id="lb-counter">1 / 1</div>
+            <button class="lb-arrow prev" id="lb-prev" onclick="lightboxNav(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+            <img id="mob-lightbox-img" src="" alt="Product image">
+            <button class="lb-arrow next" id="lb-next" onclick="lightboxNav(1)"><i class="fa-solid fa-chevron-right"></i></button>
+            <div class="lb-strip" id="lb-strip"></div>
+        </div>
+
         <div class="layout-container">
             <!-- Left: Images -->
             <div class="left-col">
@@ -349,7 +431,7 @@ $isLoggedIn = !empty($userId);
                     <div class="thumb-nav"><i class="fa-solid fa-chevron-down"></i></div>
                 </div>
                 
-                <div class="main-img-wrap">
+                <div class="main-img-wrap desktop-main">
                     <img src="" class="main-img" id="main-image">
                     <div class="img-counter" id="img-counter">1/1</div>
                 </div>
@@ -565,26 +647,46 @@ $isLoggedIn = !empty($userId);
             currentImages = data.images && data.images.length ? data.images : (data.main_image ? [data.main_image] : []);
             renderGallery();
 
-            // Description
-            let descStr = data.desc || '';
-            let descHtml = descStr;
-            try {
-                let parsed = JSON.parse(descStr);
-                if (parsed && parsed.moduleList) {
-                    descHtml = parsed.moduleList.map(mod => {
-                        if (mod.type === 'image' && mod.data && mod.data.url) return `<img src="${mod.data.url}" />`;
-                        if (mod.type === 'text' && mod.data && mod.data.content) return `<div>${mod.data.content}</div>`;
-                        if (mod.type === 'html' && mod.data && mod.data.content) return mod.data.content;
-                        return '';
-                    }).join('');
-                }
-            } catch(e) { /* raw HTML */ }
-            if (!descHtml.trim()) descHtml = '<p>No description available.</p>';
-            document.getElementById('pd-desc').innerHTML = descHtml;
-            document.querySelectorAll('#pd-desc img').forEach(img => {
-                if (!img.src && img.hasAttribute('data-src')) img.src = img.getAttribute('data-src');
-                img.removeAttribute('width'); img.removeAttribute('height');
-            });
+
+            // \u2500\u2500 Description \u2014 lazy-render when user scrolls to it \u2500\u2500
+            const descSection = document.getElementById('desc-section');
+            const descEl      = document.getElementById('pd-desc');
+            let   descRendered = false;
+
+            function renderDesc() {
+                if (descRendered) return;
+                descRendered = true;
+                let descStr  = data.desc || '';
+                let descHtml = descStr;
+                try {
+                    let parsed = JSON.parse(descStr);
+                    if (parsed && parsed.moduleList) {
+                        descHtml = parsed.moduleList.map(mod => {
+                            if (mod.type === 'image' && mod.data?.url) return `<img src="${mod.data.url}" loading="lazy">`;
+                            if (mod.type === 'text'  && mod.data?.content) return `<div>${mod.data.content}</div>`;
+                            if (mod.type === 'html'  && mod.data?.content) return mod.data.content;
+                            return '';
+                        }).join('');
+                    }
+                } catch(e) { /* raw HTML */ }
+                if (!descHtml.trim()) descHtml = '<p>No description available.</p>';
+                descEl.innerHTML = descHtml;
+                // Fix any img with data-src, strip fixed dimensions
+                descEl.querySelectorAll('img').forEach(img => {
+                    if (!img.src && img.dataset.src) img.src = img.dataset.src;
+                    img.removeAttribute('width'); img.removeAttribute('height');
+                    img.loading = 'lazy';
+                });
+            }
+
+            if ('IntersectionObserver' in window) {
+                const obs = new IntersectionObserver((entries) => {
+                    if (entries[0].isIntersecting) { renderDesc(); obs.disconnect(); }
+                }, { rootMargin: '200px' });
+                obs.observe(descSection);
+            } else {
+                renderDesc(); // fallback for old browsers
+            }
 
             // Variants
             renderDynamicVariants(data.variants);
@@ -742,22 +844,149 @@ $isLoggedIn = !empty($userId);
 
 
         function renderGallery() {
+            // ── Desktop thumbnails ──
             const thumbsContainer = document.getElementById('gallery-thumbs');
             thumbsContainer.innerHTML = currentImages.map((img, idx) => `
                 <img src="${img}" class="thumb-img ${idx === 0 ? 'active' : ''}" onclick="setMainImage(${idx})">
             `).join('');
             setMainImage(0);
+
+            // ── Mobile swipe gallery ──
+            const track   = document.getElementById('mob-gallery-track');
+            const dotsWrap = document.getElementById('mob-img-dots');
+            const counter  = document.getElementById('mob-counter');
+            const prevBtn  = document.getElementById('mob-prev');
+            const nextBtn  = document.getElementById('mob-next');
+            if (!track) return;
+
+            // Build slides (tap opens lightbox)
+            track.innerHTML = currentImages.map((img, i) => `
+                <div class="mobile-gallery-slide" onclick="openLightbox(${i})">
+                    <img src="${img}" loading="${i===0?'eager':'lazy'}" alt="Product image ${i+1}">
+                </div>
+            `).join('');
+
+            // Build dots (click to jump)
+            dotsWrap.innerHTML = currentImages.map((_, i) =>
+                `<div class="mob-dot ${i===0?'active':''}" onclick="mobJumpTo(${i})"></div>`
+            ).join('');
+
+            // Counter
+            if (counter) counter.textContent = `1/${currentImages.length}`;
+
+            // Hide arrows if only 1 image
+            if (currentImages.length <= 1) {
+                if (prevBtn) prevBtn.classList.add('hidden');
+                if (nextBtn) nextBtn.classList.add('hidden');
+            }
+
+            // Sync dots + counter + arrows on scroll
+            let scrollTimer;
+            track.addEventListener('scroll', () => {
+                clearTimeout(scrollTimer);
+                scrollTimer = setTimeout(() => {
+                    const slideW = track.clientWidth;
+                    const idx = Math.round(track.scrollLeft / slideW);
+                    dotsWrap.querySelectorAll('.mob-dot').forEach((d, i) =>
+                        d.classList.toggle('active', i === idx)
+                    );
+                    if (counter) counter.textContent = `${idx+1}/${currentImages.length}`;
+                    if (prevBtn) prevBtn.classList.toggle('hidden', idx === 0);
+                    if (nextBtn) nextBtn.classList.toggle('hidden', idx === currentImages.length - 1);
+                }, 50);
+            }, { passive: true });
+
+            // Build lightbox thumbnail strip
+            buildLightboxStrip();
         }
+
+        // ── Arrow navigation ──
+        window.mobGalleryNav = function(dir) {
+            const track = document.getElementById('mob-gallery-track');
+            const slideW = track.clientWidth;
+            track.scrollBy({ left: dir * slideW, behavior: 'smooth' });
+        };
+
+        // ── Jump by dot tap ──
+        window.mobJumpTo = function(idx) {
+            const track = document.getElementById('mob-gallery-track');
+            track.scrollTo({ left: idx * track.clientWidth, behavior: 'smooth' });
+        };
+
+        // ── Lightbox ──
+        let lbIndex = 0;
+        function buildLightboxStrip() {
+            const strip = document.getElementById('lb-strip');
+            if (!strip) return;
+            strip.innerHTML = currentImages.map((img, i) =>
+                `<img src="${img}" class="lb-thumb ${i===0?'active':''}" onclick="lightboxNav(${i}, true)" loading="lazy">`
+            ).join('');
+        }
+
+        window.openLightbox = function(idx) {
+            lbIndex = idx;
+            const lb = document.getElementById('mob-lightbox');
+            lb.classList.add('open');
+            document.body.style.overflow = 'hidden';
+            lightboxShow(lbIndex);
+        };
+
+        window.closeLightbox = function() {
+            document.getElementById('mob-lightbox').classList.remove('open');
+            document.body.style.overflow = '';
+        };
+
+        window.lightboxNav = function(val, absolute) {
+            if (absolute) { lbIndex = val; }
+            else {
+                lbIndex = Math.max(0, Math.min(currentImages.length - 1, lbIndex + val));
+            }
+            lightboxShow(lbIndex);
+        };
+
+        function lightboxShow(idx) {
+            document.getElementById('mob-lightbox-img').src = currentImages[idx];
+            const counter = document.getElementById('lb-counter');
+            if (counter) counter.textContent = `${idx+1} / ${currentImages.length}`;
+            // Update strip
+            document.querySelectorAll('.lb-thumb').forEach((t,i) => t.classList.toggle('active', i===idx));
+            // Scroll strip to active
+            const strip = document.getElementById('lb-strip');
+            const activeTh = strip && strip.children[idx];
+            if (activeTh) activeTh.scrollIntoView({ inline:'center', behavior:'smooth' });
+            // Update arrows
+            const prev = document.getElementById('lb-prev');
+            const next = document.getElementById('lb-next');
+            if (prev) prev.style.opacity = idx === 0 ? '0.3' : '1';
+            if (next) next.style.opacity = idx === currentImages.length-1 ? '0.3' : '1';
+        }
+
+        // Swipe in lightbox
+        (function() {
+            let lbStartX = 0;
+            const lb = document.getElementById('mob-lightbox');
+            if (!lb) return;
+            lb.addEventListener('touchstart', e => { lbStartX = e.touches[0].clientX; }, { passive: true });
+            lb.addEventListener('touchend', e => {
+                const dx = e.changedTouches[0].clientX - lbStartX;
+                if (Math.abs(dx) > 50) lightboxNav(dx < 0 ? 1 : -1);
+            }, { passive: true });
+            // ESC
+            document.addEventListener('keydown', e => {
+                if (!lb.classList.contains('open')) return;
+                if (e.key === 'ArrowRight') lightboxNav(1);
+                if (e.key === 'ArrowLeft')  lightboxNav(-1);
+                if (e.key === 'Escape') closeLightbox();
+            });
+        })();
 
         function setMainImage(index) {
             activeImgIndex = index;
             document.getElementById('main-image').src = currentImages[index];
             document.getElementById('img-counter').innerText = `${index + 1}/${currentImages.length}`;
-            
             // Update thumb active state
             document.querySelectorAll('.thumb-img').forEach((el, idx) => {
-                if(idx === index) el.classList.add('active');
-                else el.classList.remove('active');
+                el.classList.toggle('active', idx === index);
             });
         }
 
