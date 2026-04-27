@@ -34,8 +34,8 @@ if (!$imageBytes || strlen($imageBytes) < 100) {
     echo json_encode(['error' => 'No valid image received. Size: ' . strlen($imageBytes ?? '')]); exit;
 }
 
-$appKey    = "532966";
-$appSecret = "OuzUIdMqmJ9qsnkid6w9RWLB7eNmwDjB";
+$appKey    = getenv('ALI_APP_KEY') ?: "532966";
+$appSecret = getenv('ALI_APP_SECRET') ?: "cTzCrj5XNUjx9lXKsrD6Fo1AuUf1Th2J";
 $token     = $_SESSION['ali_access_token'] ?? "50000100827ezZgp7jnnaRwf9df2jpqaTpD9dcT1df32eaaBtxveHgwIXDOqM94vK3KQ";
 
 // ── Build system + API params (NO image here for signing) ──────────────────

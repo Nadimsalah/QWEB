@@ -21,8 +21,8 @@ echo "Cache dir:       $cacheDir\n";
 echo "Cache writable:  " . (is_writable(dirname($cacheDir)) ? 'YES' : 'NO ❌ — run: chmod 755 cache/') . "\n\n";
 
 // 3. Try direct API call
-$appKey    = "532966";
-$appSecret = "cTzCrj5XNUjx9lXKsrD6Fo1AuUf1Th2J";
+$appKey    = getenv('ALI_APP_KEY') ?: "532966";
+$appSecret = getenv('ALI_APP_SECRET') ?: "cTzCrj5XNUjx9lXKsrD6Fo1AuUf1Th2J";
 $token     = "50000100827ezZgp7jnnaRwf9df2jpqaTpD9dcT1df32eaaBtxveHgwIXDOqM94vK3KQ";
 
 echo "App Key:         $appKey\n";

@@ -68,7 +68,7 @@
 </FilesMatch>
 
 # ── Block All Debug / Test / Fix PHP Files ───────────────────
-<FilesMatch "^(test_|debug_|check_|db_test|db_check|db_alter|alter|scratch_|desc_|fix_latlong|fix_all|fix_page|fix_count|fix_nanobanana|fix_pruna|fix_upload|fix_json|fix_headers|fix_dash|fix_latlong2|fix_latlong3|fix_latlong4|delete_category|delete_posts|delete_product|migrate_photos|identify_posts|check\.php|get_cats|get_url|cat_test|quick_ali|alitest|aliexpress_test|ali_product_test|server_check|fixStoryCount|cat_test).*\.php$">
+<FilesMatch "^(test_|debug_|check_|db_test|db_check|db_alter|alter|scratch_|desc_|fix_latlong|fix_all|fix_page|fix_count|fix_nanobanana|fix_pruna|fix_upload|fix_json|fix_headers|fix_dash|fix_latlong2|fix_latlong3|fix_latlong4|delete_category|delete_posts|delete_product|migrate_photos|identify_posts|check\.php|get_cats|get_url|cat_test|quick_ali|alitest|ali_product_test|server_check|fixStoryCount|cat_test).*\.php$">
     Order Allow,Deny
     Deny from all
 </FilesMatch>
@@ -113,7 +113,6 @@ Options -Indexes
     php_value error_log /var/log/php_errors.log
     php_flag expose_php off
     php_value session.cookie_httponly 1
-    php_value session.cookie_secure 1
     php_value session.cookie_samesite Strict
     php_value session.use_strict_mode 1
 </IfModule>

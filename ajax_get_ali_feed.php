@@ -5,8 +5,8 @@ require_once 'includes/AliExpressAPI.php';
 header('Content-Type: application/json');
 
 session_start();
-$appKey = "532966";
-$appSecret = "OuzUIdMqmJ9qsnkid6w9RWLB7eNmwDjB";
+$appKey = getenv('ALI_APP_KEY') ?: "532966";
+$appSecret = getenv('ALI_APP_SECRET') ?: "cTzCrj5XNUjx9lXKsrD6Fo1AuUf1Th2J";
 // Hardcode the known good token for testing
 $token = "50000100827ezZgp7jnnaRwf9df2jpqaTpD9dcT1df32eaaBtxveHgwIXDOqM94vK3KQ";
 

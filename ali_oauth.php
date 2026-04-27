@@ -1,7 +1,7 @@
 <?php
 // ══ AliExpress Token Helper — shows all possible auth URLs ══
-$appKey     = "532966";
-$appSecret  = "cTzCrj5XNUjx9lXKsrD6Fo1AuUf1Th2J";
+$appKey     = getenv('ALI_APP_KEY') ?: "532966";
+$appSecret  = getenv('ALI_APP_SECRET') ?: "cTzCrj5XNUjx9lXKsrD6Fo1AuUf1Th2J";
 $callbackUrl = "https://qoon.app/ali_oauth.php";
 
 // ── Handle callback ──────────────────────────────────────────────────────────
