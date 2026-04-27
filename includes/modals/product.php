@@ -488,9 +488,8 @@
         .pm-price-row { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
         .pm-price { font-size: 24px; font-weight: 800; color: #f50057; }
         .pm-old-price { font-size: 16px; text-decoration: line-through; color: rgba(255, 255, 255, 0.3); }
-
-        .pm-desc { font-size: 15px; color: rgba(255, 255, 255, 0.5); line-height: 1.6; margin-bottom: 28px; }
-
+        .pm-desc { font-size: 15px; color: rgba(255, 255, 255, 0.5); line-height: 1.6; margin-bottom: 28px; overflow-wrap: break-word; }
+        .pm-desc img { max-width: 100%; height: auto; border-radius: 12px; margin-top: 10px; margin-bottom: 10px; display: block; }
         .pm-section-title {
             font-size: 13px; font-weight: 700; text-transform: uppercase;
             letter-spacing: 1.5px; margin-bottom: 14px; color: rgba(255, 255, 255, 0.4);
@@ -1033,15 +1032,23 @@
         
         let cartItems = [];
 
-        function openProductModal(element) {
+        function openProductModalFromJSON(dataObj) {
+            openProductModal(dataObj, true);
+        }
+
+        function openProductModal(elementOrData, isData = false) {
             // alert('openProductModal called');
             let data;
-            try {
-                const raw = element.getAttribute('data-product');
-                data = JSON.parse(raw);
-            } catch(e) {
-                console.error('Product JSON parse error:', e, element.getAttribute('data-product'));
-                return;
+            if (isData) {
+                data = elementOrData;
+            } else {
+                try {
+                    const raw = elementOrData.getAttribute('data-product');
+                    data = JSON.parse(raw);
+                } catch(e) {
+                    console.error('Product JSON parse error:', e, elementOrData.getAttribute('data-product'));
+                    return;
+                }
             }
             currentProductData = data;
             currentModalPrice = parseFloat(data.price);
@@ -1170,6 +1177,34 @@
             }, 50);
 
             loadProductExtras(data.id);
+
+            if (data.id && String(data.id).startsWith('ALI_') && !data.full_details_loaded) {
+                const scrollArea = document.getElementById('pm-scroll-area');
+                if (scrollArea) {
+                    const loadingDiv = document.createElement('div');
+                    loadingDiv.className = 'pm-desc';
+                    loadingDiv.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Loading full details from AliExpress...';
+                    scrollArea.insertBefore(loadingDiv, document.getElementById('pm-extras-container'));
+                }
+                
+                const productId = String(data.id).replace('ALI_', '');
+                fetch(`ajax_get_ali_product.php?product_id=${productId}`)
+                    .then(r => r.json())
+                    .then(fullData => {
+                        if (fullData && !fullData.error) {
+                            currentProductData.images = fullData.images || [currentProductData.img];
+                            currentProductData.desc = fullData.desc || currentProductData.desc;
+                            currentProductData.has_variants = fullData.has_variants || false;
+                            currentProductData.full_details_loaded = true;
+                            
+                            const modalNode = document.getElementById('pm-modal');
+                            if (currentProductData.id === data.id && modalNode && modalNode.style.opacity === '1') {
+                                openProductModal(currentProductData, true);
+                            }
+                        }
+                    })
+                    .catch(e => console.error('Failed to load ALI product', e));
+            }
         }
 
         function closeProductModal() {

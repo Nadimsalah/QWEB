@@ -1,1 +1,0 @@
-﻿<?php error_reporting(E_ALL); ini_set("display_errors", "1"); $_POST["UserLat"] = "0"; $_POST["UserLongt"] = "0"; $_POST["Page"] = "0"; $_POST["UserID"] = "1000016"; $_POST["Pro"] = "Normal"; include "GetAllPostsById.php"; ?>

@@ -1,50 +1,59 @@
 <?php
+// ============================================================
+// QOON — Shop Login (LoginShop.php)
+// SECURITY: Prepared statements, bcrypt, rate limiting
+// ============================================================
+require_once 'conn.php';
+require_once 'security.php';
+header('Content-Type: application/json');
 
-require "conn.php";
+$ip = getClientIp();
 
-$pass="a";
-$ShopLogName = $_POST["ShopLogName"];
-$ShopPassword = $_POST["ShopPassword"];
-//$ShopFirebaseToken = $_POST["ShopFirebaseToken"];
-
-
-
-$test=0;
-$res = mysqli_query($con,"SELECT * FROM Shops WHERE ShopLogName='$ShopLogName' AND ShopPassword='$ShopPassword'");
-
-$result = array();
-
-while($row = mysqli_fetch_assoc($res)){
-
-//$data = $row[0];
-
-
-
-$result[] = $row;
-
-
-
-$test=4;
-
+// Rate limit: max 10 login attempts per minute per IP
+if (!rateLimit($con, 'shop_login', $ip, 10, 60)) {
+    http_response_code(429);
+    echo json_encode(['success' => false, 'message' => 'Too many attempts. Please wait a minute.']);
+    exit;
 }
-/////////////
-//echo json_encode(array("result"=>$result));
-if($test==4 || empty($result)){
-    $message ="loged sucssesfully";
-    $success = true;
-    $status_code = 200;
 
-echo json_encode(array('status_code' => $status_code,'success' => $success ,"data"=>$result[0],"message"=>$message));
+$ShopLogName  = sanitizeString($_POST['ShopLogName']  ?? '', 128);
+$ShopPassword = $_POST['ShopPassword'] ?? ''; // Don't alter passwords
+
+if (empty($ShopLogName) || empty($ShopPassword)) {
+    echo json_encode(['success' => false, 'message' => 'Username and password are required.']);
+    exit;
 }
-else{
-	$message ="Nom d'utilisateur ou mot de passe est incorrect";
-    $success = false;
-    $status_code = 200;
-	
-   echo json_encode(array('status_code' => $status_code,'success' => $success ,"message"=>$message));
+
+// ── Fetch shop by username only (never include password in WHERE) ──
+$stmt = $con->prepare("SELECT * FROM Shops WHERE ShopLogName=? LIMIT 1");
+if (!$stmt) {
+    echo json_encode(['success' => false, 'message' => 'Server error.']);
+    exit;
 }
-die;
+$stmt->bind_param("s", $ShopLogName);
+$stmt->execute();
+$row = $stmt->get_result()->fetch_assoc();
+$stmt->close();
 
-mysqli_close($con);
+if (!$row) {
+    // Generic error — don't reveal if username exists
+    echo json_encode(['success' => false, 'message' => 'Invalid username or password.']);
+    exit;
+}
 
-?>
+// ── Password verification with bcrypt migration ──────────────
+if (!verifyPassword($ShopPassword, $row['ShopPassword'], $con, 'Shops', 'ShopID', $row['ShopID'])) {
+    echo json_encode(['success' => false, 'message' => 'Invalid username or password.']);
+    exit;
+}
+
+// ── Success — return shop data (strip sensitive fields) ─────
+unset($row['ShopPassword']); // Never return password to client
+$row['ShopLogName'] = ''; // Don't return login name either
+
+echo json_encode([
+    'status_code' => 200,
+    'success'     => true,
+    'data'        => $row,
+    'message'     => 'Logged in successfully'
+]);

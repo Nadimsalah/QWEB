@@ -1,0 +1,137 @@
+# ============================================================
+# QOON Platform — Apache Security Configuration
+# ============================================================
+
+# ── Force HTTPS (uncomment on production with SSL) ──────────
+# RewriteEngine On
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# ── Security Headers ─────────────────────────────────────────
+<IfModule mod_headers.c>
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(self), camera=(), microphone=()"
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    # Remove server fingerprint headers
+    Header always unset X-Powered-By
+    Header always unset Server
+</IfModule>
+
+# ── Block Sensitive Files ─────────────────────────────────────
+# Block .env files — CRITICAL (contains DB password)
+<Files ".env">
+    Order Allow,Deny
+    Deny from all
+</Files>
+<Files ".env.example">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# Block log files — contains passwords and user data
+<FilesMatch "\.(log|txt)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Block zip/archive files — contains full source code
+<FilesMatch "\.(zip|tar|gz|bz2|7z|rar)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Block JSON debug/test files
+<FilesMatch "^(test_|debug_|ali_raw_debug|ali_search_debug|ali_test|test_dump|test_sku|test_final|test_getallposts|QOON_Postman|postman).*\.(json)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Block Python scripts
+<FilesMatch "\.py$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Block PowerShell scripts
+<FilesMatch "\.(ps1|psm1|psd1)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Block JavaScript test files from web
+<FilesMatch "^(test|testApi|testCheck|testNom|testPurchase|testSearch|testSwagger|testZendit).*\.js$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# ── Block All Debug / Test / Fix PHP Files ───────────────────
+<FilesMatch "^(test_|debug_|check_|db_test|db_check|db_alter|alter|scratch_|desc_|fix_latlong|fix_all|fix_page|fix_count|fix_nanobanana|fix_pruna|fix_upload|fix_json|fix_headers|fix_dash|fix_latlong2|fix_latlong3|fix_latlong4|delete_category|delete_posts|delete_product|migrate_photos|identify_posts|check\.php|get_cats|get_url|cat_test|quick_ali|alitest|aliexpress_test|ali_product_test|server_check|fixStoryCount|cat_test).*\.php$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Specifically block known dangerous debug/test files
+<FilesMatch "^(debug_upload|debug_imgsearch|debug_reels|debug_clone|debug_last_vto|server_check|check_php_config|check_drivers_schema|check_users_schema|check_latest_order|check_post_photos|check_posts|check_posts_2|check_search|check_shops|check_tables|check_time|check_user_cols|check_users_photos|check_users_schema|check_500|check_500_2|check_ajax|test_ajax|test_ajax_local|test_env|test_req|test_url|test_php|test_splice|test_splice2|test_splice3|test_splice4|test_out|test_empty_lat|test_byid|test_posts_byid_data|alter_users|db_alter|db_test|db_test2|db_test_pro|desc_orders|desc_users|db_check|get_url)\.php$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Block VTO test files
+<FilesMatch "^(test_pruna|test_pruna2|test_pruna3|test_pruna4|test_pruna5|test_pruna_clothes|test_pruna_live|test_pruna_ptryon|PrunaAIApi|test_vto_api|fix_pruna_output|fix_nanobanana)\.php$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Block migration scripts that should only be run once
+<FilesMatch "^(migrate_passwords_RUNONCE|migrate_photos|fixStoryCount|fix_all)\.php$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Block HTML debug files
+<FilesMatch "^(debug_imgsearch|ali_product_test|test_ali|test_ui|test_output|test_output2|local_output|output|out|rendered_index)\.html$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# ── Block Directory Listing ───────────────────────────────────
+Options -Indexes
+
+# ── Hide sensitive file extensions from browser ───────────────
+<FilesMatch "\.(sql|bak|orig|swp|gitignore|htpasswd)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# ── PHP Security Settings ─────────────────────────────────────
+<IfModule mod_php.c>
+    php_flag display_errors off
+    php_flag log_errors on
+    php_value error_log /var/log/php_errors.log
+    php_flag expose_php off
+    php_value session.cookie_httponly 1
+    php_value session.cookie_secure 1
+    php_value session.cookie_samesite Strict
+    php_value session.use_strict_mode 1
+</IfModule>
+
+# ── Protect Git directory ─────────────────────────────────────
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^\.git - [F,L]
+    RewriteRule ^\.env - [F,L]
+</IfModule>
+
+# ── Limit Upload Size ─────────────────────────────────────────
+<IfModule mod_php.c>
+    php_value upload_max_filesize 10M
+    php_value post_max_size 12M
+</IfModule>
+
+# ── Prevent Script Execution in Upload Directory ──────────────
+<IfModule mod_rewrite.c>
+    RewriteRule ^photo/.*\.(php|phtml|php3|php4|php5|phps|cgi|pl|py|sh|bash)$ - [F,L]
+</IfModule>

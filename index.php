@@ -392,6 +392,24 @@ try {
                         if ($globalIndex % 4 == 0 && $globalIndex >= 4) {
                             $htmlOut .= getRandomProductsHtml($con, $DomainNamee);
                         }
+                        if ($globalIndex % 10 == 6 && $globalIndex >= 6) {
+                            $aliId = "ali_feed_" . $globalIndex;
+                            $htmlOut .= '<div style="width:100%;padding:30px 0;margin-top:20px;margin-bottom:20px;background:transparent;overflow:hidden;border-top:1px solid rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.05);">';
+                            $htmlOut .= '<h3 style="font-size:18px;font-weight:600;padding:0;margin-bottom:24px;color:#ff4081; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-globe"></i> International Products</h3>';
+                            $htmlOut .= '<div id="' . $aliId . '" class="ali-slider-container no-scrollbar" style="display:flex;gap:16px;overflow-x:auto;padding:0;width:100%;scrollbar-width:none;min-height:180px;align-items:flex-start;justify-content:flex-start;">';
+                            // Pre-render shimmer placeholders (shown before JS loads the products)
+                            for ($s = 0; $s < 4; $s++) {
+                                $htmlOut .= '<div style="flex:0 0 auto;width:140px;display:flex;flex-direction:column;">';
+                                $htmlOut .= '<div style="width:140px;height:180px;border-radius:12px;overflow:hidden;background:rgba(255,255,255,0.05);position:relative;">';
+                                $htmlOut .= '<div style="position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.07) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 1.4s infinite;"></div>';
+                                $htmlOut .= '</div>';
+                                $htmlOut .= '<div style="margin-top:8px;height:14px;width:80%;border-radius:4px;background:rgba(255,255,255,0.05);position:relative;overflow:hidden;">';
+                                $htmlOut .= '<div style="position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.07) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 1.4s infinite;"></div>';
+                                $htmlOut .= '</div>';
+                                $htmlOut .= '</div>';
+                            }
+                            $htmlOut .= '</div></div>';
+                        }
                         if ($globalIndex % 10 == 8 && $globalIndex >= 8) {
                             $htmlOut .= getTryBeforeBuyHtml($con, $DomainNamee);
                         }
@@ -2221,6 +2239,68 @@ if (empty($posts)) {
             }
         });
                             <?php endif; ?>
+
+        // AliExpress Feed Fetcher
+        function loadAliExpressFeeds() {
+            const containers = document.querySelectorAll('.ali-slider-container:not(.loaded)');
+            if (containers.length === 0) return;
+
+            containers.forEach(container => {
+                container.classList.add('loaded'); // Mark as loaded immediately to prevent duplicate fetches
+                
+                fetch('ajax_get_ali_feed.php')
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.products && data.products.length > 0) {
+                            let html = '';
+                            data.products.forEach(p => {
+                                const pJson = JSON.stringify(p).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
+                                let aliId = String(p.id).replace('ALI_', '');
+                                html += `
+                                <div style="flex:0 0 auto;width:140px;display:flex;flex-direction:column;cursor:pointer;" onclick="window.location.href='ali_product.php?id=${aliId}'">
+                                    <div style="width:140px;height:180px;border-radius:12px;overflow:hidden;background:#222;position:relative;">
+                                        <img src="${p.img}" style="width:100%;height:100%;object-fit:cover;">
+                                        <div style="position:absolute;top:8px;left:8px;background:rgba(255,64,129,0.9);color:#fff;padding:4px 8px;border-radius:12px;font-size:10px;font-weight:700;">Global</div>
+                                        ${p.oldPrice > p.price ? `<div style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.7);color:#fff;padding:4px 6px;border-radius:8px;font-size:10px;backdrop-filter:blur(4px);"><span style="text-decoration:line-through;opacity:0.6;">${p.oldPrice}</span> <span style="color:#ff4081;font-weight:700;">${p.price} MAD</span></div>` : `<div style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.7);color:#fff;padding:4px 6px;border-radius:8px;font-size:10px;backdrop-filter:blur(4px);font-weight:700;">${p.price} MAD</div>`}
+                                    </div>
+                                    <div style="margin-top:8px;padding:0 4px;">
+                                        <p style="margin:0;font-size:12px;color:#eee;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.name}</p>
+                                    </div>
+                                </div>`;
+                            });
+                            container.innerHTML = html;
+                            container.style.justifyContent = 'flex-start';
+                        } else {
+                            container.parentElement.style.display = 'none'; // Hide section if no products
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Failed to load AliExpress feed:', err);
+                        container.parentElement.style.display = 'none';
+                    });
+            });
+        }
+
+        // Run on load and whenever new feed items are injected
+        document.addEventListener('DOMContentLoaded', loadAliExpressFeeds);
+        
+        // Setup MutationObserver to watch for new injected feeds
+        const observer = new MutationObserver((mutations) => {
+            let hasNewAliContainers = false;
+            mutations.forEach((mutation) => {
+                if (mutation.addedNodes.length) {
+                    mutation.addedNodes.forEach((node) => {
+                        if (node.nodeType === 1 && (node.classList.contains('ali-slider-container') || node.querySelector('.ali-slider-container'))) {
+                            hasNewAliContainers = true;
+                        }
+                    });
+                }
+            });
+            if (hasNewAliContainers) {
+                loadAliExpressFeeds();
+            }
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
 
     </script>
 

@@ -1,51 +1,61 @@
 <?php
+// ============================================================
+// QOON — eSIM Purchase (buy_esim.php)
+// SECURITY: Authentication required, input validation
+// ============================================================
+require_once 'conn.php';
+require_once 'security.php';
 header('Content-Type: application/json');
 
-$data = json_decode(file_get_contents('php://input'), true);
-$offerId = $data['offerId'] ?? '';
+// ── Auth required ────────────────────────────────────────────
+$authUser = requireAuth($con);
+$userID   = (int)$authUser['UserID'];
 
-if (empty($offerId)) {
-    echo json_encode(['success' => false, 'message' => 'Missing offer ID']);
+// ── Rate limit: max 5 purchases per 10 minutes per user ──────
+if (!rateLimit($con, 'esim_purchase', "uid_$userID", 5, 600)) {
+    http_response_code(429);
+    echo json_encode(['success' => false, 'message' => 'Too many purchase attempts. Please wait.']);
     exit;
 }
 
-$token = 'sand_81a14687-4596-4d2f-a3c5-e238d873057869ed4aebbf7c25ab4cfc9e19';
-$apiUrl = "https://api.zendit.io/v1/esim/purchases";
+// ── Input ────────────────────────────────────────────────────
+$data    = json_decode(file_get_contents('php://input'), true) ?? [];
+$offerId = sanitizeString($data['offerId'] ?? '', 128);
 
-$transactionId = "qoon_esim_" . time() . "_" . rand(1000, 9999);
+if (empty($offerId)) {
+    echo json_encode(['success' => false, 'message' => 'Missing offer ID.']);
+    exit;
+}
+
+// ── API Key from environment ─────────────────────────────────
+$token = getenv('ZENDIT_API_KEY');
+if (!$token) {
+    echo json_encode(['success' => false, 'message' => 'eSIM service not configured.']);
+    exit;
+}
+
+$apiUrl       = "https://api.zendit.io/v1/esim/purchases";
+$transactionId = "qoon_esim_{$userID}_" . time() . "_" . rand(1000, 9999);
 
 $payload = json_encode([
-    "offerId" => $offerId,
-    "transactionId" => $transactionId
+    "offerId"       => $offerId,
+    "transactionId" => $transactionId,
 ]);
 
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $apiUrl);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-curl_setopt($ch, CURLOPT_POST, 1);
-curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    "Authorization: Bearer $token",
-    "Content-Type: application/json",
-    "Accept: application/json"
-]);
-curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+$result = safePost(
+    $apiUrl,
+    ["Authorization: Bearer $token", "Content-Type: application/json", "Accept: application/json"],
+    $payload,
+    15
+);
 
-$response = curl_exec($ch);
-$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-curl_close($ch);
+if ($result['code'] === 200 || $result['code'] === 201) {
+    // Log the purchase against the user (for audit trail)
+    $stmt = $con->prepare("INSERT INTO UserTransaction (UserID,Money,Method,DistnationName,MoneyPlusOrLess) VALUES (?,0,'eSIM',?,'less') ");
+    if ($stmt) { $stmt->bind_param("is", $userID, $offerId); $stmt->execute(); $stmt->close(); }
 
-if ($httpCode === 200 || $httpCode === 201) {
-    echo json_encode([
-        'success' => true,
-        'transactionId' => $transactionId
-    ]);
+    echo json_encode(['success' => true, 'transactionId' => $transactionId]);
 } else {
-    $err = json_decode($response, true);
-    echo json_encode([
-        'success' => false,
-        'message' => $err['message'] ?? 'API Error'
-    ]);
+    $err = json_decode($result['body'] ?? '', true);
+    echo json_encode(['success' => false, 'message' => $err['message'] ?? 'eSIM API error. Please try again.']);
 }
-?>

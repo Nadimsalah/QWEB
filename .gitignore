@@ -1,0 +1,91 @@
+# ============================================================
+# QOON Platform — Git Ignore
+# ============================================================
+
+# NEVER commit secrets
+.env
+*.env
+
+# Logs — may contain sensitive user data
+*.log
+logs/
+app_requests.log
+debug.log
+error_log
+esim_purchase_errors.log
+upload_debug.txt
+test_api_result.log
+
+# Compiled/cache
+cache/
+*.cache
+
+# Zip archives — contain source code
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Debug/test output files — not needed in repo
+*.html
+out.html
+output.html
+rendered_index.html
+local_output.html
+test_output.html
+test_output2.html
+ali_product_test.html
+debug_imgsearch.html
+test_ali.html
+test_ui.html
+
+# Debug JSON output
+ali_raw_debug.json
+ali_search_debug.*
+ali_test.json
+ali_test2.json
+test_dump_2.json
+test_sku.json
+test_sku_full.json
+test_final.json
+test_ajax_output*.json
+test_getallposts_postman.json
+test_esim_dump.json
+test_posts_data.json
+test_posts_byid_data.json
+test_byid.txt
+test_out.txt
+test_empty_lat.txt
+test_output.txt
+test_rec.txt
+test_kenz.txt
+test_cats.txt
+test_sku_print.txt
+test_ajax_verbose.txt
+ali_search_debug.txt
+ali_search_debug_2.txt
+ali_search_debug_3.txt
+upload_debug.txt
+temp_styles.txt
+extract_modal.txt
+extracted_modal.txt
+
+# Node modules
+node_modules/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VTO temp files
+vto_temp/
+
+# User uploaded photos (large binary content)
+# photo/
+
+# Scratch work
+scratch/

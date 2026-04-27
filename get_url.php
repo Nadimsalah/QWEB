@@ -1,1 +1,0 @@
-﻿<?php require "conn.php"; $res = $con->query("SELECT UserPhoto, name FROM Users WHERE UserID = 1000018"); if($r = $res->fetch_assoc()){ echo resolvePhotoUrl($r["UserPhoto"], $r["name"]); } else { echo "User not found"; }

@@ -1,1 +1,0 @@
-﻿<?php require "conn.php"; $res = mysqli_query($con, "SELECT COUNT(*) as c FROM Posts JOIN Shops ON Shops.ShopID=Posts.ShopID JOIN Categories ON Shops.CategoryID = Categories.CategoryId WHERE Shops.Status = 'ACTIVE' AND Categories.Pro = 'Normal' AND Posts.PostStatus='ACTIVE'"); $r=mysqli_fetch_assoc($res); echo "Posts: ".$r["c"]."\n"; ?>

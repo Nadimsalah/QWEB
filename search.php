@@ -393,45 +393,62 @@ $isLoggedIn = !empty($userId);
             .search-page-wrapper {
                 display: flex;
                 flex-direction: column;
+                align-items: center;
+                justify-content: center;
                 min-height: calc(100vh - 80px);
+                padding: 0 16px;
+                box-sizing: border-box;
             }
 
             .search-wrapper {
-                transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
-                margin: auto auto;
-                /* Perfectly centers vertically and horizontally */
+                transition: all 0.55s cubic-bezier(0.25, 0.8, 0.25, 1);
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 width: 100%;
+                max-width: 860px;
+                /* Animate up when user starts searching */
+                transform: translateY(0);
+            }
+
+            body.is-searching .search-page-wrapper {
+                justify-content: flex-start;
+                padding-top: 20px;
             }
 
             body.is-searching .search-wrapper {
-                margin: 2vh auto 0 auto !important;
-                /* Flies to the top */
+                transform: translateY(0);
             }
 
             .brand-logo-container {
-                transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
-                margin-bottom: -5px;
-                /* Small, consistent gap above search bar */
+                transition: all 0.55s cubic-bezier(0.25, 0.8, 0.25, 1);
+                margin-bottom: 18px;
                 transform-origin: bottom center;
-                /* Keeps the gap perfectly identical when scaling */
                 pointer-events: none;
                 z-index: 15;
             }
 
             body.is-searching .brand-logo-container {
-                transform: scale(0.65);
-                margin-bottom: -5px;
-                /* Same exact distance */
+                transform: scale(0.6);
+                margin-bottom: -6px;
+            }
+
+            /* Wide search bar */
+            #promptBox {
+                width: 100%;
+                max-width: 860px !important;
+            }
+
+            @media (max-width: 600px) {
+                #promptBox { max-width: 100% !important; }
+                .brand-logo-container img { height: 52px !important; }
             }
         </style>
 
-        <main class="search-page-wrapper" style="padding-top: 0px;">
+        <main class="search-page-wrapper">
 
-            <!-- Home UI Prompt Container -->
-            <div class="search-wrapper" style="max-width:100%;">
+            <!-- Logo + Search Bar - Centered -->
+            <div class="search-wrapper">
 
                 <div class="brand-logo-container">
                     <img src="logo_qoon_white.png" alt="QOON Logo" class="brand-logo"
@@ -439,12 +456,18 @@ $isLoggedIn = !empty($userId);
                 </div>
 
                 <div class="prompt-container" id="promptBox"
-                    style="border-radius: 24px; padding-right: 12px; width: 100%; max-width: 600px;">
+                    style="border-radius: 24px; padding-right: 12px;">
                     <button class="icon-btn" style="margin-left: 4px;"><i
                             class="fa-solid fa-magnifying-glass"></i></button>
 
                     <input type="text" class="prompt-input" id="searchInput"
                         placeholder="Search shops, products, reels..." autocomplete="off" autofocus>
+
+                    <!-- Camera / Image Search Button -->
+                    <button class="icon-btn" id="imgSearchBtn" onclick="openImageSearch()" title="Search by image"
+                        style="color:#a855f7; flex-shrink:0;">
+                        <i class="fa-solid fa-camera"></i>
+                    </button>
 
                     <button class="clear-btn" id="clearBtn" onclick="clearSearch()"><i
                             class="fa-solid fa-xmark"></i></button>
@@ -457,6 +480,65 @@ $isLoggedIn = !empty($userId);
 
             <div class="loader" id="loader">
                 <i class="fa-solid fa-circle-notch fa-spin" style="font-size:32px; color:#f50057;"></i>
+            </div>
+
+            <!-- Image Search Modal -->
+            <div id="img-search-overlay" onclick="closeImageSearch(event)" style="
+                display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85);
+                z-index:2000; align-items:center; justify-content:center; backdrop-filter:blur(8px);">
+                <div id="img-search-modal" style="
+                    background:#1a1a2e; border-radius:28px; padding:28px; width:90%; max-width:480px;
+                    box-shadow:0 32px 80px rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.08);">
+
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+                        <div style="font-size:18px; font-weight:700;">🔍 Search by Image</div>
+                        <button onclick="closeImageSearch()" style="background:rgba(255,255,255,0.08); border:none; color:#fff; width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:16px;">✕</button>
+                    </div>
+
+                    <!-- Upload Area -->
+                    <div id="img-drop-area" onclick="document.getElementById('img-file-input').click()" style="
+                        border:2px dashed rgba(168,85,247,0.5); border-radius:20px; padding:28px 20px;
+                        text-align:center; cursor:pointer; transition:0.2s;
+                        background:rgba(168,85,247,0.04);" 
+                        ondragover="event.preventDefault(); this.style.borderColor='#a855f7';" 
+                        ondragleave="this.style.borderColor='rgba(168,85,247,0.5)';"
+                        ondrop="handleImgDrop(event)">
+                        <i class="fa-solid fa-image" style="font-size:40px; color:#a855f7; margin-bottom:12px; display:block;"></i>
+                        <div style="font-size:15px; font-weight:600; margin-bottom:6px;">Drop an image or click to upload</div>
+                        <div style="font-size:12px; color:rgba(255,255,255,0.4); margin-bottom:10px;">Any image format — auto-converted to JPEG</div>
+                        <div style="font-size:11px; color:rgba(168,85,247,0.8); background:rgba(168,85,247,0.1); border-radius:8px; padding:8px 12px; text-align:left;">
+                            <b>💡 Best results:</b> Use product photos with clear white/neutral background. Screenshot from any shopping site works great!
+                        </div>
+                    </div>
+
+                    <!-- Preview -->
+                    <div id="img-preview-wrap" style="display:none; margin-top:16px; text-align:center;">
+                        <img id="img-preview" style="max-height:180px; border-radius:14px; max-width:100%; object-fit:contain;">
+                        <div style="margin-top:12px;">
+                            <button onclick="runImageSearch()" id="img-search-go" style="
+                                background:linear-gradient(135deg,#a855f7,#6366f1); color:#fff; border:none;
+                                padding:12px 32px; border-radius:14px; font-size:15px; font-weight:700;
+                                cursor:pointer; width:100%;">
+                                <i class="fa-solid fa-magnifying-glass" style="margin-right:8px;"></i>
+                                Find Similar Products
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Or take a photo (mobile) -->
+                    <div style="margin-top:14px; text-align:center;">
+                        <button onclick="document.getElementById('img-camera-input').click()" style="
+                            background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
+                            color:rgba(255,255,255,0.7); padding:10px 20px; border-radius:12px;
+                            cursor:pointer; font-size:13px;">
+                            <i class="fa-solid fa-camera" style="margin-right:6px; color:#a855f7;"></i>
+                            Take a Photo
+                        </button>
+                    </div>
+
+                    <input type="file" id="img-file-input" accept="image/*" style="display:none" onchange="handleImgFile(this)">
+                    <input type="file" id="img-camera-input" accept="image/*" capture="environment" style="display:none" onchange="handleImgFile(this)">
+                </div>
             </div>
 
             <!-- RESULTS -->
@@ -479,6 +561,18 @@ $isLoggedIn = !empty($userId);
                         <span class="section-count" id="products-count"></span>
                     </div>
                     <div class="products-grid" id="products-grid"></div>
+                </div>
+
+                <div id="sec-ali" style="display:none">
+                    <div class="section-header">
+                        <span class="section-title"><i class="fa-solid fa-globe"
+                                style="margin-right:8px;color:#ff4081"></i>International Products</span>
+                        <span class="section-count" id="ali-count"></span>
+                    </div>
+                    <div class="products-grid" id="ali-grid"></div>
+                    <div id="ali-load-more-container" style="text-align:center; margin-top:20px; display:none;">
+                        <button id="ali-load-more-btn" onclick="loadMoreAli()" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:#fff; padding:10px 24px; border-radius:20px; cursor:pointer; font-weight:600; font-size:14px; transition:0.2s;">Load More Products</button>
+                    </div>
                 </div>
 
                 <div id="sec-posts" style="display:none">
@@ -589,6 +683,8 @@ $isLoggedIn = !empty($userId);
 
         let searchTimer = null;
         let lastQuery = '';
+        let aliPage = 1;
+        let isAliLoading = false;
         const input = document.getElementById('searchInput');
         const clearBtn = document.getElementById('clearBtn');
 
@@ -646,6 +742,25 @@ $isLoggedIn = !empty($userId);
             document.getElementById('results').style.display = 'none';
             document.getElementById('loader').style.display = 'block';
 
+            // Show shimmer in the ali section
+            const aliSec = document.getElementById('sec-ali');
+            const aliGrid = document.getElementById('ali-grid');
+            aliSec.style.display = 'block';
+            let shimmerHtml = '';
+            for(let i = 0; i < 4; i++) {
+                shimmerHtml += `
+                <div class="product-card" style="padding:12px;display:flex;flex-direction:column;gap:8px;">
+                    <div style="width:100%;aspect-ratio:1;border-radius:12px;background:rgba(255,255,255,0.05);position:relative;overflow:hidden;">
+                        <div style="position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.07) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 1.4s infinite;"></div>
+                    </div>
+                    <div style="height:14px;width:80%;border-radius:4px;background:rgba(255,255,255,0.05);position:relative;overflow:hidden;margin-top:4px;">
+                        <div style="position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.07) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 1.4s infinite;"></div>
+                    </div>
+                </div>`;
+            }
+            aliGrid.innerHTML = shimmerHtml;
+
+            // 1. Fetch Local DB Search
             fetch(`search_api.php?q=${encodeURIComponent(query)}`)
                 .then(r => r.json())
                 .then(data => renderResults(data, query))
@@ -653,6 +768,20 @@ $isLoggedIn = !empty($userId);
                     document.getElementById('loader').style.display = 'none';
                     document.getElementById('results').style.display = 'block';
                     document.getElementById('noResults').style.display = 'block';
+                });
+                
+            // 2. Fetch Parallel AliExpress Search
+            aliPage = 1;
+            window.aliSearchData = [];
+            document.getElementById('ali-load-more-container').style.display = 'none';
+            fetch(`ajax_search_ali.php?q=${encodeURIComponent(query)}&page=${aliPage}`)
+                .then(r => r.json())
+                .then(data => {
+                    window.aliSearchData = data.products || [];
+                    renderAliResults(data.products || [], query, false);
+                })
+                .catch(() => {
+                    document.getElementById('sec-ali').style.display = 'none';
                 });
         }
 
@@ -673,6 +802,7 @@ $isLoggedIn = !empty($userId);
             const tabs = [];
             if (shops.length) tabs.push({ id: 'sec-shops', label: `Shops (${shops.length})` });
             if (products.length) tabs.push({ id: 'sec-products', label: `Products (${products.length})` });
+            tabs.push({ id: 'sec-ali', label: `International` }); // Always show tab, will have skeleton initially
             if (posts.length) tabs.push({ id: 'sec-posts', label: `Posts (${posts.length})` });
             if (reels.length) tabs.push({ id: 'sec-reels', label: `Reels (${reels.length})` });
 
@@ -739,9 +869,267 @@ $isLoggedIn = !empty($userId);
       </div>
     </div>`).join('');
         }
+
+        function renderAliResults(products, q, append) {
+            const aliSec = document.getElementById('sec-ali');
+            const aliGrid = document.getElementById('ali-grid');
+            const loadMoreBtn = document.getElementById('ali-load-more-container');
+            
+            if (!append && (!products || products.length === 0)) {
+                aliSec.style.display = 'none';
+                return;
+            }
+            
+            aliSec.style.display = 'block';
+            document.getElementById('ali-count').innerText = `(${window.aliSearchData.length})`;
+            
+            let html = products.map((p, idx) => {
+                let actualIdx = append ? (window.aliSearchData.length - products.length + idx) : idx;
+                let aliId = String(p.id).replace('ALI_', '');
+                return `
+    <div class="product-card" onclick="window.location.href='ali_product.php?id=${aliId}'" style="position:relative;">
+      <div style="position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.6); backdrop-filter:blur(5px); color:#fff; font-size:10px; padding:2px 6px; border-radius:8px; z-index:5;"><i class="fa-solid fa-plane"></i> Int'l</div>
+      <img class="product-img" src="${p.img}" onerror="this.src='https://ui-avatars.com/api/?name=Item&background=222&color=fff'" alt="">
+      <div class="product-body">
+        <div class="product-name" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${hl(p.name, q)}</div>
+        <div class="product-price">${p.price} MAD <span style="font-size:11px;color:rgba(255,255,255,0.4);text-decoration:line-through;font-weight:400;margin-left:4px;">${p.oldPrice}</span></div>
+      </div>
+    </div>`}).join('');
+            
+            if (append) {
+                // Remove shimmer skeletons first
+                const shimmers = aliGrid.querySelectorAll('.shimmer-skeleton');
+                shimmers.forEach(s => s.remove());
+                aliGrid.insertAdjacentHTML('beforeend', html);
+            } else {
+                aliGrid.innerHTML = html;
+            }
+            
+            // Re-hide noResults if it was shown and we now have ali results
+            document.getElementById('noResults').style.display = 'none';
+            
+            // Show load more button if we got exactly 20 items
+            if (products.length >= 20) {
+                loadMoreBtn.style.display = 'block';
+            } else {
+                loadMoreBtn.style.display = 'none';
+            }
+            isAliLoading = false;
+        }
+
+        function loadMoreAli() {
+            if (isAliLoading) return;
+            isAliLoading = true;
+            aliPage++;
+            
+            const loadMoreContainer = document.getElementById('ali-load-more-container');
+            loadMoreContainer.style.display = 'none';
+            
+            const aliGrid = document.getElementById('ali-grid');
+            let shimmerHtml = '';
+            for(let i = 0; i < 4; i++) {
+                shimmerHtml += `
+                <div class="product-card shimmer-skeleton" style="padding:12px;display:flex;flex-direction:column;gap:8px;">
+                    <div style="width:100%;aspect-ratio:1;border-radius:12px;background:rgba(255,255,255,0.05);position:relative;overflow:hidden;">
+                        <div style="position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.07) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 1.4s infinite;"></div>
+                    </div>
+                    <div style="height:14px;width:80%;border-radius:4px;background:rgba(255,255,255,0.05);position:relative;overflow:hidden;margin-top:4px;">
+                        <div style="position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.07) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 1.4s infinite;"></div>
+                    </div>
+                </div>`;
+            }
+            aliGrid.insertAdjacentHTML('beforeend', shimmerHtml);
+            
+            const query = input.value.trim();
+            fetch(`ajax_search_ali.php?q=${encodeURIComponent(query)}&page=${aliPage}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.products && data.products.length > 0) {
+                        window.aliSearchData = window.aliSearchData.concat(data.products);
+                        renderAliResults(data.products, query, true);
+                    } else {
+                        const shimmers = aliGrid.querySelectorAll('.shimmer-skeleton');
+                        shimmers.forEach(s => s.remove());
+                        isAliLoading = false;
+                    }
+                })
+                .catch(() => {
+                    const shimmers = aliGrid.querySelectorAll('.shimmer-skeleton');
+                    shimmers.forEach(s => s.remove());
+                    loadMoreContainer.style.display = 'block'; // Show button again so they can retry
+                    isAliLoading = false;
+                });
+        }
+
+        // ── Image Search ──────────────────────────────────────────────────────
+        let imgFile   = null;  // actual File object for upload
+        let imgBase64 = null;  // data URI for preview only
+
+        function openImageSearch() {
+            const overlay = document.getElementById('img-search-overlay');
+            overlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageSearch(e) {
+            if (e && e.target !== document.getElementById('img-search-overlay')) return;
+            document.getElementById('img-search-overlay').style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        function handleImgDrop(e) {
+            e.preventDefault();
+            document.getElementById('img-drop-area').style.borderColor = 'rgba(168,85,247,0.5)';
+            const file = e.dataTransfer.files[0];
+            if (file) processImgFile(file);
+        }
+
+        function handleImgFile(input) {
+            const file = input.files[0];
+            if (file) processImgFile(file);
+        }
+
+        function processImgFile(file) {
+            if (!file.type.startsWith('image/')) {
+                alert('Please select an image file.'); return;
+            }
+            if (file.size > 10 * 1024 * 1024) {
+                alert('Image too large. Max 10MB.'); return;
+            }
+
+            imgFile = null; // reset until conversion completes
+            const btn = document.getElementById('img-search-go');
+            if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin" style="margin-right:8px;"></i>Converting...'; }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const dataUrl = e.target.result;
+                document.getElementById('img-preview').src = dataUrl;
+                document.getElementById('img-preview-wrap').style.display = 'block';
+                document.getElementById('img-drop-area').style.display = 'none';
+
+                const img = new Image();
+                img.onload = () => {
+                    let w = img.width, h = img.height;
+                    const MAX = 800;
+                    if (w > MAX || h > MAX) {
+                        if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+                        else       { w = Math.round(w * MAX / h); h = MAX; }
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = w; canvas.height = h;
+                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+
+                    canvas.toBlob((blob) => {
+                        if (!blob) { alert('Could not convert image.'); return; }
+                        imgFile = new File([blob], 'search.jpg', { type: 'image/jpeg' });
+                        console.log(`✅ Converted: ${file.type} → JPEG ${(imgFile.size/1024).toFixed(1)}KB @ ${w}×${h}px`);
+                        // Now enable the search button
+                        if (btn) {
+                            btn.disabled = false;
+                            btn.innerHTML = '<i class="fa-solid fa-magnifying-glass" style="margin-right:8px;"></i>Find Similar Products';
+                        }
+                    }, 'image/jpeg', 0.88);
+                };
+                img.onerror = () => alert('Could not read image file.');
+                img.src = dataUrl;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function runImageSearch() {
+            if (!imgFile) { alert('Please select an image first.'); return; }
+            const btn = document.getElementById('img-search-go');
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin" style="margin-right:8px;"></i>Searching...';
+            btn.disabled = true;
+
+            // Use FormData — much more reliable than base64 JSON for large files
+            const fd = new FormData();
+            fd.append('image',    imgFile);
+            fd.append('country',  'MA');
+            fd.append('currency', 'MAD');
+            fd.append('page',     '1');
+
+            fetch('ajax_image_search.php', { method: 'POST', body: fd })
+            .then(r => r.json())
+            .then(data => {
+                btn.innerHTML = '<i class="fa-solid fa-magnifying-glass" style="margin-right:8px;"></i>Find Similar Products';
+                btn.disabled = false;
+
+                if (data.error) {
+                    alert('Image search error: ' + data.error); return;
+                }
+
+                // Close modal & show results
+                document.getElementById('img-search-overlay').style.display = 'none';
+                document.body.style.overflow = '';
+
+                // Show results in the AliExpress section
+                const aliSec  = document.getElementById('sec-ali');
+                const aliGrid = document.getElementById('ali-grid');
+                const results = document.getElementById('results');
+
+                document.body.classList.add('is-searching');
+                results.style.display = 'block';
+                aliSec.style.display  = 'block';
+                document.getElementById('ali-count').innerText = `(${data.products.length})`;
+
+                aliGrid.innerHTML = data.products.map(p => {
+                    const aliId = String(p.id).replace('ALI_', '');
+                    const discBadge = p.discount && p.discount !== '0%'
+                        ? `<div style="position:absolute;top:8px;left:8px;background:#a855f7;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:6px;z-index:5;">-${p.discount}</div>` : '';
+                    const ratingBadge = p.rating
+                        ? `<span style="font-size:10px;color:#f59e0b;margin-left:4px;">⭐ ${p.rating}</span>` : '';
+                    const soldBadge = p.sold && p.sold > 0
+                        ? `<span style="font-size:10px;color:rgba(255,255,255,0.4);margin-left:4px;">${p.sold} sold</span>` : '';
+                    return `<div class="product-card" onclick="window.location.href='ali_product.php?id=${aliId}'" style="position:relative;">
+                        <div style="position:absolute;top:8px;right:8px;background:rgba(168,85,247,0.85);backdrop-filter:blur(5px);color:#fff;font-size:10px;padding:2px 6px;border-radius:8px;z-index:5;">
+                            <i class="fa-solid fa-camera"></i> Visual
+                        </div>
+                        ${discBadge}
+                        <img class="product-img" src="${p.img}" onerror="this.src='https://ui-avatars.com/api/?name=Item&background=222&color=fff'" alt="">
+                        <div class="product-body">
+                            <div class="product-name" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${p.name}</div>
+                            <div class="product-price">${p.price} <span style="font-size:11px;color:rgba(255,255,255,0.4);text-decoration:line-through;font-weight:400;margin-left:4px;">${p.oldPrice}</span></div>
+                            <div style="display:flex;align-items:center;margin-top:2px;">${ratingBadge}${soldBadge}</div>
+                        </div>
+                    </div>`;
+                }).join('');
+
+                if (!data.products.length) {
+                    aliGrid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px 20px;">
+                        <div style="font-size:40px; margin-bottom:12px;">🔍</div>
+                        <div style="font-size:16px; font-weight:700; margin-bottom:8px;">No similar products found</div>
+                        <div style="font-size:13px; color:rgba(255,255,255,0.5); margin-bottom:16px; max-width:280px; margin-left:auto; margin-right:auto;">
+                            AliExpress image search works best with clear product photos on a white/neutral background.
+                        </div>
+                        <div style="font-size:12px; background:rgba(168,85,247,0.1); border:1px solid rgba(168,85,247,0.2); border-radius:12px; padding:12px 16px; text-align:left; max-width:300px; margin:0 auto 16px;">
+                            <b style="color:#a855f7;">💡 Tips for better results:</b><br>
+                            • Screenshot a product from any website<br>
+                            • Use photos with white/plain background<br>
+                            • Make sure the product fills most of the image<br>
+                            • Avoid group shots or lifestyle photos
+                        </div>
+                        <button onclick="openImageSearch()" style="background:linear-gradient(135deg,#a855f7,#6366f1);color:#fff;border:none;padding:10px 24px;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;">
+                            <i class="fa-solid fa-camera" style="margin-right:6px;"></i> Try Another Image
+                        </button>
+                    </div>`;
+                    // Reset modal state for retry
+                    imgFile = null; imgBase64 = null;
+                    document.getElementById('img-preview-wrap').style.display = 'none';
+                    document.getElementById('img-drop-area').style.display = 'block';
+                }
+            })
+            .catch(err => {
+                btn.innerHTML = '<i class="fa-solid fa-magnifying-glass" style="margin-right:8px;"></i>Find Similar Products';
+                btn.disabled = false;
+                alert('Error: ' + err.message);
+            });
+        }
     </script>
 
     <?php require_once 'includes/modals/auth.php'; ?>
+    <?php require_once 'includes/modals/product.php'; ?>
 </body>
 
 </html>

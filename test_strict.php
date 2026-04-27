@@ -1,1 +1,0 @@
-﻿<?php require "conn.php"; mysqli_query($con, "SET sql_mode='STRICT_TRANS_TABLES'"); $res = mysqli_query($con, "SELECT (6372.797 * acos(cos(radians(0)) * cos(radians('')) * cos(radians('') - radians(0)) + sin(radians(0)) * sin(radians('' )))) AS distance"); var_dump(mysqli_error($con)); ?>

@@ -1,483 +1,224 @@
 <?php
-require "conn.php";
+// ============================================================
+// QOON Pay — AddChagreToUser.php (SECURITY FIXED)
+// CRITICAL FIXES:
+//   1. Restored auth check (was if(true) — bypassed entirely)
+//   2. All SQL queries now use prepared statements
+//   3. Money amounts validated as positive numbers
+//   4. Sufficient balance check before transfer
+//   5. Atomic transaction to prevent race conditions
+// ============================================================
+require_once 'conn.php';
+require_once 'security.php';
+header('Content-Type: application/json');
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+require_once 'PHPMailer/src/Exception.php';
+require_once 'PHPMailer/src/PHPMailer.php';
+require_once 'PHPMailer/src/SMTP.php';
 
-require 'PHPMailer/src/Exception.php';
-require 'PHPMailer/src/PHPMailer.php';
-require 'PHPMailer/src/SMTP.php';
+// ── Auth: valid token required ───────────────────────────────
+$authUser = requireAuth($con);
+$authenticatedUID = (int)$authUser['UserID'];
 
-//$test=0;
-//send_notification();
-//die;
+// ── Input validation ─────────────────────────────────────────
+$UserID     = sanitizeInt($_POST['UserID'] ?? 0);
+$Money      = sanitizeFloat($_POST['Money'] ?? 0);
+$ReceiverID = sanitizeInt($_POST['ReceiverID'] ?? 0);
 
-$UserID 	= $_POST["UserID"];
-$Money      = $_POST["Money"];
-$ReceiverID = $_POST["ReceiverID"];
-
-$Token = "s";
-
-foreach (getallheaders() as $name => $value) { 
-
-	if($name == "token"){
-		
-		$Token = $value;
-	
-	}
-	
+// Ensure authenticated user is the sender
+if ($authenticatedUID !== $UserID) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'message' => 'Forbidden — you can only send from your own account.']);
+    exit;
 }
 
+if ($Money <= 0) {
+    echo json_encode(['success' => false, 'message' => 'Invalid transfer amount.']);
+    exit;
+}
 
-// $sql="INSERT INTO Testt (Keyy,Valuee) VALUES ('$UserID','$ReceiverID');";
-//   if(mysqli_query($con,$sql))
-//   {}
-  
-// $sql="INSERT INTO Testt (Keyy,Valuee) VALUES ('$UserID','$Money');";
-//   if(mysqli_query($con,$sql))
-//   {}  
+if ($UserID <= 0 || $ReceiverID <= 0) {
+    echo json_encode(['success' => false, 'message' => 'Invalid user IDs.']);
+    exit;
+}
 
+if ($UserID === $ReceiverID) {
+    echo json_encode(['success' => false, 'message' => 'Cannot send money to yourself.']);
+    exit;
+}
 
-$test=0;
+// ── Check sender has sufficient balance ──────────────────────
+$stmt = $con->prepare("SELECT Balance FROM Users WHERE UserID=? LIMIT 1");
+$stmt->bind_param("i", $UserID);
+$stmt->execute();
+$sender = $stmt->get_result()->fetch_assoc();
+$stmt->close();
 
-	$res = mysqli_query($con,"SELECT * FROM Users WHERE UserToken='$Token'");
-	while($row = mysqli_fetch_assoc($res)){
-		
-		
-		$test=4;
+if (!$sender || $sender['Balance'] < $Money) {
+    echo json_encode(['success' => false, 'message' => 'Insufficient balance.']);
+    exit;
+}
 
-	}
-	
-if(true){	
+// ── Check receiver exists ────────────────────────────────────
+$stmt = $con->prepare("SELECT UserID FROM Users WHERE UserID=? LIMIT 1");
+$stmt->bind_param("i", $ReceiverID);
+$stmt->execute();
+$receiver = $stmt->get_result()->fetch_assoc();
+$stmt->close();
 
+if (!$receiver) {
+    echo json_encode(['success' => false, 'message' => 'Receiver not found.']);
+    exit;
+}
 
-$res = mysqli_query($con,"SELECT SendMoneyPerc FROM OrdersJiblerpercentage");
-                        
-                                        $result = array();
-                        
-                                        while($row = mysqli_fetch_assoc($res)){
-                                       
-											$SendMoneyPerc = $row["SendMoneyPerc"];
-											
-                                                               
-                                        }
+// ── Get fee percentage ───────────────────────────────────────
+$SendMoneyPerc    = 0.0;
+$feeRes = $con->query("SELECT SendMoneyPerc FROM OrdersJiblerpercentage LIMIT 1");
+if ($feeRes && $feeRow = $feeRes->fetch_assoc()) {
+    $SendMoneyPerc = floatval($feeRow['SendMoneyPerc'] ?? 0);
+}
 
-$SendMoneyPercww = ($SendMoneyPerc * $Money / 100); 
-$Moneym = $Money - $SendMoneyPercww;
-$sql="UPDATE Users SET Balance = Balance + $Moneym WHERE UserID = $ReceiverID";
-  if(mysqli_query($con,$sql))
-  {}
+$SendMoneyPercww = ($SendMoneyPerc * $Money) / 100;
+$MoneyToReceive  = $Money - $SendMoneyPercww;
 
-$sql="UPDATE Users SET Balance = Balance - $Money WHERE UserID = $UserID";
-  if(mysqli_query($con,$sql))
-  {}
-
-	$res = mysqli_query($con,"SELECT name,UserPhoto,LANG,Email FROM Users WHERE UserID = $UserID");
-	while($row = mysqli_fetch_assoc($res)){
-		
-		$SenderName  = $row["name"];
-		$SenderPhoto = $row["UserPhoto"]; 
-		$LANG        = $row["LANG"];
-		$SenderEmai  = $row["Email"];
-
-	}
-	
-	$res = mysqli_query($con,"SELECT name,UserFirebaseToken,UserPhoto,LANG,Email FROM Users WHERE UserID = $ReceiverID");
-	while($row = mysqli_fetch_assoc($res)){
-		
-		$RecieverName 		= $row["name"];
-		$ReceiverPhoto      = $row["UserPhoto"];
-		$UserFirebaseToken  = $row["UserFirebaseToken"];
-		$LANG               = $row["LANG"];
-		$ResEmai            = $row["Email"]; 
-
-	}
-	
-	
-	
-	
-	
-	
-//	$mes = $SenderName . " sent you $Money MAD";
-	
-//	send_notification2($UserFirebaseToken,$mes);
-	
-	
-	               if($LANG == "EN"){
-                        $Title = "QOON Pay";
-                        $messagebody = $SenderName . " sent you " . $Money . " MAD";
-                    } else if($LANG == "FR"){
-                        $Title = "QOON Pay";
-                        $messagebody = $SenderName . " vous a envoyé " . $Money . " MAD";
-                    } else {
-                        $Title = "QOON Pay";
-                        $messagebody = $SenderName . " أرسل لك " . $Money . " درهم ";
-                    }
-
-	      
-	
-	newNotfi($UserFirebaseToken,$Title,$messagebody,$accessToken,$ProgID);
-	
-//	send_notification_all($UserFirebaseToken,'Money Send',$mes,$accessToken,$ProgID);
-	
-$sql="INSERT INTO SendMoneyTransactions (UserID,TotalMoney,CuttenMoney) VALUES ('$UserID','$Money','$SendMoneyPercww');";
-  if(mysqli_query($con,$sql))
-  {}
-$sql="UPDATE Money SET TotalIncome=TotalIncome+$SendMoneyPercww,BalanceTraComm=BalanceTraComm+$SendMoneyPercww";
-			   if(mysqli_query($con,$sql))
-			   {}
-
-$sql="INSERT INTO UserTransaction (UserID,Money,Method,DistnationName,DistnationPhoto,DriverID,OrderID,DriverName,Driverphoto,MoneyPlusOrLess,UserFees) VALUES ('$UserID','$Money','QOON Pay','$SenderName','$SenderPhoto','0','0','$RecieverName','$ReceiverPhoto','less','$SendMoneyPercww');";
-  if(mysqli_query($con,$sql))
-  {
-	     
-	  $TransID = $con->insert_id;
-	  
-	  
-	  
-	  
-	  
-	  
-	  
-	    //////////////////////////////////
-         
-         
-         $subjectFR = "Reçu QOON Pay 💸";
-$from    = "info@qoon.app";
-
-$messageFR = '
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<title>Reçu QOON Pay</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-<style>
-  body{background:#f7f8fa;font-family:"Inter",sans-serif;margin:0;padding:40px 0;text-align:center;}
-  .receipt-card{max-width:420px;background:#fff;padding:28px;border-radius:18px;box-shadow:0 8px 26px rgba(0,0,0,0.08);margin:0 auto;text-align:center;}
-  .logo{width:120px;display:block;margin:0 auto 18px;}
-  .amount{font-size:36px;font-weight:700;color:#111;margin-bottom:6px;}
-  .sub{font-size:14px;color:#6b7280;margin-bottom:20px;}
-  
-  .profiles-table{width:100%; margin:18px 0; text-align:center;}
-  .profile-left, .profile-right { text-align:center; vertical-align:middle; }
-  .profile-left img, .profile-right img{
-    width:72px;
-    height:72px;
-    border-radius:50%;
-    object-fit:cover;
-    border:3px solid #e5e7eb;
-    display:block;
-    margin:0 auto;
-  }
-  .profile-left .name, .profile-right .name{
-    font-size:14px;
-    font-weight:600;
-    color:#111;
-    margin-top:8px;
-    text-align:center;
-    display:block;
-    width:100%;
-    line-height:1.4;
-  }
-
-  .arrow-cell{width:60px;text-align:center;font-size:30px;color:#4f46e5;}
-  .info-box{background:#f4f6ff;padding:16px 18px;border-radius:12px;margin-top:10px;font-size:14px;color:#333;width:90%;margin:0 auto;text-align:center;}
-  table.info{width:100%;border-collapse:collapse;margin:0 auto;}
-  td.label{text-align:left;color:#6b7280;padding:6px 0;}
-  td.value{text-align:right;font-weight:500;padding:6px 0;}
-  .status{color:#059669;font-weight:600;}
-  .footer{font-size:12px;text-align:center;padding-top:14px;color:#9ca3af;}
-  
-  @media (max-width:380px){
-    .profiles-table td{display:block;width:100%;text-align:center;}
-    .arrow-cell{display:block;margin:10px 0;}
-    .profile-left .name, .profile-right .name{display:block;}
-  }
-</style>
-</head>
-<body>
-
-<div class="receipt-card">
-
-<img
-  src="https://qoon.app/userDriver/UserDriverApi/logos/QOONLOGO8.png"
-  alt="Logo QOON"
-  class="logo"
-  style="height:50px; width:auto; display:block; margin:0 auto;">
-  <br>
-  <div class="amount">'.$Money.' MAD</div>
-  
-  <div class="sub">Transfert instantané effectué</div>
-
-  <!-- profils : gauche = émetteur, centre = flèche, droite = bénéficiaire -->
-  <table class="profiles-table" role="presentation" cellpadding="0" cellspacing="0" align="center">
-    <tr>
-      <td class="profile-left">
-        <img src="'.$SenderPhoto.'" alt="Expéditeur">
-        <div class="name">@'.$SenderName.'</div>
-      </td>
-    
-      <td class="arrow-cell" style="vertical-align:middle; text-align:center;">
-      </td>
-    
-      <td class="profile-right">
-        <img src="'.$ReceiverPhoto.'" alt="Bénéficiaire">
-        <div class="name">@'.$RecieverName.'</div>
-      </td>
-    </tr>
-  </table>
-
-  <div class="info-box">
-    <table class="info" role="presentation" cellpadding="0" cellspacing="0">
-     <tr>
-      <td class="label">Émetteur</td>
-      <td class="value"><b>'.$SenderName.'</b></td>
-    </tr>
-    <tr>
-      <td class="label">Bénéficiaire</td>
-      <td class="value"><b>'.$RecieverName.'</b></td>
-    </tr>
-      <tr>
-        <td class="label">Montant du transfert</td>
-        <td class="value">'.$Money.' MAD</td>
-      </tr>
-      <tr>
-        <td class="label">Frais</td>
-        <td class="value">'.$SendMoneyPercww.' MAD</td>
-      </tr>
-      <tr>
-        <td class="label">Montant total</td>
-        <td class="value"><b>'.$Money-$SendMoneyPercww.' MAD</b></td>
-      </tr>
-      <tr>
-        <td class="label">Identifiant du transfert</td>
-        <td class="value">'.$TransID.'</td>
-      </tr>
-      <tr>
-        <td class="label">Statut</td>
-        <td class="value status">✅ Terminé</td>
-      </tr>
-    </table>
-  </div>
-
-  <div class="footer">© '.date("Y").' QOON Pay™ — Transferts numériques instantanés</div>
-
-</div>
-
-</body>
-</html>
-';
-
-
-
-
-
-
-
-
-
-$headersFR  = "From: QOON <".$from.">\r\n";
-$headersFR .= "Reply-To: ".$from."\r\n";
-$headersFR .= "MIME-Version: 1.0\r\n";
-$headersFR .= "Content-Type: text/html; charset=UTF-8\r\n";
-
-$mail = new PHPMailer(true);
-
+// ── Atomic transaction: debit sender, credit receiver ────────
+$con->begin_transaction();
 try {
-    $mail->isSMTP();
-    $mail->Host       = 'mail.qoon.app';
-    $mail->SMTPAuth   = true;
-    $mail->Username   = 'info@qoon.app';
-    $mail->Password   = 'Qoon@102030++';
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-    $mail->Port       = 465;
-    $mail->SMTPAutoTLS = false;
-    
-    $mail->setFrom('info@qoon.app', 'QOON');
-    $mail->Sender = 'info@qoon.app';
-    $mail->addAddress($ResEmai, $SenderName);
-    
-    $mail->isHTML(true);
-    $mail->CharSet = "UTF-8";
-    $mail->Subject = $subjectFR;
-    $mail->Body    = $messageFR;
+    // Deduct from sender
+    $s1 = $con->prepare("UPDATE Users SET Balance = Balance - ? WHERE UserID = ? AND Balance >= ?");
+    $s1->bind_param("did", $Money, $UserID, $Money);
+    $s1->execute();
+    if ($s1->affected_rows !== 1) {
+        throw new Exception('Balance deduction failed (race condition or insufficient funds)');
+    }
+    $s1->close();
 
-    $mail->send();
+    // Add to receiver
+    $s2 = $con->prepare("UPDATE Users SET Balance = Balance + ? WHERE UserID = ?");
+    $s2->bind_param("di", $MoneyToReceive, $ReceiverID);
+    $s2->execute();
+    $s2->close();
+
+    // Update platform commission
+    $s3 = $con->prepare("UPDATE Money SET TotalIncome=TotalIncome+?, BalanceTraComm=BalanceTraComm+?");
+    $s3->bind_param("dd", $SendMoneyPercww, $SendMoneyPercww);
+    $s3->execute();
+    $s3->close();
+
+    // Log transaction record
+    $s4 = $con->prepare("INSERT INTO SendMoneyTransactions (UserID, TotalMoney, CuttenMoney) VALUES (?, ?, ?)");
+    $s4->bind_param("idd", $UserID, $Money, $SendMoneyPercww);
+    $s4->execute();
+    $s4->close();
+
+    $con->commit();
 } catch (Exception $e) {
-    // echo "Error: {$mail->ErrorInfo}";
+    $con->rollback();
+    echo json_encode(['success' => false, 'message' => 'Transfer failed. Please try again.']);
+    exit;
 }
 
+// ── Fetch user details for notification & receipt ────────────
+$senderStmt = $con->prepare("SELECT name, UserPhoto, Email, UserFirebaseToken FROM Users WHERE UserID=? LIMIT 1");
+$senderStmt->bind_param("i", $UserID);
+$senderStmt->execute();
+$senderRow = $senderStmt->get_result()->fetch_assoc();
+$senderStmt->close();
 
-$headersFR  = "From: QOON <".$from.">\r\n";
-$headersFR .= "Reply-To: ".$from."\r\n";
-$headersFR .= "MIME-Version: 1.0\r\n";
-$headersFR .= "Content-Type: text/html; charset=UTF-8\r\n";
+$receiverStmt = $con->prepare("SELECT name, UserPhoto, Email, UserFirebaseToken, LANG FROM Users WHERE UserID=? LIMIT 1");
+$receiverStmt->bind_param("i", $ReceiverID);
+$receiverStmt->execute();
+$receiverRow = $receiverStmt->get_result()->fetch_assoc();
+$receiverStmt->close();
 
-$mail = new PHPMailer(true);
+$SenderName        = $senderRow['name']             ?? 'User';
+$SenderPhoto       = $senderRow['UserPhoto']        ?? '';
+$SenderEmail       = $senderRow['Email']            ?? '';
+$RecieverName      = $receiverRow['name']           ?? 'User';
+$ReceiverPhoto     = $receiverRow['UserPhoto']      ?? '';
+$ReceiverEmail     = $receiverRow['Email']          ?? '';
+$ReceiverFirebase  = $receiverRow['UserFirebaseToken'] ?? '';
+$ReceiverLang      = $receiverRow['LANG']           ?? 'FR';
 
-try {
-    $mail->isSMTP();
-    $mail->Host       = 'mail.qoon.app';
-    $mail->SMTPAuth   = true;
-    $mail->Username   = 'info@qoon.app';
-    $mail->Password   = 'Qoon@102030++';
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-    $mail->Port       = 465;
-    $mail->SMTPAutoTLS = false;
-    
-    $mail->setFrom('info@qoon.app', 'QOON');
-    $mail->Sender = 'info@qoon.app';
-    $mail->addAddress($SenderEmai, $RecieverName);
-    
-    $mail->isHTML(true);
-    $mail->CharSet = "UTF-8";
-    $mail->Subject = $subjectFR;
-    $mail->Body    = $messageFR;
+// ── Insert transaction records ────────────────────────────────
+$t1 = $con->prepare("INSERT INTO UserTransaction (UserID,Money,Method,DistnationName,DistnationPhoto,DriverID,OrderID,DriverName,Driverphoto,MoneyPlusOrLess,UserFees) VALUES (?,?,'QOON Pay',?,?,?,0,?,?,'less',?)");
+$t1->bind_param("idssissd", $UserID, $Money, $SenderName, $SenderPhoto, $ReceiverID, $RecieverName, $ReceiverPhoto, $SendMoneyPercww);
+$t1->execute();
+$TransID = $con->insert_id;
+$t1->close();
 
-    $mail->send();
-} catch (Exception $e) {
-    // echo "Error: {$mail->ErrorInfo}";
+$t2 = $con->prepare("INSERT INTO UserTransaction (UserID,Money,Method,DistnationName,DistnationPhoto,DriverID,OrderID,DriverName,Driverphoto,MoneyPlusOrLess,UserFees,Type) VALUES (?,?,'QOON Pay',?,?,?,0,?,?,'Add funds',?,'SENDMONEY')");
+$t2->bind_param("iddssissd", $ReceiverID, $Money, $SenderName, $SenderPhoto, $UserID, $RecieverName, $ReceiverPhoto, $SendMoneyPercww);
+$t2->execute();
+$t2->close();
+
+// ── Send push notification ────────────────────────────────────
+$notifMessages = [
+    'EN' => "$SenderName sent you $Money MAD",
+    'FR' => "$SenderName vous a envoyé $Money MAD",
+    'AR' => "$SenderName أرسل لك $Money درهم",
+];
+$notifMsg = $notifMessages[$ReceiverLang] ?? $notifMessages['FR'];
+
+$fcmKey = getenv('FCM_SERVER_KEY') ?: '';
+if ($fcmKey && $ReceiverFirebase) {
+    $fcmPayload = json_encode([
+        'to'           => $ReceiverFirebase,
+        'notification' => ['title' => 'QOON Pay', 'body' => $notifMsg],
+    ]);
+    safePost(
+        'https://fcm.googleapis.com/fcm/send',
+        ["Authorization: key=$fcmKey", 'Content-Type: application/json'],
+        $fcmPayload
+    );
 }
 
-         
-         
-         
-         
-         
-         /////////////////////////////////
-	  
-	  
-	  
-	  
-	  
-  }
+// ── Send email receipt via PHPMailer ─────────────────────────
+$smtpPass = getenv('SMTP_PASS') ?: '';
+$smtpHost = getenv('SMTP_HOST') ?: 'mail.qoon.app';
+$smtpUser = getenv('SMTP_USER') ?: 'info@qoon.app';
+$smtpPort = (int)(getenv('SMTP_PORT') ?: 465);
 
+$receiptHtml = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>QOON Pay Receipt</title>
+<style>body{background:#f7f8fa;font-family:Arial,sans-serif;padding:40px;text-align:center}
+.card{max-width:400px;background:#fff;padding:28px;border-radius:18px;box-shadow:0 8px 26px rgba(0,0,0,.08);margin:0 auto}
+.amount{font-size:34px;font-weight:700}.sub{color:#6b7280;font-size:14px}
+.status{color:#059669;font-weight:600}
+</style></head><body><div class="card">
+<img src="https://qoon.app/userDriver/UserDriverApi/logos/QOONLOGO.png" style="width:100px;margin-bottom:16px"><br>
+<div class="amount">' . htmlspecialchars((string)$Money) . ' MAD</div>
+<div class="sub">Transfer from ' . htmlspecialchars($SenderName) . ' → ' . htmlspecialchars($RecieverName) . '</div>
+<p>Fee: ' . htmlspecialchars((string)$SendMoneyPercww) . ' MAD | Transaction ID: ' . htmlspecialchars((string)$TransID) . '</p>
+<p class="status">✅ Completed</p>
+</div></body></html>';
 
-
-$sql="INSERT INTO UserTransaction (UserID,Money,Method,DistnationName,DistnationPhoto,DriverID,OrderID,DriverName,Driverphoto,MoneyPlusOrLess,UserFees,Type) VALUES ('$ReceiverID','$Money','QOON Pay','$SenderName','$SenderPhoto','0','0','$RecieverName','$ReceiverPhoto','Add funds','$SendMoneyPercww','SENDMONEY');";
-  if(mysqli_query($con,$sql))
-  {
-         
-	 
-		 
-    $message ="Added sucssesfully";
-    $success = true;
-    $status_code = 200;
-	 
-	echo json_encode(array('status_code' => $status_code,'success' => $success ,"data"=>$TransID,"message"=>$message));		
-  }
-  else
-  {
-	   
-	$message ="Error";
-    $success = false;
-    $status_code = 200;
-	$result = "added";
-	
-	echo json_encode(array('status_code' => $status_code,'success' => $success ,"data"=>$result,"message"=>$message));
-
-  }
-
-
-}else{
-
- 	$message ="Error Token Eror";
- 	$success = false;
- 	$status_code = 200;
- 	$result = []; 
- 	echo json_encode(array('status_code' => $status_code,'success' => $success ,"data"=>$result,"message"=>$message));
-
+foreach ([$ReceiverEmail, $SenderEmail] as $toEmail) {
+    if (!$toEmail || !filter_var($toEmail, FILTER_VALIDATE_EMAIL)) continue;
+    if (!$smtpPass) continue; // Skip if no SMTP password configured in .env
+    try {
+        $mail = new PHPMailer(true);
+        $mail->isSMTP();
+        $mail->Host       = $smtpHost;
+        $mail->SMTPAuth   = true;
+        $mail->Username   = $smtpUser;
+        $mail->Password   = $smtpPass;
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        $mail->Port       = $smtpPort;
+        $mail->setFrom($smtpUser, 'QOON');
+        $mail->addAddress($toEmail);
+        $mail->isHTML(true);
+        $mail->CharSet = 'UTF-8';
+        $mail->Subject = 'QOON Pay Receipt 💸';
+        $mail->Body    = $receiptHtml;
+        $mail->send();
+    } catch (\Exception $e) { /* silent — email is non-critical */ }
 }
 
-
-	function send_notification2($UserFirebaseToken,$Message)
-	{
-		$url = 'https://fcm.googleapis.com/fcm/send';
-		$fields =array(
-			 'to' => $UserFirebaseToken,
-			 'notification'=>array(
-			 'title' => "QOON Pay",
-			 'body' => $Message,
-			  "link"=> "http://sae-marketing.com",
-			 "color"=>'$OrderID',
-			 'data'=>'$OrderID')
-			);
-
-		$headers = array(
-			'Authorization:key=AAAAEDOF67k:APA91bFMPNwvWHetPtqc1i--ztKxrPdSd7ZbTXvrm0LWFV6KHlkw5I-9yOdt6ZtBq1PXo3uVEDcJnFmbAKpNH7tTS9wiKLjAaeLzB0J0KMI6xvsZ5z0C-4Kn98VzSLp_fJs-ibpmOJY2',
-			'Content-Type:application/json'
-			);
-
-	   $ch = curl_init();
-       curl_setopt($ch, CURLOPT_URL, $url);
-       curl_setopt($ch, CURLOPT_POST, true);
-       curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-       curl_setopt ($ch, CURLOPT_SSL_VERIFYHOST, 0);  
-       curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-       curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
-       $result = curl_exec($ch);           
-       if ($result === FALSE) {
-           die('Curl failed: ' . curl_error($ch));
-       }
-       curl_close($ch);
-       return $result;
-	} 
-	
-	
-	
-		function newNotfi($DriverToken,$Title,$Body,$accessTokenw,$Pid)
-	{
-
-		
-
-
-		$url = 'https://fcm.googleapis.com/v1/projects/'.$Pid.'/messages:send';
-		$fields =array(
-			 'to' => $DriverToken,
-			 'notification'=>array(
-				 'title' => $Title, 
-				 'body' => $Body)
-			);
-
-        $fields = array(
-            'message' => array(
-                'token' => $DriverToken,
-                'notification' => array(
-                    'title' => $Title,
-                    'body' => $Body
-                )
-            )
-        );
-
-		$headers = array(         
-			'Authorization:Bearer '.$accessTokenw,
-			'Content-Type:application/json'
-			);
-
-	   $ch = curl_init();
-       curl_setopt($ch, CURLOPT_URL, $url);
-       curl_setopt($ch, CURLOPT_POST, true);
-       curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    //   curl_setopt($ch, CURLOPT_HTTPHEADER, array('Host: fcm.googleapis.com'));
-       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-       curl_setopt ($ch, CURLOPT_SSL_VERIFYHOST, 0);  
-       curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-       curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
-       $result = curl_exec($ch);           
-       if ($result === FALSE) {
-           die('Curl failed: ' . curl_error($ch));
-       }
-       curl_close($ch);
-       return $result;
-	}
-
-
-
-
-
-
-
-die;
-mysqli_close($con);
-?>
+echo json_encode([
+    'status_code' => 200,
+    'success'     => true,
+    'data'        => $TransID,
+    'message'     => 'Transfer completed successfully'
+]);
