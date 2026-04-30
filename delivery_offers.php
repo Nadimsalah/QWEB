@@ -361,12 +361,151 @@ $orderId = isset($_GET['orderId']) ? htmlspecialchars($_GET['orderId']) : '8492'
             flex-direction: row;
         }
 
-        /* Responsive Layout: Mobile goes back to column */
+        /* ── Mobile-First Responsive Layout ── */
         @media (max-width: 768px) {
-            body { flex-direction: column-reverse; }
-            #sidebar { width: 100% !important; height: 50vh !important; }
-            #map-container { height: 50vh !important; width: 100% !important;}
+            body {
+                flex-direction: column;
+                overflow: hidden;
+                height: 100dvh;
+            }
+
+            /* Map sits at top, takes 40% of screen */
+            #map-container {
+                height: 25dvh !important;
+                width: 100% !important;
+                flex-shrink: 0;
+                order: 1;
+            }
+
+            /* Offers panel slides up from bottom as a bottom sheet */
+            #sidebar {
+                width: 100% !important;
+                height: 75dvh !important;
+                order: 2;
+                border-right: none !important;
+                border-top: 1px solid rgba(255,255,255,0.08);
+                border-radius: 24px 24px 0 0;
+                box-shadow: 0 -8px 40px rgba(0,0,0,0.4);
+                position: relative;
+                flex-shrink: 0;
+            }
+
+            /* Drag handle indicator */
+            #sidebar::before {
+                content: '';
+                display: block;
+                width: 36px;
+                height: 4px;
+                background: rgba(255,255,255,0.2);
+                border-radius: 99px;
+                margin: 10px auto 0;
+                flex-shrink: 0;
+            }
+
+            /* Compact top-bar */
+            .top-bar {
+                padding: 10px 16px 12px !important;
+                gap: 8px !important;
+            }
+
+            .header-row { gap: 8px; }
+
+            .back-btn {
+                width: 38px !important;
+                height: 38px !important;
+                font-size: 15px !important;
+            }
+
+            .status-pill {
+                font-size: 12px !important;
+                padding: 7px 12px !important;
+            }
+
+            .top-bar h3 {
+                font-size: 17px !important;
+                margin-bottom: 2px !important;
+            }
+
+            .top-bar p {
+                font-size: 11px !important;
+            }
+
+            #cancel-order-btn {
+                font-size: 11px !important;
+                padding: 5px 10px !important;
+                white-space: nowrap;
+            }
+
+            /* Offers list: full width, touch-scrollable */
+            #offers-list {
+                padding: 10px 12px 16px !important;
+                gap: 10px !important;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            /* Offer cards: compact on mobile */
+            .offer-card {
+                padding: 14px !important;
+                border-radius: 18px !important;
+                gap: 12px !important;
+            }
+
+            .driver-avatar {
+                width: 42px !important;
+                height: 42px !important;
+            }
+
+            .driver-name {
+                font-size: 14px !important;
+            }
+
+            .driver-meta {
+                font-size: 11px !important;
+                gap: 8px !important;
+            }
+
+            .offer-price {
+                font-size: 17px !important;
+            }
+
+            .offer-price-container {
+                padding: 5px 10px !important;
+                border-radius: 10px !important;
+            }
+
+            .accept-btn {
+                padding: 12px !important;
+                font-size: 14px !important;
+                border-radius: 12px !important;
+            }
+
+            /* Success overlay full screen on mobile */
+            .success-desc {
+                font-size: 13px !important;
+                padding: 0 20px;
+            }
+
+            .finish-btn {
+                padding: 14px 30px !important;
+                font-size: 14px !important;
+            }
+
+            /* Cancel modal full-width */
+            .cancel-modal {
+                width: 95% !important;
+                padding: 24px 20px !important;
+            }
         }
+
+        /* Small phones */
+        @media (max-width: 380px) {
+            #map-container { height: 22dvh !important; }
+            #sidebar { height: 78dvh !important; }
+            .top-bar { padding: 8px 12px 10px !important; }
+            .offer-card { padding: 12px !important; }
+        }
+
 
         /* --- Left Sidebar (Offers) --- */
         #sidebar {
@@ -571,6 +710,17 @@ $orderId = isset($_GET['orderId']) ? htmlspecialchars($_GET['orderId']) : '8492'
         html.light-mode .map-radar-center { border-color: #ffffff; }
         html.light-mode #offers-list::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); }
         html.light-mode .top-bar h3, html.light-mode .top-bar p { color: #0f1115 !important; }
+
+        /* Light mode mobile overrides */
+        @media (max-width: 768px) {
+            html.light-mode #sidebar {
+                border-top-color: rgba(0,0,0,0.08) !important;
+                box-shadow: 0 -8px 30px rgba(0,0,0,0.08) !important;
+            }
+            html.light-mode #sidebar::before {
+                background: rgba(0,0,0,0.15) !important;
+            }
+        }
     </style>
 </head>
 <body>
