@@ -101,6 +101,8 @@ html.light-mode .header-text-link:hover { color: #0f0f0f; background: rgba(0,0,0
 html.light-mode .grid-dots span { background: rgba(0,0,0,0.6); }
 html.light-mode .more-apps-btn:hover { background: rgba(0,0,0,0.06); }
 html.light-mode .more-apps-btn:hover .grid-dots span { background: #0f0f0f; }
+html.light-mode .signup-btn { background: rgba(0,0,0,0.05) !important; color: #000 !important; border-color: rgba(0,0,0,0.1) !important; }
+html.light-mode .signup-btn:hover { background: rgba(0,0,0,0.08) !important; }
 
 /* Light mode More from QOON panel */
 html.light-mode .apps-panel { background: rgba(255,255,255,0.98); border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 32px 100px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.04); }
