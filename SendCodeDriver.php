@@ -25,9 +25,9 @@ $test=4;
 }
 /////////////
 //echo json_encode(array("result"=>$result));
-if($test==4 || empty($result)){
+if($test==4 && !empty($result)){
 	
-	$sql22="UPDATE Drivers SET FirebaseDriverToken='$FirebaseDriverToken' WHERE DriverPhone='$DriverPhone'";
+	$sql22="UPDATE Drivers SET FirebaseDriverToken='$FirebaseDriverToken' WHERE DriverPhone='$PhoneNumber'";
 					if(mysqli_query($con,$sql22))
 					{
 						
@@ -37,22 +37,23 @@ if($test==4 || empty($result)){
     $success = true;
     $status_code = 200;
 
-echo json_encode(array('status_code' => $status_code,'success' => $success ,"data"=>$result[0],"message"=>$message));
+    $data = isset($result[0]) ? $result[0] : new stdClass();
+    echo json_encode(array('status_code' => $status_code,'success' => $success ,"data"=>$data,"message"=>$message));
 }
 else{
 	$message ="Error";
     $success = false;
     $status_code = 200;
-	$result = []; 
-   echo json_encode(array('status_code' => $status_code,'success' => $success ,"data"=>$result[0],"message"=>$message));
+    $data = new stdClass();
+    echo json_encode(array('status_code' => $status_code,'success' => $success ,"data"=>$data,"message"=>$message));
 }
 
 }else{
 	$message ="Wrong code";
     $success = false;
     $status_code = 200;
-	$result = []; 
-   echo json_encode(array('status_code' => $status_code,'success' => $success ,"data"=>$result[0],"message"=>$message));
+    $data = new stdClass();
+    echo json_encode(array('status_code' => $status_code,'success' => $success ,"data"=>$data,"message"=>$message));
 }
 die;
 mysqli_close($con);

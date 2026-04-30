@@ -34,12 +34,13 @@ $test=4;
 }
 /////////////
 //echo json_encode(array("result"=>$result));
-if($test==4 || empty($result)){
+if($test==4 && !empty($result)){
     $message ="loged sucssesfully";
     $success = true;
     $status_code = 200;
 
-echo json_encode(array('status_code' => $status_code,'success' => $success ,"data"=>$result[0],"message"=>$message));
+    $data = isset($result[0]) ? $result[0] : new stdClass();
+    echo json_encode(array('status_code' => $status_code,'success' => $success ,"data"=>$data,"message"=>$message));
 }
 else{
 	$message ="الجوال او كلمة المرور خاطئ";

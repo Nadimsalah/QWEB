@@ -69,6 +69,13 @@ usort($history, function($a, $b) {
     <title>QOON Pay | Wallet</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- ⚡ Apply theme BEFORE paint to prevent flash -->
+    <script>
+        (function() {
+            var t = localStorage.getItem('qoon_theme') || 'dark';
+            if (t === 'light') document.documentElement.classList.add('light-mode');
+        })();
+    </script>
     <style>
         :root {
             --bg-color: #050505;
@@ -81,6 +88,20 @@ usort($history, function($a, $b) {
 
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter', sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
+
+        /* Light Mode Overrides */
+        html.light-mode { --bg-color: #f8f9fa; --text-main: #0f1115; --text-muted: rgba(0, 0, 0, 0.5); --glass-bg: #ffffff; --glass-border: rgba(0, 0, 0, 0.08); }
+        html.light-mode body { background-color: #f8f9fa !important; color: #0f1115 !important; }
+        html.light-mode .wallet-card { background: #ffffff !important; border-color: rgba(0,0,0,0.08) !important; box-shadow: 0 20px 50px rgba(0,0,0,0.05) !important; }
+        html.light-mode .card-holder-name, html.light-mode .card-balance-section .amount { color: #0f1115 !important; }
+        html.light-mode .glass-action-main { background: #ffffff !important; border-color: rgba(0,0,0,0.08) !important; color: #0f1115 !important; }
+        html.light-mode .transaction-card { background: #ffffff !important; border-color: rgba(0,0,0,0.06) !important; }
+        html.light-mode .tx-title { color: #0f1115 !important; }
+        html.light-mode .tx-amount.expense { color: #0f1115 !important; }
+        html.light-mode header { background: rgba(255,255,255,0.7) !important; border-bottom-color: rgba(0,0,0,0.08) !important; }
+        html.light-mode .logo, html.light-mode img[alt="QOON PAY"] { filter: none !important; }
+        html.light-mode .tx-icon:not(.income):not(.expense) { background: rgba(0,0,0,0.03) !important; color: #0f1115 !important; }
+
 
         .aurora { position: fixed; inset: 0; z-index: -1; overflow: hidden; }
         .blob { position: absolute; width: 60vw; height: 60vh; background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%); filter: blur(100px); opacity: 0.15; animation: move 15s infinite alternate; }
@@ -213,10 +234,7 @@ usort($history, function($a, $b) {
     </header>
 
     <div class="container">
-        <div class="back-nav">
-            <a href="index.php" class="back-btn">
-                <i class="fa-solid fa-arrow-left"></i>
-            </a>
+        <div class="back-nav" style="justify-content: center;">
             <img src="qoon_pay_logo.png" alt="QOON PAY" style="height:48px; filter:brightness(0) invert(1);">
         </div>
 
@@ -243,11 +261,11 @@ usort($history, function($a, $b) {
 
         <!-- Actions -->
         <div class="actions-group">
-            <div class="glass-action-main" onclick="window.location.href='topup.php'">
+            <div class="glass-action-main" onclick="window.location.href='topup.php' + window.location.search">
                 <i class="fa-solid fa-circle-plus"></i>
                 <span>Top up</span>
             </div>
-            <div class="glass-action-main" onclick="window.location.href='send.php'">
+            <div class="glass-action-main" onclick="window.location.href='send.php' + window.location.search">
                 <i class="fa-solid fa-paper-plane"></i>
                 <span>Send</span>
             </div>
@@ -314,7 +332,12 @@ usort($history, function($a, $b) {
                             }
                         }
                         
-                        $link = ($otherUserId > 0 && $otherUserId != $userId) ? "friend_chat.php?uid=" . $otherUserId : "#";
+                        $orderId = intval($item['OrderID'] ?? 0);
+                        if ($orderId > 0) {
+                            $link = "track_order.php?orderId=" . $orderId . "&tot=" . $val;
+                        } else {
+                            $link = ($otherUserId > 0 && $otherUserId != $userId) ? "friend_chat.php?uid=" . $otherUserId : "#";
+                        }
                     else:
                         // Order type
                         $isIncome = false;
@@ -335,7 +358,7 @@ usort($history, function($a, $b) {
                         $avatarHtml = '<i class="fa-solid fa-shopping-bag" style="color:inherit; font-size:18px;"></i>';
                     endif;
                 ?>
-                    <a href="<?= $link ?>" class="transaction-card" style="text-decoration:none; color:inherit; cursor:<?= ($isOrder?'pointer':'default') ?>;">
+                    <a href="<?= $link ?>" class="transaction-card" style="text-decoration:none; color:inherit; cursor:pointer;">
                         <div class="tx-icon <?= ($item['type']=='tx')?$class:'order-icon' ?>" style="<?= ($item['type']=='tx' && strpos($avatarHtml, 'img')!==false) ? 'padding:0; overflow:hidden; background:transparent;' : '' ?>">
                             <?= $avatarHtml ?>
                             <?php if($item['type'] == 'tx'): ?>

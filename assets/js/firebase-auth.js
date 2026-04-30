@@ -41,7 +41,7 @@ window.googleLogin = function () {
 
         const formData = new FormData();
         formData.append('AccountType', 'Google');
-        formData.append('GoogleID', externalId);
+        formData.append('SocialID', externalId);
         formData.append('name', user.displayName || 'User');
         formData.append('Email', user.email);
         formData.append('Photo', user.photoURL || '');
@@ -104,7 +104,7 @@ window.appleLogin = function () {
 
         const formData = new FormData();
         formData.append('AccountType', 'Apple');
-        formData.append('GoogleID', externalId); // Backend uses this field as unique external ID
+        formData.append('SocialID', externalId); // Backend reads $_POST['SocialID']
         formData.append('name', user.displayName || 'Apple User');
         formData.append('Email', user.email || (user.uid + '@apple.com'));
         formData.append('Photo', user.photoURL || '');

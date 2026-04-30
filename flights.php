@@ -193,12 +193,32 @@ define('FROM_UI', true);
     </style>
 </head>
 <body>
+
     <div class="header">
         <div style="display: flex; align-items: center; gap: 16px;">
             <button class="back-btn" onclick="window.location.href='index.php'"><i class="fa-solid fa-arrow-left"></i></button>
             <img src="logo_qoon_white.png" alt="QOON" style="height: 28px; width: auto; object-fit: contain;">
         </div>
-        <div></div>
+        <div>
+            <button class="back-btn" style="width: auto; padding: 0 20px; font-weight: 600; font-size: 14px;" onclick="document.getElementById('manage-booking-modal').style.display='flex'">My Trips</button>
+        </div>
+    </div>
+
+    <!-- Manage Booking Modal -->
+    <div id="manage-booking-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
+        <div style="background: #111; border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 32px; width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="margin: 0; font-size: 20px;">Manage Booking</h2>
+                <button onclick="document.getElementById('manage-booking-modal').style.display='none'" style="background: transparent; border: none; color: rgba(255,255,255,0.6); font-size: 20px; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <p style="color: rgba(255,255,255,0.6); font-size: 14px; margin: 0;">Enter your PNR to view your E-Ticket, void, or request a refund.</p>
+            <input type="text" id="manage-pnr" class="drawer-input" placeholder="PNR (e.g. TRW12345)" style="text-transform: uppercase;">
+            <button onclick="fetchTripDetails()" style="background: #fff; color: #000; font-weight: 700; border: none; border-radius: 12px; padding: 14px; cursor: pointer;">Retrieve Booking</button>
+            
+            <div id="manage-results" style="display: none; flex-direction: column; gap: 12px; margin-top: 16px;">
+                <!-- Filled by JS -->
+            </div>
+        </div>
     </div>
     
     <div class="content">
@@ -207,6 +227,25 @@ define('FROM_UI', true);
         
         <!-- Unified QOON Pill Search Form -->
         <div class="search-box">
+            <!-- Trip Types -->
+            <div style="display: flex; gap: 16px; padding: 4px 12px; margin-bottom: 4px; overflow-x: auto; white-space: nowrap;">
+                <label style="color: #fff; font-size: 13px; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                    <input type="radio" name="trip_type" value="oneway" checked style="accent-color: #fff;"> One Way
+                </label>
+                <label style="color: rgba(255,255,255,0.7); font-size: 13px; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                    <input type="radio" name="trip_type" value="roundtrip" style="accent-color: #fff;"> Round Trip
+                </label>
+                <label style="color: rgba(255,255,255,0.7); font-size: 13px; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                    <input type="radio" name="trip_type" value="multicity" style="accent-color: #fff;"> Multi City
+                </label>
+                <label style="color: rgba(255,255,255,0.7); font-size: 13px; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                    <input type="radio" name="trip_type" value="advance" style="accent-color: #fff;"> Advance Search
+                </label>
+                <label style="color: rgba(255,255,255,0.7); font-size: 13px; display: flex; align-items: center; gap: 6px; cursor: pointer; color: #ff9f0a; font-weight: 600;">
+                    <input type="radio" name="trip_type" value="ai" style="accent-color: #ff9f0a;"> Flight Booking with AI
+                </label>
+            </div>
+
             <div class="search-row">
                 <div class="input-wrapper" style="flex: 1.5;">
                     <i class="fa-solid fa-plane-departure"></i>
@@ -232,14 +271,93 @@ define('FROM_UI', true);
                     <i class="fa-regular fa-calendar-check"></i>
                     <input type="text" id="return_date" placeholder="Return (Optional)">
                 </div>
-                <div class="input-wrapper" style="flex: 0.5; min-width: 120px;">
+                <div class="input-wrapper" style="flex: 0.5; min-width: 140px; cursor: pointer;" onclick="togglePaxSelector(event)">
                     <i class="fa-solid fa-user"></i>
-                    <input type="number" id="passengers" min="1" max="9" value="1">
+                    <input type="text" id="pax-display" value="1 Adult" readonly style="cursor: pointer; pointer-events: none;">
+                    
+                    <div id="pax-selector" style="display: none; position: absolute; top: 70px; left: 0; background: #111; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 16px; width: 240px; z-index: 1000; box-shadow: 0 20px 40px rgba(0,0,0,0.5); cursor: default;" onclick="event.stopPropagation()">
+                        <!-- Adults -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <div>
+                                <div style="font-weight: 600; font-size: 14px; color: #fff;">Adults</div>
+                                <div style="font-size: 12px; color: rgba(255,255,255,0.4);">12+ years</div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <button onclick="updatePax('adt', -1)" style="width: 28px; height: 28px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: #fff; cursor: pointer;">-</button>
+                                <span id="pax-adt" style="font-weight: 600; width: 12px; text-align: center;">1</span>
+                                <button onclick="updatePax('adt', 1)" style="width: 28px; height: 28px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: #fff; cursor: pointer;">+</button>
+                            </div>
+                        </div>
+                        <!-- Children -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <div>
+                                <div style="font-weight: 600; font-size: 14px; color: #fff;">Children</div>
+                                <div style="font-size: 12px; color: rgba(255,255,255,0.4);">2-11 years</div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <button onclick="updatePax('chd', -1)" style="width: 28px; height: 28px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: #fff; cursor: pointer;">-</button>
+                                <span id="pax-chd" style="font-weight: 600; width: 12px; text-align: center;">0</span>
+                                <button onclick="updatePax('chd', 1)" style="width: 28px; height: 28px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: #fff; cursor: pointer;">+</button>
+                            </div>
+                        </div>
+                        <!-- Infants -->
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-weight: 600; font-size: 14px; color: #fff;">Infants</div>
+                                <div style="font-size: 12px; color: rgba(255,255,255,0.4);">Under 2 years</div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <button onclick="updatePax('inf', -1)" style="width: 28px; height: 28px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: #fff; cursor: pointer;">-</button>
+                                <span id="pax-inf" style="font-weight: 600; width: 12px; text-align: center;">0</span>
+                                <button onclick="updatePax('inf', 1)" style="width: 28px; height: 28px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: #fff; cursor: pointer;">+</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
-                <button class="search-btn" onclick="searchFlights()">
-                    <i class="fa-solid fa-arrow-right"></i>
-                </button>
+            </div>
+
+            <!-- Advanced Options -->
+            <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;">
+                
+                <!-- Fare Type Selector -->
+                <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; gap: 24px;">
+                    <span style="color: #fff; font-size: 14px; font-weight: 600;">Select a fare type</span>
+                    <label style="color: rgba(255,255,255,0.8); font-size: 13px; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                        <input type="radio" name="fare_type" value="regular" checked style="accent-color: #fff;"> Regular Fares
+                    </label>
+                    <label style="color: rgba(255,255,255,0.8); font-size: 13px; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                        <input type="radio" name="fare_type" value="student" style="accent-color: #fff;"> Student Fares
+                    </label>
+                </div>
+
+                <!-- Filters -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; padding: 0 4px;">
+                    <label style="color: rgba(255,255,255,0.7); font-size: 13px; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                        <input type="checkbox" style="accent-color: #fff;"> Cross Selling
+                    </label>
+                    <label style="color: rgba(255,255,255,0.7); font-size: 13px; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                        <input type="checkbox" style="accent-color: #fff;"> Preferred Airline
+                    </label>
+                    <label style="color: rgba(255,255,255,0.7); font-size: 13px; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                        <input type="checkbox" style="accent-color: #fff;"> Markup (In Percentage)
+                    </label>
+                    <label style="color: rgba(255,255,255,0.7); font-size: 13px; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                        <input type="checkbox" style="accent-color: #fff;"> Direct Flight
+                    </label>
+                    <label style="color: rgba(255,255,255,0.7); font-size: 13px; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                        <input type="checkbox" style="accent-color: #fff;"> Flexible Dates +/- 3
+                    </label>
+                    <label style="color: rgba(255,255,255,0.7); font-size: 13px; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                        <input type="checkbox" style="accent-color: #fff;"> Select Flights Separately
+                    </label>
+                </div>
+
+                <div style="display: flex; justify-content: flex-start; margin-top: 8px;">
+                    <button class="search-btn" style="width: auto; padding: 0 24px; border-radius: 24px; gap: 8px;" onclick="searchFlights()">
+                        <i class="fa-solid fa-search"></i> Search
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -254,102 +372,14 @@ define('FROM_UI', true);
             Scanning global airlines...
         </div>
         
-        <!-- Filters Container -->
-        <div id="filters-container" style="display: none; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; padding: 20px; margin-top: 24px;">
-            <div style="font-weight: 700; font-size: 16px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-                <i class="fa-solid fa-filter" style="color: #fff;"></i> Filter Results
-            </div>
-            
-            <!-- Price Filter -->
-            <div style="margin-bottom: 20px;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                    <span style="font-size: 13px; color: rgba(255,255,255,0.6);">Max Price</span>
-                    <span id="price-display" style="font-size: 14px; font-weight: 700; color: #fff;">$0</span>
-                </div>
-                <input type="range" id="price-filter" min="0" max="1000" value="1000" style="width: 100%; accent-color: #fff;" oninput="document.getElementById('price-display').innerText = '$' + this.value; applyFilters();">
-            </div>
-            
-            <!-- Airlines Filter -->
-            <div>
-                <span style="font-size: 13px; color: rgba(255,255,255,0.6); display: block; margin-bottom: 8px;">Airlines</span>
-                <div id="airline-filters" style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px;">
-                    <!-- Airline toggles will be injected here -->
-                </div>
-            </div>
-        </div>
 
-        <div id="results"></div>
-    </div>
 
-    <!-- Checkout Drawer -->
-    <div id="drawer-overlay" class="drawer-overlay" onclick="closeCheckout()"></div>
-    <div id="checkout-drawer">
-        <div class="drawer-header">
-            <div class="drawer-title">Flight Checkout</div>
-            <button class="drawer-close" onclick="closeCheckout()"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div class="drawer-body">
-            <div class="checkout-section">
-                <span class="section-label">Itinerary</span>
-                <div class="flight-summary-mini">
-                    <div class="mini-route">
-                        <div class="mini-airport" id="chk-origin">RBA</div>
-                        <i class="fa-solid fa-arrow-right" style="color: rgba(255,255,255,0.2);"></i>
-                        <div class="mini-airport" id="chk-dest">MRS</div>
-                    </div>
-                    <div class="mini-airline" id="chk-airline-row">
-                        <img id="chk-logo" src="" style="width: 20px; height: 20px; border-radius: 50%; background: #fff;">
-                        <span id="chk-airline-name">Ryanair</span>
-                        <span style="opacity: 0.3;">•</span>
-                        <span id="chk-date">Jun 25</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="checkout-section">
-                <span class="section-label">Travelers</span>
-                <div class="traveler-info-card">
-                    <div class="info-row">
-                        <span class="info-label">Full Name</span>
-                        <span class="info-value" id="chk-user-name"><?= $_COOKIE['qoon_user_name'] ?? 'Nadim' ?></span>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <div class="info-row">
-                            <span class="info-label">Passport</span>
-                            <span class="info-value">41154</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Nationality</span>
-                            <span class="info-value">DZDZ</span>
-                        </div>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Date of Birth</span>
-                        <span class="info-value">25/04/2026</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="checkout-section">
-                <span class="section-label">Price Summary</span>
-                <div class="price-breakdown">
-                    <div class="price-row">
-                        <span>Adult x<span id="chk-passengers">1</span></span>
-                        <span id="chk-base-price">$0</span>
-                    </div>
-                    <div class="price-row">
-                        <span>Taxes & Fees</span>
-                        <span>Included</span>
-                    </div>
-                    <div class="price-row price-total">
-                        <span>Total Price</span>
-                        <span id="chk-total-price">$0</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="drawer-footer">
-            <button class="confirm-btn" id="chk-confirm-btn">Book Flight</button>
+    <!-- Modern Alert -->
+    <div id="modern-alert" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
+        <div style="background: #111; border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 32px; width: 100%; max-width: 350px; text-align: center; display: flex; flex-direction: column; gap: 16px;">
+            <i class="fa-solid fa-circle-exclamation" style="font-size: 40px; color: #ff9f0a;"></i>
+            <div id="alert-text" style="color: #fff; font-size: 15px; font-weight: 500;"></div>
+            <button onclick="document.getElementById('modern-alert').style.display='none'" style="background: #fff; color: #000; font-weight: 700; border: none; border-radius: 12px; padding: 12px; cursor: pointer; margin-top: 8px;">Got it</button>
         </div>
     </div>
 
@@ -395,6 +425,35 @@ define('FROM_UI', true);
                 searchFlights();
             }
         }
+
+        let paxCounts = { adt: 1, chd: 0, inf: 0 };
+        
+        function togglePaxSelector(e) {
+            e.stopPropagation();
+            const selector = document.getElementById('pax-selector');
+            selector.style.display = selector.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        function updatePax(type, delta) {
+            const newVal = paxCounts[type] + delta;
+            if (newVal < 0) return;
+            if (type === 'adt' && newVal < 1) return; // Min 1 adult
+            
+            paxCounts[type] = newVal;
+            document.getElementById(`pax-${type}`).innerText = newVal;
+            
+            let displayParts = [];
+            if (paxCounts.adt > 0) displayParts.push(`${paxCounts.adt} Adult${paxCounts.adt > 1 ? 's' : ''}`);
+            if (paxCounts.chd > 0) displayParts.push(`${paxCounts.chd} Child${paxCounts.chd > 1 ? 'ren' : ''}`);
+            if (paxCounts.inf > 0) displayParts.push(`${paxCounts.inf} Infant${paxCounts.inf > 1 ? 's' : ''}`);
+            
+            document.getElementById('pax-display').value = displayParts.join(', ');
+        }
+
+        document.addEventListener('click', () => {
+            const selector = document.getElementById('pax-selector');
+            if (selector) selector.style.display = 'none';
+        });
 
         // Initialize Modern Flatpickr Calendar
         document.addEventListener('DOMContentLoaded', () => {
@@ -479,217 +538,76 @@ define('FROM_UI', true);
                 return;
             }
 
-            document.getElementById('results').innerHTML = '';
-            document.getElementById('filters-container').style.display = 'none';
-            document.getElementById('loading').style.display = 'block';
-            fallbackBannerHtml = '';
-            currentFlights = [];
-            selectedAirlines.clear();
+            const url = `flight_results.php?origin=${originCode}&dest=${destCode}&date=${date}&return=${returnDate}&class=${currentTripClass}&adt=${paxCounts.adt}&chd=${paxCounts.chd}&inf=${paxCounts.inf}`;
+            window.location.href = url;
+        }
 
+        async function fetchTripDetails() {
+            const pnr = document.getElementById('manage-pnr').value;
+            if(!pnr) return;
+            
+            document.getElementById('manage-results').style.display = 'flex';
+            document.getElementById('manage-results').innerHTML = '<div style="color:#fff;"><i class="fa-solid fa-circle-notch fa-spin"></i> Fetching details...</div>';
+            
             try {
-                // Actual API call using PHP backend to bypass CORS and hide API Key
-                const url = `search_flights.php?origin=${originCode}&destination=${destCode}&depart_date=${date}&return_date=${returnDate}&trip_class=${currentTripClass}`;
-                const response = await fetch(url);
-                const data = await response.json();
+                const res = await fetch(`api_manage_booking.php?action=trip_details&pnr=${pnr}&session_id=DUMMY_OR_ACTIVE_SESSION`);
+                const data = await res.json();
                 
-                if (data.success && data.data && data.data[destCode]) {
-                    // Extract the flight options
-                    const flightList = data.data[destCode];
-
-                    // Check for alternative dates fallback
-                    if (data.is_alternative_dates) {
-                        fallbackBannerHtml = `
-                        <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); border-radius: 16px; padding: 16px; margin-bottom: 24px; display: flex; align-items: center; gap: 16px;">
-                            <i class="fa-solid fa-calendar-day" style="font-size: 24px; color: #fff;"></i>
-                            <div>
-                                <div style="font-weight: 700; color: #fff; font-size: 15px; margin-bottom: 4px;">Alternative Dates Available</div>
-                                <div style="color: rgba(255,255,255,0.7); font-size: 13px;">We couldn't find flights for your exact date, but we found these great alternatives.</div>
+                if(data.success && data.data) {
+                    const status = data.data.BookingStatus || 'Unknown';
+                    document.getElementById('manage-results').innerHTML = `
+                        <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px;">
+                            <div style="color: rgba(255,255,255,0.6); font-size: 12px; margin-bottom: 4px;">Status</div>
+                            <div style="color: #fff; font-size: 16px; font-weight: 700; margin-bottom: 12px;">${status}</div>
+                            
+                            <div style="display: flex; gap: 8px; margin-top: 16px;">
+                                <button onclick="quoteAction('void_quote', '${pnr}')" style="flex: 1; background: #ff3b30; color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer;">Void</button>
+                                <button onclick="quoteAction('refund_quote', '${pnr}')" style="flex: 1; background: #ff9f0a; color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 600; cursor: pointer;">Refund</button>
                             </div>
-                        </div>`;
-                    } else if (data.has_alternatives_appended) {
-                        fallbackBannerHtml = `
-                        <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 16px; margin-bottom: 24px; display: flex; align-items: center; gap: 16px;">
-                            <i class="fa-solid fa-list-ul" style="font-size: 24px; color: #fff;"></i>
-                            <div>
-                                <div style="font-weight: 700; color: #fff; font-size: 15px; margin-bottom: 4px;">More Options Added</div>
-                                <div style="color: rgba(255,255,255,0.7); font-size: 13px;">We included flights from surrounding dates to give you more choices.</div>
-                            </div>
-                        </div>`;
-                    }
-
-                    currentFlights = flightList.map(f => {
-                        // Format ISO dates to readable time
-                        const flightDate = new Date(f.departure_at);
-                        const departTime = flightDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                        // Always include the date in the time display now that lists are mixed
-                        const displayTime = flightDate.toLocaleDateString([], {month: 'short', day: 'numeric'}) + ' • ' + departTime;
-
-                        const returnFlightDate = f.return_at ? new Date(f.return_at) : null;
-                        const arrivalTime = returnFlightDate ? returnFlightDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'TBD';
-                        const displayReturn = returnFlightDate ? 
-                                            returnFlightDate.toLocaleDateString([], {month: 'short', day: 'numeric'}) + ' • ' + arrivalTime : 
-                                            arrivalTime;
-
-                        return {
-                            airline: f.airline, 
-                            price: f.price,
-                            departure: displayTime,
-                            arrival: displayReturn,
-                            duration: f.flight_number ? 'Flight ' + f.flight_number : 'Direct',
-                            code: f.airline
-                        };
-                    });
-
-                    renderFilters();
-                    applyFilters();
-
+                        </div>
+                    `;
                 } else {
-                    // Try fallback to Jetradar entirely if STILL empty
-                    document.getElementById('loading').style.display = 'none';
-                    document.getElementById('results').innerHTML = `
-                    <div style="text-align:center; padding: 20px;">
-                        <i class="fa-solid fa-plane-slash" style="font-size:40px; color:rgba(255,255,255,0.2); margin-bottom:16px;"></i>
-                        <div style="color:rgba(255,255,255,0.7); font-size:16px; margin-bottom:8px;">No cached flights found for this route.</div>
-                        <div style="color:rgba(255,255,255,0.4); font-size:13px; margin-bottom:20px;">For a full live search of all global airlines, please use the live engine.</div>
-                        <button onclick="window.open('https://search.jetradar.com/flights/?origin_iata=${originCode}&destination_iata=${destCode}&depart_date=${document.getElementById('date').value}&return_date=${document.getElementById('return_date').value}&adults=${document.getElementById('passengers').value}&marker=${MARKER}', '_blank')" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 12px 24px; border-radius: 12px; cursor: pointer; font-weight: 600;">Search Live on JetRadar</button>
-                    </div>`;
+                    document.getElementById('manage-results').innerHTML = `<div style="color:#ff3b30;">${data.message}</div>`;
                 }
-            } catch (error) {
-                console.error(error);
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('results').innerHTML = '<div style="text-align:center; color:#ff3b30;">Error connecting to API.</div>';
+            } catch(e) {
+                document.getElementById('manage-results').innerHTML = '<div style="color:#ff3b30;">Network error.</div>';
             }
         }
 
-        function openCheckout(f, originCode, destCode, passengers) {
-            document.getElementById('chk-origin').innerText = originCode;
-            document.getElementById('chk-dest').innerText = destCode;
-            document.getElementById('chk-airline-name').innerText = AIRLINE_NAMES[f.code] || f.airline;
-            document.getElementById('chk-logo').src = `http://pics.avs.io/200/200/${f.code}.png`;
-            document.getElementById('chk-date').innerText = f.departure.split(' • ')[0];
-            document.getElementById('chk-passengers').innerText = passengers;
-            document.getElementById('chk-base-price').innerText = `$${f.price}`;
-            document.getElementById('chk-total-price').innerText = `$${f.price}`;
+        async function quoteAction(action, pnr) {
+            if(!confirm(`Are you sure you want to request a quote for this action?`)) return;
             
-            const url = `https://search.jetradar.com/flights/?origin_iata=${originCode}&destination_iata=${destCode}&depart_date=${document.getElementById('date').value}&return_date=${document.getElementById('return_date').value}&adults=${passengers}&marker=${MARKER}`;
-            document.getElementById('chk-confirm-btn').onclick = () => window.open(url, '_blank');
-
-            document.getElementById('drawer-overlay').classList.add('show');
-            document.getElementById('checkout-drawer').classList.add('open');
-        }
-
-        function closeCheckout() {
-            document.getElementById('drawer-overlay').classList.remove('show');
-            document.getElementById('checkout-drawer').classList.remove('open');
-        }
-
-        function renderFilters() {
-            if (currentFlights.length === 0) return;
-
-            document.getElementById('filters-container').style.display = 'block';
-
-            // 1. Setup Price Slider
-            const prices = currentFlights.map(f => f.price);
-            const minPrice = Math.min(...prices);
-            const maxPrice = Math.max(...prices);
-            
-            const priceSlider = document.getElementById('price-filter');
-            priceSlider.min = minPrice;
-            priceSlider.max = maxPrice;
-            priceSlider.value = maxPrice;
-            document.getElementById('price-display').innerText = '$' + maxPrice;
-
-            // 2. Setup Airline Logos
-            const uniqueAirlines = [...new Set(currentFlights.map(f => f.code))];
-            selectedAirlines = new Set(uniqueAirlines); // Initially all selected
-
-            const airlineContainer = document.getElementById('airline-filters');
-            airlineContainer.innerHTML = uniqueAirlines.map(code => {
-                const logo = `http://pics.avs.io/200/200/${code}.png`;
-                const name = AIRLINE_NAMES[code] || code;
-                return `
-                <div id="airline-btn-${code}" onclick="toggleAirline('${code}')" style="background: rgba(255,255,255,0.15); border: 2px solid #fff; border-radius: 16px; padding: 8px 16px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s; white-space: nowrap;">
-                    <img src="${logo}" style="width: 24px; height: 24px; border-radius: 12px; background: #fff; object-fit: contain;">
-                    <span style="font-weight: 600; font-size: 13px;">${name}</span>
-                </div>`;
-            }).join('');
-        }
-
-        function toggleAirline(code) {
-            const btn = document.getElementById(`airline-btn-${code}`);
-            if (selectedAirlines.has(code)) {
-                selectedAirlines.delete(code);
-                btn.style.background = 'rgba(255,255,255,0.05)';
-                btn.style.borderColor = 'rgba(255,255,255,0.1)';
-                btn.style.opacity = '0.5';
-            } else {
-                selectedAirlines.add(code);
-                btn.style.background = 'rgba(255,255,255,0.15)';
-                btn.style.borderColor = '#fff';
-                btn.style.opacity = '1';
+            showModernAlert("Fetching quote from airline...");
+            try {
+                const res = await fetch(`api_manage_booking.php?action=${action}&pnr=${pnr}&session_id=DUMMY_OR_ACTIVE_SESSION`);
+                const data = await res.json();
+                if(data.success) {
+                    const executeActionStr = action === 'void_quote' ? 'process_void' : 'process_refund';
+                    if(confirm(`Quote successful. Proceed with execution?`)) {
+                        executeAction(executeActionStr, pnr);
+                    }
+                } else {
+                    showModernAlert(`Quote Failed: ${data.message}`);
+                }
+            } catch(e) {
+                showModernAlert("Network error fetching quote.");
             }
-            applyFilters();
         }
 
-        function applyFilters() {
-            const maxPrice = parseInt(document.getElementById('price-filter').value);
-            
-            const filteredData = currentFlights.filter(f => {
-                return f.price <= maxPrice && selectedAirlines.has(f.code);
-            });
-            
-            renderFlights(filteredData, document.getElementById('origin').value, document.getElementById('destination').value);
-        }
-
-        function renderFlights(flights, origin, destination) {
-            document.getElementById('loading').style.display = 'none';
-            let html = fallbackBannerHtml;
-            
-            if (flights.length === 0) {
-                html += `<div style="text-align:center; color: rgba(255,255,255,0.5); padding: 40px 0; font-weight: 500;">No flights match your filters.</div>`;
-                document.getElementById('results').innerHTML = html;
-                return;
+        async function executeAction(action, pnr) {
+            showModernAlert("Processing request...");
+            try {
+                const res = await fetch(`api_manage_booking.php?action=${action}&pnr=${pnr}&session_id=DUMMY_OR_ACTIVE_SESSION`);
+                const data = await res.json();
+                if(data.success) {
+                    showModernAlert(`Success: ${data.message}`);
+                    fetchTripDetails(); // Refresh
+                } else {
+                    showModernAlert(`Failed: ${data.message}`);
+                }
+            } catch(e) {
+                showModernAlert("Network error executing action.");
             }
-            
-            flights.forEach(f => {
-                // Live real airline logos from Aviasales
-                const logo = `http://pics.avs.io/200/200/${f.code}.png`;
-                
-                html += `
-                <div class="flight-card">
-                    <div class="fc-header">
-                        <div class="fc-airline">
-                            <img src="${logo}" alt="${f.airline}" onerror="this.src='https://ui-avatars.com/api/?name=${f.code}&background=random&color=fff'">
-                            <span style="font-weight: 700; color: #fff;">${AIRLINE_NAMES[f.code] || f.airline}</span>
-                        </div>
-                        <div class="fc-price">$${f.price}</div>
-                    </div>
-                    
-                    <div class="fc-route">
-                        <div class="fc-time-block">
-                            <div class="fc-time">${f.departure}</div>
-                            <div class="fc-airport">${origin}</div>
-                        </div>
-                        
-                        <div class="fc-duration">
-                            <span>${f.duration}</span>
-                            <div class="fc-line">
-                                <i class="fa-solid fa-plane"></i>
-                            </div>
-                            <span style="color:#fff; font-weight:600; margin-top:4px;">Direct</span>
-                        </div>
-                        
-                        <div class="fc-time-block">
-                            <div class="fc-time">${f.arrival}</div>
-                            <div class="fc-airport">${destination}</div>
-                        </div>
-                    </div>
-                    
-                    <button class="fc-book-btn" onclick='openCheckout(${JSON.stringify(f)}, "${document.getElementById("origin_code").value}", "${document.getElementById("destination_code").value}", ${document.getElementById("passengers").value})'>Select Flight</button>
-                </div>`;
-            });
-            
-            document.getElementById('results').innerHTML = html;
         }
     </script>
 </body>

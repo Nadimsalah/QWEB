@@ -119,8 +119,14 @@ while($row = mysqli_fetch_assoc($res)){
 //$Balance    = "177";
 //$DriverRate = "5"; 
 $Hwafez     = "0";
-$Pers       = $CountTRIPDONE/$DriverOrdersNum*100;
+$Pers = empty($DriverOrdersNum) ? 0 : ($CountTRIPDONE/$DriverOrdersNum*100);
 $DriversLimitMoney = "350";
+$qLimit = mysqli_query($con, "SELECT MoneyStopNumber FROM MoneyStop LIMIT 1");
+if($qLimit && $r = mysqli_fetch_assoc($qLimit)) {
+    if (!empty($r['MoneyStopNumber'])) {
+        $DriversLimitMoney = $r['MoneyStopNumber'];
+    }
+}
 
 $CountAll = $DriverOrdersNum;
 //$CountTRIPDONE = "22";

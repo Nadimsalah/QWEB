@@ -273,6 +273,12 @@ foreach ($boutiqueFoodsByCat as $bCatId => $arr) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Prevent theme flashing
+        if (localStorage.getItem('qoon_theme') === 'light') {
+            document.documentElement.classList.add('light-mode');
+        }
+    </script>
     <style>
         :root {
             --bg: #000000;
@@ -923,20 +929,32 @@ foreach ($boutiqueFoodsByCat as $bCatId => $arr) {
         }
 
         .b-cat-btn {
-            background: transparent;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            color: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 10px 24px;
             border-radius: 99px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
             white-space: nowrap;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .b-cat-btn.active {
             background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+            box-shadow: 0 10px 25px rgba(245, 0, 87, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .b-cat-btn:not(.active):hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.15);
         }
 
         .products-grid {
@@ -970,11 +988,19 @@ foreach ($boutiqueFoodsByCat as $bCatId => $arr) {
             flex-direction: column;
             text-decoration: none;
             color: inherit;
-            transition: transform 0.3s;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            background: rgba(255, 255, 255, 0.02);
+            padding: 12px;
+            border-radius: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
         }
 
         .prod-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
 
         .prod-img-wrap {
@@ -998,17 +1024,24 @@ foreach ($boutiqueFoodsByCat as $bCatId => $arr) {
         }
 
         .prod-name {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
             color: #fff;
             line-height: 1.3;
-            margin-bottom: 6px;
+            margin-top: 6px;
+            margin-bottom: 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            letter-spacing: -0.2px;
         }
 
         .prod-price {
-            font-size: 15px;
-            font-weight: 800;
+            font-size: 16px;
+            font-weight: 900;
             color: var(--primary);
+            letter-spacing: -0.5px;
         }
 
         /* Override header to float over cover image */
@@ -1024,11 +1057,86 @@ foreach ($boutiqueFoodsByCat as $bCatId => $arr) {
 
         /* Styles for product modal and checkout moved to includes/modals/product.php */
 
+        /* ✨ HIGH UI/UX WHITE MODE OVERRIDES */
+        html.light-mode {
+            --bg: #fafafa;
+            --surface: #ffffff;
+            --text-main: #0f1115;
+            --text-muted: #6b7280;
+            --border: rgba(0, 0, 0, 0.08);
+        }
+        
+        html.light-mode .shop-profile-card { box-shadow: 0 -20px 40px rgba(0,0,0,0.03); }
+        html.light-mode .shop-avatar-wrap { background: #fff; }
+        html.light-mode .shop-avatar { border-color: #fff; }
+        html.light-mode .shop-name { color: #0f1115; }
+        html.light-mode .shop-rating, html.light-mode .shop-dist { color: #4b5563; }
+        html.light-mode .round-btn { background: rgba(255, 255, 255, 0.8); color: #000; border-color: rgba(0,0,0,0.1); }
+        html.light-mode .round-btn:hover { background: #fff; transform: scale(1.05); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        
+        html.light-mode .tab-btn { background: rgba(0,0,0,0.04); color: #6b7280; }
+        html.light-mode .tab-btn.active { background: rgba(130, 140, 255, 0.15); color: #0f1115; }
+        
+        html.light-mode .b-cat-btn { background: #f3f4f6; color: #6b7280; border-color: rgba(0,0,0,0.03); }
+        html.light-mode .b-cat-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 10px 20px rgba(245, 0, 87, 0.2); }
+        html.light-mode .b-cat-btn:not(.active):hover { background: #e5e7eb; color: #000; }
+        
+        html.light-mode .story-item { background: #fff; box-shadow: 0 0 0 2px var(--primary), 0 4px 10px rgba(0,0,0,0.05); }
+        html.light-mode .post-card { background: #fff; border-color: rgba(0,0,0,0.08); box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+        html.light-mode .post-card:hover { border-color: rgba(0,0,0,0.15); box-shadow: 0 8px 30px rgba(0,0,0,0.06); }
+        html.light-mode .p-name-wrap { color: #0f1115; }
+        html.light-mode .p-text { color: #374151; }
+        html.light-mode .post-header button { color: #0f1115 !important; }
+        
+        html.light-mode .feed-inline-product { background: rgba(0, 0, 0, 0.03); border-color: rgba(0, 0, 0, 0.08); color: #000; }
+        html.light-mode .feed-inline-product:hover { background: rgba(0, 0, 0, 0.06); border-color: rgba(0, 0, 0, 0.15); }
+        html.light-mode .fip-icon-holder { background: rgba(44, 181, 232, 0.1); color: #0d8abc; }
+        html.light-mode .fip-name { color: #000; }
+        html.light-mode .fip-price { color: #0d8abc; }
+        html.light-mode .fip-right { color: rgba(0, 0, 0, 0.3); }
+        
+        html.light-mode .prod-card { background: #ffffff; border-color: rgba(0,0,0,0.05); box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        html.light-mode .prod-card:hover { background: #ffffff; border-color: rgba(0,0,0,0.08); box-shadow: 0 20px 40px rgba(0,0,0,0.06); }
+        html.light-mode .prod-name { color: #0f1115; }
+        html.light-mode .prod-price { color: var(--primary); }
+        
+        html.light-mode .cart-slider { background: #fff; border-top: 1px solid rgba(0,0,0,0.08); box-shadow: 0 -10px 30px rgba(0,0,0,0.05); }
+        html.light-mode .cart-header h3 { color: #000; }
+        html.light-mode .cart-total-label { color: #6b7280; }
+        html.light-mode .cart-total-value { color: #0f1115; }
+        html.light-mode .cart-item { border-bottom-color: rgba(0,0,0,0.05); }
+        html.light-mode .cart-item-name { color: #0f1115; }
+        html.light-mode .ci-btn { background: rgba(0,0,0,0.05); color: #000; }
+        html.light-mode .ci-btn:hover { background: rgba(0,0,0,1); }
+        
+        /* Modals Light Mode Overrides */
+        html.light-mode #share-modal-overlay { background: rgba(255, 255, 255, 0.4); }
+        html.light-mode #share-modal { background: #ffffff !important; border-top-color: rgba(0,0,0,0.08) !important; box-shadow: 0 -10px 40px rgba(0,0,0,0.05) !important; }
+        html.light-mode #share-modal h3 { color: #0f1115 !important; }
+        html.light-mode #share-modal button { color: #0f1115 !important; }
+        html.light-mode #share-modal .share-divider { background: rgba(0,0,0,0.08) !important; }
+        html.light-mode #copy-link-btn { background: #f3f4f6 !important; border-color: rgba(0,0,0,0.08) !important; color: #0f1115 !important; }
+        html.light-mode #copy-link-btn div { background: rgba(0,0,0,0.05) !important; }
+        
+        /* ✨ Theme Toggle FAB */
+        .theme-fab {
+            position: fixed; bottom: 28px; left: 28px; width: 52px; height: 52px;
+            border-radius: 50%; border: none; cursor: pointer; z-index: 99999;
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            color: #fff; font-size: 22px; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .theme-fab:hover { transform: scale(1.1) rotate(15deg); background: rgba(255, 255, 255, 0.15); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4); }
+        html.light-mode .theme-fab { background: #fff; color: #f59e0b; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); border-color: rgba(0, 0, 0, 0.05); }
+        html.light-mode .theme-fab:hover { background: #f8f9fa; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15); }
+
+
     </style>
 </head>
 
 <body>
-    <?php require_once 'includes/header.php'; ?>
+
 
     <!-- Cover Image -->
     <div class="cover-section">
@@ -1234,7 +1342,7 @@ foreach ($boutiqueFoodsByCat as $bCatId => $arr) {
                                 <?php endif; ?>
 
                                 <div class="p-actions">
-                                    <button class="p-action-btn" onclick="handleLike(this)"><i class="fa-regular fa-heart"></i>
+                                    <button class="p-action-btn" onclick="handleLike(this, <?= $p['PostId'] ?? $p['PostID'] ?? '0' ?>, <?= $shopId ?>)"><i class="fa-regular fa-heart"></i>
                                         <span><?= intval($p['PostLikes'] ?? 0) ?></span></button>
                                     <button class="p-action-btn"
                                         onclick="openCommentModal(<?= $p['PostId'] ?? $p['PostID'] ?? '0' ?>, '<?= addslashes(htmlspecialchars($shopName)) ?>')"><i
@@ -1260,7 +1368,7 @@ foreach ($boutiqueFoodsByCat as $bCatId => $arr) {
                 <!-- Shimmer Skeletons for Boutique -->
                 <div id="boutique-shimmer-ui" style="display: block;">
                     <!-- Categories Shimmer -->
-                    <?php if (count($categories)): ?>
+                    <?php if (count($boutiqueCategories)): ?>
                         <div class="boutique-categories">
                             <div class="shimmer-box"
                                 style="height: 38px; width: 90px; border-radius: 99px; margin-right: 10px; display: inline-block;">
@@ -1508,23 +1616,6 @@ foreach ($boutiqueFoodsByCat as $bCatId => $arr) {
             return Math.floor(diff / 86400) + 'd';
         }
 
-        function handleLike(btn) {
-            const isLoggedIn = <?= isset($_COOKIE['qoon_user_id']) ? 'true' : 'false' ?>;
-            if (!isLoggedIn) {
-                window.location.href = 'index.php?auth_required=1';
-                return;
-            }
-            const icon = btn.querySelector('i');
-            if (icon.classList.contains('fa-regular')) {
-                icon.classList.remove('fa-regular');
-                icon.classList.add('fa-solid');
-                icon.style.color = '#ff3b30';
-            } else {
-                icon.classList.remove('fa-solid');
-                icon.classList.add('fa-regular');
-                icon.style.color = '';
-            }
-        }
 
         function openCommentModal(postId, shopName) {
             const isLoggedIn = <?= isset($_COOKIE['qoon_user_id']) ? 'true' : 'false' ?>;
@@ -1740,7 +1831,7 @@ foreach ($boutiqueFoodsByCat as $bCatId => $arr) {
                 </button>
             </div>
 
-            <div style="width: 100%; height: 1px; background: rgba(255,255,255,0.1); margin-bottom: 16px;"></div>
+            <div class="share-divider" style="width: 100%; height: 1px; background: rgba(255,255,255,0.1); margin-bottom: 16px;"></div>
 
             <button id="copy-link-btn" onclick="copyLink()"
                 style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 16px; color: #fff; font-size: 15px; font-weight: 600; font-family: inherit; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: background 0.2s;">
@@ -1861,6 +1952,36 @@ foreach ($boutiqueFoodsByCat as $bCatId => $arr) {
                     }
                 }, 800);
             }
+        });
+    </script>
+    
+    <!-- Theme Toggle FAB -->
+    <button class="theme-fab" id="themeToggleBtn" aria-label="Toggle Light/Dark Mode">
+        <i class="fa-solid fa-moon"></i>
+    </button>
+    <script>
+        const themeBtn = document.getElementById('themeToggleBtn');
+        const themeIcon = themeBtn.querySelector('i');
+        const html = document.documentElement;
+
+        function updateThemeIcon() {
+            if (html.classList.contains('light-mode')) {
+                themeIcon.className = 'fa-solid fa-sun';
+            } else {
+                themeIcon.className = 'fa-solid fa-moon';
+            }
+        }
+
+        updateThemeIcon();
+
+        themeBtn.addEventListener('click', () => {
+            html.classList.toggle('light-mode');
+            if (html.classList.contains('light-mode')) {
+                localStorage.setItem('qoon_theme', 'light');
+            } else {
+                localStorage.setItem('qoon_theme', 'dark');
+            }
+            updateThemeIcon();
         });
     </script>
 </body>

@@ -93,9 +93,11 @@ function renderPostCard($post, $DomainNamee) {
 
     $html .= $postPhotoHtml;
 
+    $shopId = $post['ShopID'] ?? '0';
+
     $html .= '<div class="post-actions">
             <div class="action-group">
-                <button class="action-btn" onclick="handleLike(this)"><i class="fa-regular fa-heart"></i> ' . $likes . '</button>
+                <button class="action-btn" onclick="handleLike(this, ' . $postId . ', ' . $shopId . ')"><i class="fa-regular fa-heart"></i> <span>' . $likes . '</span></button>
                 <button class="action-btn" onclick="openCommentModal(' . $postId . ', \'' . addslashes(htmlspecialchars($shopName)) . '\')"><i class="fa-regular fa-comment"></i> ' . $comments . '</button>
                 <button class="action-btn"><i class="fa-solid fa-share-nodes"></i></button>
             </div>

@@ -77,6 +77,13 @@ if ($con) {
     <title>Chat · QOON</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- ⚡ Apply theme BEFORE paint to prevent flash -->
+    <script>
+        (function() {
+            var t = localStorage.getItem('qoon_theme') || 'dark';
+            if (t === 'light') document.documentElement.classList.add('light-mode');
+        })();
+    </script>
     <style>
         :root {
             --bg-color: #030303;
@@ -329,6 +336,34 @@ if ($con) {
         .oc-done    { background: rgba(52,199,89,0.12);  color: #34c759; border: 1px solid rgba(52,199,89,0.25); }
         .oc-cancelled { background: rgba(255,59,48,0.12); color: #ff3b30; border: 1px solid rgba(255,59,48,0.25); }
 
+        /* Light Mode Overrides */
+        html.light-mode body { background-color: #f8f9fa !important; color: #0f1115 !important; }
+        html.light-mode #space { display: none !important; }
+        html.light-mode .page-header h1 { background: none !important; -webkit-text-fill-color: initial !important; color: #0f1115 !important; }
+        html.light-mode .chat-tabs { background: rgba(0,0,0,0.03) !important; border-color: rgba(0,0,0,0.05) !important; }
+        html.light-mode .tab-btn { color: rgba(0,0,0,0.5) !important; }
+        html.light-mode .tab-btn.active { background: #ffffff !important; color: #0f1115 !important; box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important; }
+        html.light-mode .order-chat-card { background: #ffffff !important; border-color: rgba(0,0,0,0.06) !important; }
+        html.light-mode .order-chat-card:hover { background: #ffffff !important; border-color: rgba(0,0,0,0.1) !important; box-shadow: 0 16px 40px rgba(0,0,0,0.08) !important; }
+        html.light-mode .oc-name { color: #0f1115 !important; }
+        html.light-mode .oc-date { color: rgba(0,0,0,0.4) !important; }
+        html.light-mode .oc-sub { color: rgba(0,0,0,0.6) !important; }
+        html.light-mode .oc-shop-logo { border-color: rgba(0,0,0,0.05) !important; }
+        html.light-mode .oc-driver-badge { border-color: #ffffff !important; }
+        html.light-mode .oc-active { background: rgba(44,181,232,0.1) !important; color: #1e88e5 !important; }
+        html.light-mode .oc-done { background: rgba(52,199,89,0.1) !important; color: #2e7d32 !important; }
+        html.light-mode .oc-cancelled { background: rgba(255,59,48,0.1) !important; color: #c62828 !important; }
+        html.light-mode .glass-card { background: #ffffff !important; border-color: rgba(0,0,0,0.06) !important; }
+        html.light-mode .chat-title { color: #0f1115 !important; }
+        html.light-mode .chat-subtitle { color: rgba(0,0,0,0.5) !important; }
+        html.light-mode .search-hero { background: linear-gradient(135deg, rgba(245,0,87,0.05), rgba(44,181,232,0.05)) !important; border-color: rgba(0,0,0,0.05) !important; }
+        html.light-mode .friend-search-box input { background: #ffffff !important; border-color: rgba(0,0,0,0.1) !important; color: #0f1115 !important; }
+        html.light-mode .chat-action { background: rgba(0,0,0,0.05) !important; color: #0f1115 !important; }
+        html.light-mode .search-hero h2 { color: #0f1115 !important; }
+        html.light-mode .page-header p { color: rgba(0,0,0,0.5) !important; }
+
+
+
         <?php if ($isIframe): ?>
         body { background: transparent !important; }
         .chat-wrapper { margin-top: 10px; padding-bottom: 30px; }
@@ -387,8 +422,8 @@ if ($con) {
                     $dPhoto   = fullUrl($oc['DriverPhoto'] ?? '', $domain);
                     if (!$dPhoto && $dName) $dPhoto = "https://ui-avatars.com/api/?name=" . urlencode($dName) . "&background=2cb5e8&color=fff&size=80";
                     $rawSt    = strtoupper($oc['OrderState'] ?? '');
-                    $isDone   = in_array($rawSt, ['DONE','FINISH','RATED','DELIVERED','COMPLETED','CANCELLED','CANCELED','CANCEL']);
-                    $isCancelled = in_array($rawSt, ['CANCELLED','CANCELED','CANCEL']);
+                    $isDone   = in_array($rawSt, ['DONE','FINISH','RATED','DELIVERED','COMPLETED','CANCELLED','CANCELED','CANCEL','RETURNED','REFUNDED']);
+                    $isCancelled = in_array($rawSt, ['CANCELLED','CANCELED','CANCEL','RETURNED','REFUNDED']);
                     $total    = floatval($oc['OrderPriceFromShop'] ?? 0) + floatval($oc['OrderPrice'] ?? 0) + floatval($oc['PlatformFee'] ?? 0);
                     $date     = $oc['CreatedAtOrders'] ? date('M j', strtotime($oc['CreatedAtOrders'])) : '';
                     $hasDriver = !empty($dName) && !empty($oc['DelvryId']) && $oc['DelvryId'] != '0';
@@ -455,8 +490,8 @@ if ($con) {
                     $dPhoto   = fullUrl($oc['DriverPhoto'] ?? '', $domain);
                     if (!$dPhoto && $dName) $dPhoto = "https://ui-avatars.com/api/?name=" . urlencode($dName) . "&background=2cb5e8&color=fff&size=80";
                     $rawSt    = strtoupper($oc['OrderState'] ?? '');
-                    $isDone   = in_array($rawSt, ['DONE','FINISH','RATED','DELIVERED','COMPLETED','CANCELLED','CANCELED','CANCEL']);
-                    $isCancelled = in_array($rawSt, ['CANCELLED','CANCELED','CANCEL']);
+                    $isDone   = in_array($rawSt, ['DONE','FINISH','RATED','DELIVERED','COMPLETED','CANCELLED','CANCELED','CANCEL','RETURNED','REFUNDED']);
+                    $isCancelled = in_array($rawSt, ['CANCELLED','CANCELED','CANCEL','RETURNED','REFUNDED']);
                     $total    = floatval($oc['OrderPriceFromShop'] ?? 0) + floatval($oc['OrderPrice'] ?? 0) + floatval($oc['PlatformFee'] ?? 0);
                     $date     = $oc['CreatedAtOrders'] ? date('M j', strtotime($oc['CreatedAtOrders'])) : '';
                     $hasDriver = !empty($dName) && !empty($oc['DelvryId']) && $oc['DelvryId'] != '0';

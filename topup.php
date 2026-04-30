@@ -20,6 +20,13 @@ $uName = $userData['name'] ?: 'User';
     <title>Top Up | QOON Pay</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- ⚡ Apply theme BEFORE paint to prevent flash -->
+    <script>
+        (function() {
+            var t = localStorage.getItem('qoon_theme') || 'dark';
+            if (t === 'light') document.documentElement.classList.add('light-mode');
+        })();
+    </script>
     <style>
         :root {
             --bg-color: #050505;
@@ -33,6 +40,24 @@ $uName = $userData['name'] ?: 'User';
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter', sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; }
 
+        /* Light Mode Overrides */
+        html.light-mode { --bg-color: #f8f9fa; --text-main: #0f1115; --text-muted: rgba(0, 0, 0, 0.5); --glass-bg: #ffffff; --glass-border: rgba(0, 0, 0, 0.08); }
+        html.light-mode body { background-color: #f8f9fa !important; color: #0f1115 !important; }
+        html.light-mode header { background: rgba(255,255,255,0.7) !important; border-bottom-color: rgba(0,0,0,0.08) !important; }
+        html.light-mode .back-btn { background: #ffffff !important; border-color: rgba(0,0,0,0.1) !important; color: #0f1115 !important; }
+        html.light-mode h1 { color: #0f1115 !important; }
+        html.light-mode .amount-card { background: #ffffff !important; border-color: rgba(0,0,0,0.08) !important; box-shadow: 0 10px 40px rgba(0,0,0,0.04) !important; }
+        html.light-mode .amount-input-group input { color: #0f1115 !important; }
+        html.light-mode .q-amount { background: rgba(0,0,0,0.03) !important; color: #0f1115 !important; }
+        html.light-mode .method-item { background: #ffffff !important; border-color: rgba(0,0,0,0.08) !important; }
+        html.light-mode .method-name { color: #0f1115 !important; }
+        html.light-mode .method-icon { background: rgba(0,0,0,0.03) !important; color: #0f1115 !important; }
+        html.light-mode .summary-card { background: rgba(0,0,0,0.02) !important; }
+        html.light-mode .summary-total { border-top-color: rgba(0,0,0,0.08) !important; }
+        html.light-mode .summary-total span { color: #0f1115 !important; }
+        html.light-mode header img { filter: none !important; }
+
+
         .aurora { position: fixed; inset: 0; z-index: -1; overflow: hidden; }
         .blob { position: absolute; width: 60vw; height: 60vh; background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%); filter: blur(100px); opacity: 0.1; animation: move 15s infinite alternate; }
         @keyframes move { from { transform: translate(-10%, -10%); } to { transform: translate(10%, 10%); } }
@@ -41,7 +66,7 @@ $uName = $userData['name'] ?: 'User';
         .back-btn { width:40px; height:40px; border-radius:50%; background:var(--glass-bg); border:1px solid var(--glass-border); display:flex; align-items:center; justify-content:center; color:#fff; text-decoration:none; }
 
         <?php if(isset($_GET['iframe'])): ?>
-        header { display: none !important; }
+        /* header { display: none !important; } */
         .container { margin: 0 !important; padding: 20px !important; width: 100% !important; max-width: 100% !important; }
         body { background: transparent !important; }
         .aurora { display: none !important; }
@@ -141,7 +166,7 @@ $uName = $userData['name'] ?: 'User';
     <div class="aurora"><div class="blob"></div></div>
 
     <header>
-        <a href="qpay.php" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+        <a href="javascript:void(0)" onclick="window.location.href='qpay.php' + window.location.search" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
         <img src="qoon_pay_logo.png" style="height:28px; filter:brightness(0) invert(1);">
     </header>
 
@@ -262,9 +287,8 @@ $uName = $userData['name'] ?: 'User';
             btn.disabled = true;
 
             setTimeout(() => {
-                alert("This is a demo. Integration for " + selectedMethod + " coming soon!");
-                window.location.href = 'qpay.php';
-            }, 2000);
+                window.location.href = 'qpay.php' + window.location.search;
+            }, 3000);
         }
     </script>
 </body>

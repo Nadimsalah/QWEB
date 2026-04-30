@@ -12,7 +12,15 @@ $AppType = $_POST["AppType"] ?? '';
 
 file_put_contents('post_debug.txt', print_r($_POST, true));
 
-
+// Add the fixed platform fee from the dashboard to the driver's base offer
+$commRes = mysqli_query($con, "SELECT DriverCommesion FROM MoneyStop LIMIT 1");
+if ($commRes && mysqli_num_rows($commRes) > 0) {
+    $commRow = mysqli_fetch_assoc($commRes);
+    $dashboardCommission = floatval($commRow['DriverCommesion']);
+    if (is_numeric($Price) && $Price > 0) {
+        $Price = floatval($Price) + $dashboardCommission;
+    }
+}
 
 foreach (getallheaders() as $name => $value) { 
 
@@ -61,7 +69,7 @@ $test=0;
         }
         /////////////
         //echo json_encode(array("result"=>$result));
-        if($test==4 || empty($result)){
+        if($test==4 || !empty($result)){
         	
             $message ="You ordered before";
             $success = false;
@@ -94,47 +102,31 @@ $test=0;
         		
         		
         		
-        		$res = mysqli_query($con,"SELECT * FROM Drivers WHERE DriverID =$DriverID AND DriverState='Active'");
-        
+        	$res = mysqli_query($con,"SELECT * FROM Drivers WHERE DriverID =$DriverID AND DriverState='Active'");
         	$result = array();
-        
-        
-        
         	while($row = mysqli_fetch_assoc($res)){
-        
-        	//$data = $row[0];
-        	
-        	$FName = $row["FName"]; 
+        	$FName = $row["FName"] . ' ' . $row["LName"];
+            $PersonalPhoto = $row["PersonalPhoto"] ?? '';
+            if (empty($PersonalPhoto) || $PersonalPhoto == '0') {
+                $PersonalPhoto = 'https://ui-avatars.com/api/?name='.urlencode($FName).'&background=random';
+            } elseif (strpos($PersonalPhoto, 'http') === false) {
+                $DomainNamee = 'https://qoon.app/dash/';
+                $PersonalPhoto = (strpos($PersonalPhoto, 'photo/') === 0) ? $DomainNamee . $PersonalPhoto : $DomainNamee . 'photo/' . $PersonalPhoto;
+            }
+            $DriverRate = $row["Rate"] ?? '4.9';
         	$result[] = $row;
-        	
-        //	$UserID = $row["UserID"];
-        
         	$test=20;
-        
         	}
-        		
         		
         	if($test==20){	
         		
-        		
-        		
         	$res = mysqli_query($con,"SELECT * FROM Orders WHERE DelvryId =$DriverID AND OrderState='Doing'");
-        
         	$result = array();
-        
-        
             $nums = 0;
-        
         	while($row = mysqli_fetch_assoc($res)){
-        
-        	//$data = $row[0];
         	$result[] = $row;
-        	
-        //	$UserID = $row["UserID"];
-        
         	$test=30;
         	$nums++;
-        
         	}
         		
         	if($nums<7){
@@ -142,6 +134,25 @@ $test=0;
         		$sql="INSERT INTO DriversOffer (DriverID,OrderId,Price) VALUES ('$DriverID','$OrderId','$Price');";
            if(mysqli_query($con,$sql))
            {
+               // Push offer to Firebase Realtime DB to instantly update User Web App!
+               $fbUrl = 'https://jibler-37339-default-rtdb.firebaseio.com/Offers/'.$OrderId.'/'.$DriverID.'.json';
+               $fbData = [
+                   'sender' => $FName,
+                   'id' => $DriverID,
+                   'Offer' => $Price,
+                   'rate' => $DriverRate,
+                   'driverphoto' => $PersonalPhoto
+               ];
+               $chFb = curl_init();
+               curl_setopt($chFb, CURLOPT_URL, $fbUrl);
+               curl_setopt($chFb, CURLOPT_RETURNTRANSFER, true);
+               curl_setopt($chFb, CURLOPT_RETURNTRANSFER, true);
+               curl_setopt($chFb, CURLOPT_CUSTOMREQUEST, "PUT"); // PUT to overwrite just this driver's offer key
+               curl_setopt($chFb, CURLOPT_SSL_VERIFYHOST, 0);  
+               curl_setopt($chFb, CURLOPT_SSL_VERIFYPEER, false);
+               curl_setopt($chFb, CURLOPT_POSTFIELDS, json_encode($fbData));
+               curl_exec($chFb);
+               curl_close($chFb);
         	   
         	if($OrderType=="SLOW"){   
         	   $sql="UPDATE Orders SET OrderState='Doing' , DelvryId = '$DriverID', OrderPrice = '$Price' WHERE OrderID=$OrderId";

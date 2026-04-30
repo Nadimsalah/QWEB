@@ -56,9 +56,58 @@ $test=0;
 	
 	if(true){
 		
-	
-		
-		
+        // --- Prevent Double Acceptance ---
+        $checkState = mysqli_query($con, "SELECT OrderState FROM Orders WHERE OrderID = '$OrderID'");
+        if ($stRow = mysqli_fetch_assoc($checkState)) {
+            $os = strtoupper(trim($stRow['OrderState']));
+            if ($os === 'DOING' || $os === 'DONE' || $os === 'FINISH') {
+                echo json_encode(['status_code' => 200, 'success' => true, 'data' => [], 'message' => "Already accepted"]);
+                exit;
+            }
+        }
+
+        // --- QOON PAY CHECK & DEDUCTION ---
+        $checkQoon = mysqli_query($con, "SELECT o.UserID, o.Method, o.OrderPriceFromShop, o.PlatformFee, u.Balance, s.ShopName, s.ShopLogo, d.FName, d.LName, d.PersonalPhoto 
+            FROM Orders o 
+            JOIN Users u ON o.UserID = u.UserID 
+            LEFT JOIN Shops s ON o.ShopID = s.ShopID
+            LEFT JOIN Drivers d ON d.DriverID = '$DelvryId'
+            WHERE o.OrderID = '$OrderID'");
+
+        if ($rowQoon = mysqli_fetch_assoc($checkQoon)) {
+            $payMethod = strtoupper(trim($rowQoon['Method']));
+            if ($payMethod === 'QOON' || $payMethod === 'QOON PAY') {
+                $totalCost = floatval($rowQoon['OrderPriceFromShop']) + floatval($rowQoon['PlatformFee']) + floatval($OrderPrice);
+                $userBal = floatval($rowQoon['Balance']);
+                
+                if ($userBal < $totalCost) {
+                    echo json_encode(['status_code' => 400, 'success' => false, 'data' => [], 'message' => "Insufficient QOON Pay balance. Required: {$totalCost} MAD"]);
+                    exit;
+                } else {
+                    $deduct = $con->prepare("UPDATE Users SET Balance = Balance - ? WHERE UserID = ? AND Balance >= ?");
+                    $deduct->bind_param("did", $totalCost, $rowQoon['UserID'], $totalCost);
+                    $deduct->execute();
+                    if ($deduct->affected_rows !== 1) {
+                        $deduct->close();
+                        echo json_encode(['status_code' => 400, 'success' => false, 'data' => [], 'message' => "Balance deduction failed."]);
+                        exit;
+                    }
+                    $deduct->close();
+                    
+                    $shopName = $rowQoon['ShopName'] ?? 'QOON Shop';
+                    $shopPhoto = $rowQoon['ShopLogo'] ?? '';
+                    $driverName = trim($rowQoon['FName'] . ' ' . $rowQoon['LName']);
+                    $driverPhoto = $rowQoon['PersonalPhoto'] ?? '';
+                    $platformFee = floatval($rowQoon['PlatformFee']);
+                    
+                    $insTrans = $con->prepare("INSERT INTO UserTransaction (UserID, Money, Method, DistnationName, DistnationPhoto, DriverID, OrderID, DriverName, Driverphoto, MoneyPlusOrLess, UserFees) VALUES (?, ?, 'QOON Pay', ?, ?, ?, ?, ?, ?, 'less', ?)");
+                    $insTrans->bind_param("idssiissd", $rowQoon['UserID'], $totalCost, $shopName, $shopPhoto, $DelvryId, $OrderID, $driverName, $driverPhoto, $platformFee);
+                    $insTrans->execute();
+                    $insTrans->close();
+                }
+            }
+        }
+        // ----------------------------------
 
    $sql="UPDATE Orders SET OrderState='Doing' ,OfferKey='$OfferKey', DelvryId = '$DelvryId', OrderPrice = '$OrderPrice' WHERE OrderID=$OrderID";
    if(mysqli_query($con,$sql))

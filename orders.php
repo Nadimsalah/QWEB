@@ -42,6 +42,7 @@ function normalizeStatus($raw) {
     $s = strtoupper(trim($raw ?? ''));
     if (in_array($s, ['DONE', 'FINISH', 'RATED', 'DELIVERED', 'COMPLETED'])) return 'delivered';
     if (in_array($s, ['CANCELLED', 'CANCELED', 'CANCEL'])) return 'cancelled';
+    if (in_array($s, ['RETURNED'])) return 'returned';
     if (in_array($s, ['DOING', 'ON_WAY', 'ONWAY', 'PICKED', 'INPROGRESS', 'IN_PROGRESS', 'ACCEPTED'])) return 'doing';
     if (in_array($s, ['DRIVER_OFFER', 'DRIVER_OFFERED', 'OFFER', 'OFFERED'])) return 'driver_offer';
     return 'waiting'; // default
@@ -53,153 +54,134 @@ function normalizeStatus($raw) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Orders | QOON</title>
+    <!-- ⚡ Apply theme BEFORE paint to prevent flash -->
+    <script>
+        (function() {
+            var t = localStorage.getItem('qoon_theme') || 'dark';
+            if (t === 'light') document.documentElement.classList.add('light-mode');
+        })();
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         :root {
             --accent-glow: #7b00ff;
             --accent-cyan: #00d4ff;
-            --text-muted: rgba(255, 255, 255, 0.5);
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-muted: rgba(255, 255, 255, 0.45);
+            --card-bg: #111114;
+            --card-border: rgba(255,255,255,0.08);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: #010008; color: #fff; min-height: 100vh; overflow-x: hidden; }
+        body { background-color: #0a0a0a; color: #fff; min-height: 100vh; overflow-x: hidden; }
 
         #space {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             z-index: -3; pointer-events: none;
-            background: radial-gradient(circle at center, #0a001a 0%, #010008 100%);
+            background: radial-gradient(ellipse at 50% 0%, #12003a 0%, #0a0a0a 60%);
         }
 
         .container { max-width: 680px; margin: 0 auto; padding: 80px 20px 60px; }
 
         /* ── Filter Pills ── */
         .filter-scroll {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding-bottom: 4px;
-            margin-bottom: 24px;
-            scrollbar-width: none;
+            display: flex; gap: 8px; overflow-x: auto;
+            padding-bottom: 4px; margin-bottom: 24px; scrollbar-width: none;
         }
         .filter-scroll::-webkit-scrollbar { display: none; }
 
         .filter-pill {
-            flex-shrink: 0;
-            padding: 8px 16px;
-            border-radius: 99px;
-            border: 1px solid rgba(255,255,255,0.12);
-            background: rgba(255,255,255,0.04);
-            color: rgba(255,255,255,0.6);
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            user-select: none;
+            flex-shrink: 0; padding: 8px 16px; border-radius: 99px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: #1a1a1e;
+            color: rgba(255,255,255,0.55);
+            font-size: 13px; font-weight: 600; cursor: pointer;
+            transition: all 0.2s; white-space: nowrap;
+            display: flex; align-items: center; gap: 6px; user-select: none;
         }
-        .filter-pill:hover { border-color: rgba(255,255,255,0.3); color: #fff; }
-        .filter-pill.active {
-            border-color: transparent;
-            color: #fff;
-        }
-        .filter-pill[data-filter="all"].active       { background: rgba(255,255,255,0.15); }
-        .filter-pill[data-filter="waiting"].active   { background: rgba(255, 159, 10, 0.25); border-color: rgba(255,159,10,0.4); color: #ff9f0a; }
-        .filter-pill[data-filter="driver_offer"].active { background: rgba(44,181,232,0.2); border-color: rgba(44,181,232,0.4); color: #2cb5e8; }
-        .filter-pill[data-filter="doing"].active     { background: rgba(123,0,255,0.25); border-color: rgba(123,0,255,0.4); color: #b87eff; }
-        .filter-pill[data-filter="delivered"].active { background: rgba(52,199,89,0.2); border-color: rgba(52,199,89,0.4); color: #34c759; }
-        .filter-pill[data-filter="cancelled"].active { background: rgba(255,59,48,0.2); border-color: rgba(255,59,48,0.4); color: #ff3b30; }
+        .filter-pill:hover { border-color: rgba(255,255,255,0.25); color: #fff; background: #222228; }
+        .filter-pill.active { border-color: transparent; color: #fff; }
+        .filter-pill[data-filter="all"].active       { background: #fff; color: #0a0a0a; }
+        .filter-pill[data-filter="waiting"].active   { background: rgba(255,159,10,0.2); border-color: rgba(255,159,10,0.5); color: #ff9f0a; box-shadow: 0 0 12px rgba(255,159,10,0.15); }
+        .filter-pill[data-filter="driver_offer"].active { background: rgba(44,181,232,0.15); border-color: rgba(44,181,232,0.5); color: #2cb5e8; box-shadow: 0 0 12px rgba(44,181,232,0.12); }
+        .filter-pill[data-filter="doing"].active     { background: rgba(123,0,255,0.2); border-color: rgba(155,90,255,0.5); color: #b87eff; box-shadow: 0 0 12px rgba(123,0,255,0.15); }
+        .filter-pill[data-filter="delivered"].active { background: rgba(52,199,89,0.15); border-color: rgba(52,199,89,0.5); color: #34c759; box-shadow: 0 0 12px rgba(52,199,89,0.12); }
+        .filter-pill[data-filter="cancelled"].active { background: rgba(255,59,48,0.15); border-color: rgba(255,59,48,0.5); color: #ff3b30; box-shadow: 0 0 12px rgba(255,59,48,0.12); }
+        .filter-pill[data-filter="returned"].active  { background: rgba(255,149,0,0.15); border-color: rgba(255,149,0,0.5); color: #ff9500; box-shadow: 0 0 12px rgba(255,149,0,0.12); }
 
         .pill-count {
-            background: rgba(255,255,255,0.15);
-            padding: 1px 7px;
-            border-radius: 99px;
-            font-size: 11px;
+            background: rgba(255,255,255,0.12);
+            padding: 1px 7px; border-radius: 99px; font-size: 11px;
         }
+        .filter-pill[data-filter="all"].active .pill-count { background: rgba(0,0,0,0.15); color: #0a0a0a; }
 
         /* ── Order Cards ── */
         .order-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 20px;
-            padding: 16px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            text-decoration: none;
-            color: inherit;
+            background: #111114;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px; padding: 16px; margin-bottom: 10px;
+            display: flex; align-items: center; gap: 16px;
+            transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+            text-decoration: none; color: inherit;
         }
         .order-card:hover {
-            transform: translateY(-4px) scale(1.01);
-            background: rgba(255,255,255,0.06);
-            border-color: rgba(255,255,255,0.15);
-            box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+            transform: translateY(-3px);
+            background: #18181d;
+            border-color: rgba(255,255,255,0.16);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.6);
         }
         .order-card.hidden { display: none; }
 
-        .shop-icon { width: 52px; height: 52px; border-radius: 14px; object-fit: cover; border: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; }
+        .shop-icon { width: 52px; height: 52px; border-radius: 14px; object-fit: cover; border: 1px solid rgba(255,255,255,0.08); flex-shrink: 0; }
         .order-info { flex: 1; min-width: 0; }
-        .shop-name { font-size: 16px; font-weight: 700; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .order-date { font-size: 12px; color: var(--text-muted); }
+        .shop-name { font-size: 15px; font-weight: 700; margin-bottom: 3px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .order-date { font-size: 12px; color: rgba(255,255,255,0.4); }
 
         .order-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
-        .order-price { font-size: 15px; font-weight: 800; }
+        .order-price { font-size: 15px; font-weight: 800; color: #fff; }
 
         .order-status {
-            padding: 4px 11px;
-            border-radius: 99px;
-            font-size: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            white-space: nowrap;
+            padding: 4px 11px; border-radius: 99px;
+            font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;
         }
         .status-waiting    { background: rgba(255,159,10,0.15); color: #ff9f0a; }
         .status-driver_offer { background: rgba(44,181,232,0.15); color: #2cb5e8; }
         .status-doing      { background: rgba(123,0,255,0.2); color: #b87eff; }
         .status-delivered  { background: rgba(52,199,89,0.15); color: #34c759; }
         .status-cancelled  { background: rgba(255,59,48,0.15); color: #ff3b30; }
+        .status-returned   { background: rgba(255,149,0,0.15); color: #ff9500; }
 
         /* ── Empty State ── */
         .empty-state { text-align: center; padding: 80px 20px; }
-        .empty-state i { font-size: 52px; margin-bottom: 20px; display: block; opacity: 0.2; }
+        .empty-state i { font-size: 52px; margin-bottom: 20px; display: block; opacity: 0.15; }
         .empty-state h2 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
         .empty-state p { color: var(--text-muted); }
-
         #no-results-msg { display: none; text-align: center; padding: 50px 20px; color: var(--text-muted); font-size: 15px; }
 
         /* ── Re-order Button ── */
         .reorder-btn {
             display: inline-flex; align-items: center; gap: 6px;
             padding: 7px 14px; border-radius: 99px;
-            background: rgba(52,199,89,0.12); color: #34c759;
-            border: 1px solid rgba(52,199,89,0.3);
+            background: rgba(52,199,89,0.1); color: #34c759;
+            border: 1px solid rgba(52,199,89,0.25);
             font-size: 11px; font-weight: 800; cursor: pointer;
             transition: all 0.2s; white-space: nowrap;
             text-transform: uppercase; letter-spacing: 0.5px;
         }
-        .reorder-btn:hover { background: rgba(52,199,89,0.22); border-color: rgba(52,199,89,0.6); transform: scale(1.04); }
+        .reorder-btn:hover { background: rgba(52,199,89,0.2); border-color: rgba(52,199,89,0.5); transform: scale(1.04); }
         .reorder-btn i { font-size: 11px; }
 
         /* ── Re-order Modal ── */
         #reorder-overlay {
             position: fixed; inset: 0; z-index: 999999;
-            background: rgba(0,0,0,0.7); backdrop-filter: blur(10px);
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(12px);
             display: none; align-items: flex-end; justify-content: center;
             opacity: 0; transition: opacity 0.3s ease;
         }
         #reorder-modal {
             width: 100%; max-width: 520px; max-height: 85vh;
-            background: #0c0c14;
+            background: #161618;
             border-top-left-radius: 28px; border-top-right-radius: 28px;
-            border-top: 1px solid rgba(255,255,255,0.08);
+            border-top: 1px solid rgba(255,255,255,0.1);
             display: flex; flex-direction: column;
             transform: translateY(60px);
             transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
@@ -208,9 +190,7 @@ function normalizeStatus($raw) {
         }
         .rom-header {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 20px 20px 16px;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-            flex-shrink: 0;
+            padding: 20px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.07); flex-shrink: 0;
         }
         .rom-title { font-size: 18px; font-weight: 800; color: #fff; }
         .rom-close {
@@ -226,48 +206,78 @@ function normalizeStatus($raw) {
         .rom-item {
             display: flex; align-items: center; gap: 14px;
             padding: 12px 14px; border-radius: 18px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.06);
-            margin-bottom: 10px;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); margin-bottom: 10px;
         }
-        .rom-item-img {
-            width: 58px; height: 58px; border-radius: 12px;
-            object-fit: cover; background: #1a1a1a; flex-shrink: 0;
-        }
-        .rom-item-no-img {
-            width: 58px; height: 58px; border-radius: 12px;
-            background: #1a1a1a; flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center;
-            color: rgba(255,255,255,0.2); font-size: 20px;
-        }
+        .rom-item-img { width: 58px; height: 58px; border-radius: 12px; object-fit: cover; background: #222; flex-shrink: 0; }
+        .rom-item-no-img { width: 58px; height: 58px; border-radius: 12px; background: #222; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.2); font-size: 20px; }
         .rom-item-name { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 3px; }
         .rom-item-price { font-size: 13px; font-weight: 800; color: #34c759; }
-        .rom-item-qty {
-            margin-left: auto; background: rgba(255,255,255,0.08);
-            border-radius: 99px; padding: 4px 12px;
-            font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0;
-        }
-        .rom-footer {
-            padding: 14px 20px;
-            border-top: 1px solid rgba(255,255,255,0.06);
-            background: #0c0c14; flex-shrink: 0;
-        }
+        .rom-item-qty { margin-left: auto; background: rgba(255,255,255,0.08); border-radius: 99px; padding: 4px 12px; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; }
+        .rom-footer { padding: 14px 20px; border-top: 1px solid rgba(255,255,255,0.07); background: #161618; flex-shrink: 0; }
         .rom-confirm-btn {
             width: 100%; padding: 16px; border-radius: 18px; border: none;
-            background: #34c759; color: #000;
-            font-size: 16px; font-weight: 800; cursor: pointer;
+            background: #34c759; color: #000; font-size: 16px; font-weight: 800; cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 10px;
-            transition: 0.2s; box-shadow: 0 6px 24px rgba(52,199,89,0.3);
+            transition: 0.2s; box-shadow: 0 6px 24px rgba(52,199,89,0.25);
         }
         .rom-confirm-btn:hover { background: #2ebd52; transform: translateY(-1px); }
         .rom-confirm-btn:active { transform: scale(0.98); }
-        .rom-confirm-btn:disabled { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.3); box-shadow: none; cursor: not-allowed; }
+        .rom-confirm-btn:disabled { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.25); box-shadow: none; cursor: not-allowed; }
 
         <?php if ($isIframe): ?>
         body { background: transparent !important; }
         .container { padding-top: 16px; padding-bottom: 30px; }
         #space { display: none; }
         <?php endif; ?>
+
+
+        html.light-mode body { background-color: #f8f9fa !important; color: #0f1115 !important; }
+        html.light-mode #space { display: none !important; }
+        html.light-mode .container h1 { color: #0f1115; }
+        html.light-mode .filter-pill { background: #ffffff; border-color: rgba(0,0,0,0.1); color: #374151; }
+        html.light-mode .filter-pill:hover { border-color: rgba(0,0,0,0.2); color: #0f1115; }
+        /* Active pill text: colored text on colored bg (NOT white) for light mode */
+        html.light-mode .filter-pill.active { color: inherit; }
+        html.light-mode .filter-pill[data-filter="all"].active       { background: #0f1115; color: #fff; border-color: transparent; }
+        html.light-mode .filter-pill[data-filter="waiting"].active   { background: rgba(255,159,10,0.15); color: #b45309; border-color: rgba(255,159,10,0.4); }
+        html.light-mode .filter-pill[data-filter="driver_offer"].active { background: rgba(44,181,232,0.15); color: #0369a1; border-color: rgba(44,181,232,0.4); }
+        html.light-mode .filter-pill[data-filter="doing"].active     { background: rgba(107,70,193,0.12); color: #6b46c1; border-color: rgba(107,70,193,0.35); }
+        html.light-mode .filter-pill[data-filter="delivered"].active { background: rgba(34,197,94,0.12); color: #16a34a; border-color: rgba(34,197,94,0.4); }
+        html.light-mode .filter-pill[data-filter="cancelled"].active { background: rgba(239,68,68,0.12); color: #dc2626; border-color: rgba(239,68,68,0.4); }
+        html.light-mode .filter-pill[data-filter="returned"].active  { background: rgba(249,115,22,0.12); color: #c2410c; border-color: rgba(249,115,22,0.4); }
+        html.light-mode .pill-count { background: rgba(0,0,0,0.07); color: #374151; }
+        html.light-mode .filter-pill.active .pill-count { background: rgba(0,0,0,0.1); color: inherit; }
+
+        html.light-mode .order-card { background: #ffffff; border-color: rgba(0,0,0,0.06); box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+        html.light-mode .order-card:hover { background: #ffffff; border-color: rgba(0,0,0,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+        html.light-mode .shop-name { color: #0f1115; }
+        html.light-mode .order-date { color: #6b7280; }
+        html.light-mode .order-price { color: #0f1115; }
+        html.light-mode .shop-icon { border-color: rgba(0,0,0,0.05); }
+        html.light-mode #reorder-modal { background: #ffffff; border-top-color: rgba(0,0,0,0.08); }
+        html.light-mode .rom-title { color: #0f1115; }
+        html.light-mode .rom-item { background: #f9fafb; border-color: rgba(0,0,0,0.05); }
+        html.light-mode .rom-item-name { color: #0f1115; }
+        html.light-mode .rom-item-qty { background: #ffffff; color: #0f1115; border: 1px solid rgba(0,0,0,0.05); }
+        html.light-mode .rom-footer { background: #ffffff; border-top-color: rgba(0,0,0,0.05); }
+        html.light-mode .rom-close { background: #f3f4f6; color: #0f1115; }
+        html.light-mode .container span, html.light-mode .rom-body strong { color: #0f1115 !important; }
+        html.light-mode .empty-state h2 { color: #0f1115; }
+        html.light-mode .status-waiting    { background: rgba(255, 159, 10, 0.1) !important; color: #d35400 !important; }
+        html.light-mode .status-driver_offer { background: rgba(44, 181, 232, 0.1) !important; color: #1976d2 !important; }
+        html.light-mode .status-doing      { background: rgba(123, 0, 255, 0.1) !important; color: #6a1b9a !important; }
+        html.light-mode .status-delivered  { background: rgba(52, 199, 89, 0.1) !important; color: #2e7d32 !important; }
+        html.light-mode .status-cancelled  { background: rgba(255, 59, 48, 0.1) !important; color: #c62828 !important; }
+        html.light-mode .status-returned   { background: rgba(255, 149, 0, 0.1) !important; color: #e65100 !important; }
+        html.light-mode .empty-state p, html.light-mode #no-results-msg { color: rgba(0,0,0,0.5); }
+        html.light-mode .rom-body { color: rgba(0,0,0,0.6); }
+        html.light-mode a[onclick*="closeOrdersDrawer"] { background: #ffffff !important; border-color: rgba(0,0,0,0.08) !important; color: #0f1115 !important; }
+
+        html.light-mode .container a[href="index.php"] { background: #ffffff !important; border-color: rgba(0,0,0,0.08) !important; color: #0f1115 !important; }
+        html.light-mode #space { display: none !important; }
+        html.light-mode .container h1 { color: #0f1115 !important; }
+        html.light-mode .reorder-btn { background: #f3f4f6 !important; color: #34c759 !important; border-color: rgba(52, 199, 89, 0.1) !important; }
+        html.light-mode .order-card { background: #ffffff !important; border-color: rgba(0,0,0,0.06) !important; box-shadow: 0 4px 20px rgba(0,0,0,0.03) !important; }
     </style>
 </head>
 <body>
@@ -316,7 +326,7 @@ function normalizeStatus($raw) {
 
             <?php
             // Count per category for pills
-            $counts = ['all' => count($orders), 'waiting' => 0, 'driver_offer' => 0, 'doing' => 0, 'delivered' => 0, 'cancelled' => 0];
+            $counts = ['all' => count($orders), 'waiting' => 0, 'driver_offer' => 0, 'doing' => 0, 'delivered' => 0, 'cancelled' => 0, 'returned' => 0];
             foreach ($orders as $o) {
                 $ns = normalizeStatus($o['OrderState'] ?? $o['OrderStatus'] ?? '');
                 if (isset($counts[$ns])) $counts[$ns]++;
@@ -328,6 +338,7 @@ function normalizeStatus($raw) {
                 'doing'        => ['label' => 'In Progress',    'icon' => 'fa-spinner'],
                 'delivered'    => ['label' => 'Delivered',      'icon' => 'fa-circle-check'],
                 'cancelled'    => ['label' => 'Cancelled',      'icon' => 'fa-xmark-circle'],
+                'returned'     => ['label' => 'Returned',       'icon' => 'fa-rotate-left'],
             ];
             ?>
 
@@ -356,13 +367,14 @@ function normalizeStatus($raw) {
                         'doing'        => 'In Progress',
                         'delivered'    => 'Delivered',
                         'cancelled'    => 'Cancelled',
+                        'returned'     => 'Returned',
                     ];
                     $statusText = $statusLabels[$ns] ?? ucfirst($ns);
                     $total = floatval($order['OrderPriceFromShop'] ?? 0) + floatval($order['OrderPrice'] ?? 0) + floatval($order['PlatformFee'] ?? 0);
                     $date = date('M j, Y', strtotime($order['CreatedAtOrders'] ?? 'now'));
                 ?>
                 <div class="order-card" data-status="<?= $ns ?>" style="cursor:default;">
-                    <a href="track_order.php?orderId=<?= $order['OrderID'] ?>&tot=<?= $total ?>" style="display:contents; text-decoration:none; color:inherit;">
+                    <a href="<?= in_array($ns, ['waiting', 'driver_offer']) ? 'delivery_offers.php' : 'track_order.php' ?>?orderId=<?= $order['OrderID'] ?>&tot=<?= $total ?>" style="display:contents; text-decoration:none; color:inherit;" <?php if($isIframe) echo "onclick=\"event.preventDefault(); window.parent.location.href=this.href;\""; ?>>
                         <img src="<?= htmlspecialchars($sLogo) ?>" alt="Shop" class="shop-icon"
                              onerror="this.src='https://ui-avatars.com/api/?name=S&background=111&color=fff'">
                         <div class="order-info">
@@ -373,7 +385,7 @@ function normalizeStatus($raw) {
                     <div class="order-right">
                         <div class="order-price"><?= number_format($total, 2) ?> MAD</div>
                         <div class="order-status status-<?= $ns ?>"><?= $statusText ?></div>
-                        <?php if (in_array($ns, ['delivered','cancelled'])): ?>
+                        <?php if (in_array($ns, ['delivered','cancelled','returned'])): ?>
                         <button class="reorder-btn" onclick="event.stopPropagation(); openReorderModal(<?= $order['OrderID'] ?>, <?= $order['ShopID'] ?>, '<?= addslashes(htmlspecialchars($sName)) ?>')">
                             <i class="fa-solid fa-rotate-right"></i> Re-order
                         </button>

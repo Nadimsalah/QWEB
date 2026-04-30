@@ -94,6 +94,36 @@ if (!isset($categories)) {
 }
 .header-text-link:hover { color: #fff; background: rgba(255, 255, 255, 0.1); }
 
+/* Light mode header */
+html.light-mode header { border-bottom: 1px solid #e5e5e5; }
+html.light-mode .header-text-link { color: #0f0f0f; }
+html.light-mode .header-text-link:hover { color: #0f0f0f; background: rgba(0,0,0,0.06); }
+html.light-mode .grid-dots span { background: rgba(0,0,0,0.6); }
+html.light-mode .more-apps-btn:hover { background: rgba(0,0,0,0.06); }
+html.light-mode .more-apps-btn:hover .grid-dots span { background: #0f0f0f; }
+
+/* Light mode More from QOON panel */
+html.light-mode .apps-panel { background: rgba(255,255,255,0.98); border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 32px 100px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.04); }
+html.light-mode .qpay-card { background: linear-gradient(135deg, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.01) 50%, rgba(0,0,0,0.03) 100%); border-color: rgba(0,0,0,0.08); box-shadow: inset 0 1.5px 0 #fff, 0 10px 40px rgba(0,0,0,0.05); }
+html.light-mode .qpay-panel-logo { filter: brightness(0); } /* Black logo */
+html.light-mode .qpay-panel-logo-fallback { color: #000; }
+html.light-mode .qpay-balance-label { color: rgba(0,0,0,0.6); }
+html.light-mode .qpay-balance-amount { color: #000; text-shadow: none; }
+html.light-mode .qpay-action-btn { background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.1); color: #000; box-shadow: inset 0 1px 0 #fff; }
+html.light-mode .qpay-action-btn:hover { background: rgba(0,0,0,0.08); box-shadow: 0 8px 24px rgba(0,0,0,0.1), inset 0 1px 0 #fff; }
+html.light-mode .panel-divider { background: rgba(0,0,0,0.1); }
+html.light-mode .panel-section-title { color: rgba(0,0,0,0.6); }
+html.light-mode .mini-app-item:hover { background: rgba(0,0,0,0.06); }
+html.light-mode .mini-app-name { color: #0f0f0f; }
+html.light-mode .chat-drawer-overlay { background: rgba(255,255,255,0.4); }
+html.light-mode .chat-drawer { background: #ffffff; border-left-color: rgba(0,0,0,0.08); box-shadow: -10px 0 40px rgba(0,0,0,0.05); }
+html.light-mode .chat-drawer-header { background: #ffffff; border-bottom-color: rgba(0,0,0,0.06); }
+html.light-mode .chat-drawer-title { color: #0f0f0f; }
+html.light-mode .chat-drawer-close { color: #0f0f0f; }
+
+/* Light mode logo — slightly smaller */
+html.light-mode #qoon-main-logo { height: 44px !important; }
+
 @media (max-width: 768px) {
     .header-text-link { font-size: 13px; padding: 6px 8px; }
     .profile-link img { 
@@ -217,7 +247,12 @@ if (!isset($categories)) {
 <header style="width:100%; display:flex; justify-content:space-between; align-items:center; padding: 15px 20px; box-sizing: border-box; position: sticky; top: 0; z-index: 100; background: transparent;">
     <div class="logo-area">
         <a href="index.php">
-            <img src="logo_qoon_white.png" alt="QOON Logo" style="height: 38px; width: auto; object-fit: contain;">
+            <img id="qoon-main-logo"
+                 src="logo_qoon_white.png"
+                 data-dark-src="logo_qoon_white.png"
+                 data-light-src="logo_qoon_dark.png"
+                 alt="QOON Logo"
+                 style="height: 38px; width: auto; object-fit: contain;">
         </a>
     </div>
     <div class="header-actions">
@@ -552,4 +587,30 @@ function closeQpayDrawer() {
         document.body.style.overflow = '';
     }
 }
+</script>
+
+<script>
+/* ── Logo theme swap (all logos with data-dark-src / data-light-src) ── */
+(function() {
+    function applyLogoTheme() {
+        var isLight = document.documentElement.classList.contains('light-mode');
+        document.querySelectorAll('[data-dark-src][data-light-src]').forEach(function(el) {
+            el.src = isLight ? el.dataset.lightSrc : el.dataset.darkSrc;
+        });
+    }
+
+    // Apply immediately (for elements already in DOM like header logo)
+    applyLogoTheme();
+    
+    // Apply again when DOM is fully loaded (for elements below header like QOON Pay)
+    document.addEventListener('DOMContentLoaded', applyLogoTheme);
+
+    // Watch for future toggles
+    var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(m) {
+            if (m.attributeName === 'class') applyLogoTheme();
+        });
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+})();
 </script>

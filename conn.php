@@ -23,7 +23,7 @@ loadEnv(__DIR__ . '/.env');
 // Only apply here if this is an API request (not a UI page).
 if (!defined('FROM_UI') && !defined('HEADERS_SENT_FLAG')) {
     define('HEADERS_SENT_FLAG', true);
-    secureHeaders();
+    // secureHeaders();
 }
 
 // ── Database Credentials from Environment ───────────────────

@@ -27,9 +27,9 @@ if (file_exists($cacheFile) && (time() - filemtime($cacheFile)) < $cacheTTL) {
 // ── Cache miss — call AliExpress API ──────────────────────────────────────
 if (!is_dir($cacheDir)) mkdir($cacheDir, 0755, true);
 
-$appKey    = getenv('ALI_APP_KEY') ?: "532966";
-$appSecret = getenv('ALI_APP_SECRET') ?: "cTzCrj5XNUjx9lXKsrD6Fo1AuUf1Th2J";
-$token     = $_SESSION['ali_access_token'] ?? "50000100827ezZgp7jnnaRwf9df2jpqaTpD9dcT1df32eaaBtxveHgwIXDOqM94vK3KQ";
+$appKey    = "532966";
+$appSecret = "7AD6C8dWaQzf2GnjxTpm4eOB0bHe3yNT";
+$token     = "50000100827ezZgp7jnnaRwf9df2jpqaTpD9dcT1df32eaaBtxveHgwIXDOqM94vK3KQ";
 
 $api         = new AliExpressAPI($appKey, $appSecret, $token);
 $productData = $api->getProductDetails($productId);
@@ -163,3 +163,4 @@ $jsonOutput = json_encode([
 header('X-Cache: MISS');
 file_put_contents($cacheFile, $jsonOutput); // Write cache
 echo $jsonOutput;
+

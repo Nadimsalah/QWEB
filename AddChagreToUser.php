@@ -144,13 +144,13 @@ $ReceiverLang      = $receiverRow['LANG']           ?? 'FR';
 
 // ── Insert transaction records ────────────────────────────────
 $t1 = $con->prepare("INSERT INTO UserTransaction (UserID,Money,Method,DistnationName,DistnationPhoto,DriverID,OrderID,DriverName,Driverphoto,MoneyPlusOrLess,UserFees) VALUES (?,?,'QOON Pay',?,?,?,0,?,?,'less',?)");
-$t1->bind_param("idssissd", $UserID, $Money, $SenderName, $SenderPhoto, $ReceiverID, $RecieverName, $ReceiverPhoto, $SendMoneyPercww);
+$t1->bind_param("idssissd", $UserID, $Money, $RecieverName, $ReceiverPhoto, $ReceiverID, $RecieverName, $ReceiverPhoto, $SendMoneyPercww);
 $t1->execute();
 $TransID = $con->insert_id;
 $t1->close();
 
 $t2 = $con->prepare("INSERT INTO UserTransaction (UserID,Money,Method,DistnationName,DistnationPhoto,DriverID,OrderID,DriverName,Driverphoto,MoneyPlusOrLess,UserFees,Type) VALUES (?,?,'QOON Pay',?,?,?,0,?,?,'Add funds',?,'SENDMONEY')");
-$t2->bind_param("iddssissd", $ReceiverID, $Money, $SenderName, $SenderPhoto, $UserID, $RecieverName, $ReceiverPhoto, $SendMoneyPercww);
+$t2->bind_param("idssissd", $ReceiverID, $Money, $SenderName, $SenderPhoto, $UserID, $SenderName, $SenderPhoto, $SendMoneyPercww);
 $t2->execute();
 $t2->close();
 
@@ -200,6 +200,7 @@ foreach ([$ReceiverEmail, $SenderEmail] as $toEmail) {
     try {
         $mail = new PHPMailer(true);
         $mail->isSMTP();
+        $mail->Timeout    = 2; // FIX: Prevent API from freezing if SMTP is unreachable
         $mail->Host       = $smtpHost;
         $mail->SMTPAuth   = true;
         $mail->Username   = $smtpUser;

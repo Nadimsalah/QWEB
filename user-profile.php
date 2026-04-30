@@ -32,6 +32,13 @@ $uPhoto = resolvePhotoUrl($userData['UserPhoto'] ?? '', $uName);
     <title>My Profile | QOON</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- ⚡ Apply theme BEFORE paint to prevent flash -->
+    <script>
+        (function() {
+            var t = localStorage.getItem('qoon_theme') || 'dark';
+            if (t === 'light') document.documentElement.classList.add('light-mode');
+        })();
+    </script>
     <style>
         :root {
             --bg-color: #050505;
@@ -45,6 +52,22 @@ $uPhoto = resolvePhotoUrl($userData['UserPhoto'] ?? '', $uName);
 
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter', sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
+
+        /* Light Mode Overrides */
+        html.light-mode { --bg-color: #f8f9fa; --text-main: #0f1115; --text-muted: rgba(0, 0, 0, 0.5); --glass-bg: #ffffff; --glass-border: rgba(0, 0, 0, 0.08); }
+        html.light-mode body { background-color: #f8f9fa !important; color: #0f1115 !important; }
+        html.light-mode header { background: rgba(255,255,255,0.8) !important; border-bottom-color: rgba(0,0,0,0.08) !important; }
+        html.light-mode .back-btn { background: #ffffff !important; border-color: rgba(0,0,0,0.1) !important; color: #0f1115 !important; }
+        html.light-mode .wallet-card { background: #ffffff !important; border-color: rgba(0,0,0,0.08) !important; box-shadow: 0 20px 50px rgba(0,0,0,0.05) !important; }
+        html.light-mode .wallet-card::after { opacity: 0.1 !important; }
+        html.light-mode .card-holder-name, html.light-mode .card-balance-section .amount { color: #0f1115 !important; }
+        html.light-mode .info-card { background: #ffffff !important; border-color: rgba(0,0,0,0.06) !important; }
+        html.light-mode .details-list { background: #ffffff !important; border-color: rgba(0,0,0,0.06) !important; }
+        html.light-mode .detail-item { border-bottom-color: rgba(0,0,0,0.04) !important; }
+        html.light-mode .detail-icon { background: rgba(0,0,0,0.03) !important; }
+        html.light-mode [contenteditable="true"]:hover { background: rgba(0,0,0,0.03) !important; }
+        html.light-mode .card-brand img { filter: brightness(0) !important; }
+
 
         .aurora { position: fixed; inset: 0; z-index: -1; overflow: hidden; }
         .blob { position: absolute; width: 60vw; height: 60vh; background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%); filter: blur(100px); opacity: 0.15; animation: move 15s infinite alternate; }

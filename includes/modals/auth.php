@@ -227,12 +227,39 @@
         border-color: rgba(255, 255, 255, 0.3);
         background: rgba(255, 255, 255, 0.08);
     }
+
+    /* ── AUTH LIGHT MODE OVERRIDES ── */
+    html.light-mode .auth-overlay { background: rgba(255, 255, 255, 0.4); }
+    html.light-mode .auth-modal { background: #ffffff !important; border-color: rgba(0,0,0,0.08) !important; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1) !important; }
+    html.light-mode .auth-title { color: #0f1115 !important; }
+    html.light-mode .auth-subtitle { color: #6b7280 !important; }
+    html.light-mode .social-btn { background: #f3f4f6 !important; border-color: rgba(0,0,0,0.05) !important; color: #374151 !important; }
+    html.light-mode .social-btn:hover { background: #e5e7eb !important; border-color: rgba(0,0,0,0.1) !important; }
+    html.light-mode .social-btn.btn-google { background: #ffffff !important; border: 1px solid rgba(0,0,0,0.1) !important; color: #000 !important; }
+    html.light-mode .form-group label { color: #6b7280 !important; }
+    html.light-mode .form-input { background: #f3f4f6 !important; border-color: rgba(0,0,0,0.1) !important; color: #0f1115 !important; }
+    html.light-mode .form-input:focus { border-color: rgba(0,0,0,0.2) !important; background: #ffffff !important; }
+    html.light-mode .auth-submit-btn { background: #0f1115 !important; color: #ffffff !important; }
+    html.light-mode .auth-toggle-link { color: #6b7280 !important; }
+    html.light-mode .auth-toggle-link span { color: #0f1115 !important; }
+    html.light-mode .step-dot { background: rgba(0,0,0,0.1) !important; }
+    html.light-mode .step-dot.active { background: #0f1115 !important; }
+    html.light-mode .gender-btn { background: #f3f4f6 !important; border-color: rgba(0,0,0,0.05) !important; color: #6b7280 !important; }
+    html.light-mode .gender-btn.active { background: #0f1115 !important; color: #ffffff !important; border-color: #0f1115 !important; }
+    html.light-mode .avatar-preview-box { background: #f3f4f6 !important; border-color: rgba(0,0,0,0.1) !important; }
+    html.light-mode .avatar-preview-box i { color: #9ca3af !important; }
+    html.light-mode .auth-modal button[onclick*="closeSignup"],
+    html.light-mode .auth-modal button[onclick*="toggleEmailForm"] { color: #6b7280 !important; }
+    
+    html.light-mode .auth-logo-dark { display: none !important; }
+    html.light-mode .auth-logo-light { display: block !important; margin: 0 auto; }
 </style>
 
 <div class="auth-overlay" id="signup-overlay" style="display:none;">
     <div class="auth-modal" id="signup-modal">
-        <div style="margin-bottom: 24px;">
-            <img src="logo_qoon_white.png" style="height: 44px; width: auto; object-fit: contain;">
+        <div style="margin-bottom: 24px; display: flex; justify-content: center;">
+            <img src="logo_qoon_white.png" class="auth-logo-dark" style="height: 44px; width: auto; object-fit: contain;">
+            <img src="logo_qoon_dark.png" class="auth-logo-light" style="height: 44px; width: auto; object-fit: contain; display: none;">
         </div>
 
         <div id="auth-social-view">

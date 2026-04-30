@@ -46,12 +46,27 @@ $test=0;
 	
 	if(true){
 
-   if($IsPrepared=="NO"){
-	  $sql="UPDATE Orders SET OrderState='Cancelled',ShowButtons='NO' WHERE OrderID=$OrderID";
-   }else{
-	  $sql="UPDATE Orders SET OrderState='Cancelled' WHERE OrderID=$OrderID"; 
-	 
+   $extraUpdates = "";
+   if (isset($_POST['CancelLat']) && $_POST['CancelLat'] != '') {
+       $cancelLat = mysqli_real_escape_string($con, $_POST['CancelLat']);
+       $extraUpdates .= ", CancelLat='$cancelLat'";
    }
+   if (isset($_POST['CancelLng']) && $_POST['CancelLng'] != '') {
+       $cancelLng = mysqli_real_escape_string($con, $_POST['CancelLng']);
+       $extraUpdates .= ", CancelLng='$cancelLng'";
+   }
+   if (isset($_POST['CancelPhoto']) && $_POST['CancelPhoto'] != '') {
+       $cancelPhoto = mysqli_real_escape_string($con, $_POST['CancelPhoto']);
+       $extraUpdates .= ", CancelPhoto='$cancelPhoto'";
+   }
+
+   if($IsPrepared=="NO"){
+	  $sql="UPDATE Orders SET OrderState='Cancelled',ShowButtons='NO' $extraUpdates WHERE OrderID=$OrderID";
+   }else{
+	  $sql="UPDATE Orders SET OrderState='Cancelled' $extraUpdates WHERE OrderID=$OrderID"; 
+   }
+   
+   $newStatus = 'Cancelled'; // For Firebase sync below
    if(mysqli_query($con,$sql))
    {
 	   
@@ -87,6 +102,30 @@ $test=0;
 						
 
 					}
+					
+					// Notify Driver if assigned
+					if ($DriverID && $DriverID != '0') {
+					    $resD = mysqli_query($con, "SELECT FirebaseToken, LANG FROM Drivers WHERE DriverID = '$DriverID'");
+					    if ($rowD = mysqli_fetch_assoc($resD)) {
+					        $DriverToken = $rowD['FirebaseToken'];
+					        $DriverLang = $rowD['LANG'] ?? 'en';
+					        
+					        if (strtolower($DriverLang) == "ar") {
+					            $DriverTitle = "تم إلغاء الطلب 🚫";
+					            $DriverBody  = "تم إلغاء الطلب برقم ". $OrderID ." من قبل المستخدم.";
+					        } else if (strtolower($DriverLang) == "en") {
+					            $DriverTitle = "Order Canceled 🚫";
+					            $DriverBody  = "The order #". $OrderID ." has been canceled by the user.";
+					        } else {
+					            $DriverTitle = "Commande Annulée 🚫";
+					            $DriverBody  = "La commande #". $OrderID ." a été annulée par l'utilisateur.";
+					        }
+					        
+					        if (!empty($DriverToken)) {
+					            ResturantNotification($DriverToken, $DriverTitle, $DriverBody);
+					        }
+					    }
+					}
 	  
 	  
 	  
@@ -108,6 +147,7 @@ $test=0;
 	
 	
 	AddOrderFirebase($OrderID);
+	AddOrderTrackerFirebase($OrderID);
 	
 	$message ="Updated Sucssessfuly";
     $success = true;
@@ -231,7 +271,7 @@ $test=0;
       
 		$url = 'https://jibler-37339-default-rtdb.firebaseio.com/Offers/'.$OrderID.'.json/';
 		$postData = array(
-		      'OrderStatus' => "CANCELLED",
+		      'OrderStatus' => 'CANCELLED',
 
             );	
             
@@ -254,6 +294,26 @@ $test=0;
        return $result;
 	}
 	
+	function AddOrderTrackerFirebase($OrderID)
+	{
+		$url = 'https://jibler-37339-default-rtdb.firebaseio.com/OrderTrackers/'.$OrderID.'.json';
+		$postData = array(
+		    'current_status' => 'CANCELLED',
+		    'cancelled_by' => 'User',
+		    'cancel_reason' => 'Cancelled by the customer.'
+        );	
+	   $ch = curl_init();
+       curl_setopt($ch, CURLOPT_URL, $url);
+       curl_setopt($ch, CURLOPT_POST, true);
+       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+       curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PATCH");
+       curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);  
+       curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+       curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postData));
+       $result = curl_exec($ch);           
+       curl_close($ch);
+       return $result;
+	}
 	
 	function newNotfi($tokens,$TitleW,$MesBodyW,$accessTokenw,$Pid)
 	{
@@ -312,7 +372,7 @@ $test=0;
 
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT"); // ✅ التغيير هنا
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PATCH"); // Changed from PUT to PATCH to avoid overwriting node
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);

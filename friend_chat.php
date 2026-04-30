@@ -67,6 +67,13 @@ $chatRoomId = $idArr[0] . "_" . $idArr[1];
     <title>Chat with <?= htmlspecialchars($friendName) ?></title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- ⚡ Apply theme BEFORE paint to prevent flash -->
+    <script>
+        (function() {
+            var t = localStorage.getItem('qoon_theme') || 'dark';
+            if (t === 'light') document.documentElement.classList.add('light-mode');
+        })();
+    </script>
     <style>
         :root {
             --bg-color: #050505;
@@ -81,6 +88,26 @@ $chatRoomId = $idArr[0] . "_" . $idArr[1];
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         
         body, html { height: 100%; overflow: hidden; background: var(--bg-color); color: var(--text-main); }
+        
+        /* Light Mode Overrides */
+        html.light-mode { --bg-color: #f8f9fa; --tg-header: #ffffff; --tg-input: #ffffff; --bubble-me: #2cb5e8; --bubble-them: #ffffff; --text-main: #0f1115; --text-muted: rgba(0, 0, 0, 0.5); }
+        html.light-mode body { background-color: #f8f9fa !important; color: #0f1115 !important; }
+        html.light-mode .chat-bg { background-color: #f8f9fa !important; background-image: none !important; }
+        html.light-mode .chat-pattern { opacity: 0.02 !important; background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M20,20 Q40,5 60,20 T100,20" fill="none" stroke="black" stroke-width="2"/><circle cx="50" cy="50" r="10" fill="none" stroke="black" stroke-width="2"/></svg>') !important; }
+        html.light-mode .chat-header { background: #ffffff !important; border-bottom-color: rgba(0,0,0,0.08) !important; }
+        html.light-mode .header-name, html.light-mode .back-btn, html.light-mode .header-actions { color: #0f1115 !important; }
+        html.light-mode .msg-wrapper.them .msg-bubble { background: #ffffff !important; color: #0f1115 !important; border: 1px solid rgba(0,0,0,0.06) !important; }
+        html.light-mode .msg-wrapper.me .msg-bubble { background: #2cb5e8 !important; color: #ffffff !important; }
+        html.light-mode .chat-input-container { background: #ffffff !important; border-top-color: rgba(0,0,0,0.08) !important; }
+        html.light-mode .input-wrapper { background: rgba(0,0,0,0.03) !important; border-color: rgba(0,0,0,0.05) !important; }
+        html.light-mode .chat-input { color: #0f1115 !important; }
+        html.light-mode .msg-meta { color: rgba(0,0,0,0.4) !important; }
+        html.light-mode .msg-wrapper.me .msg-meta { color: rgba(255,255,255,0.7) !important; }
+        html.light-mode .apple-cash-card { background: #ffffff !important; border-color: rgba(0,0,0,0.1) !important; box-shadow: 0 10px 25px rgba(0,0,0,0.05) !important; }
+        html.light-mode .ac-amount { color: #0f1115 !important; }
+        html.light-mode .ac-logo-row img { filter: none !important; }
+        html.light-mode .ac-bottom { border-top-color: rgba(0,0,0,0.05) !important; }
+
         
         /* Telegram Style Background Pattern */
         .chat-bg {

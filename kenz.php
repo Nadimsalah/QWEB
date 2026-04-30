@@ -147,6 +147,13 @@ function fullUrl($path, $domain) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kenz Mdinty · Discover Local Treasures</title>
+    <!-- ⚡ Apply theme BEFORE paint to prevent flash -->
+    <script>
+        (function() {
+            var t = localStorage.getItem('qoon_theme') || 'dark';
+            if (t === 'light') document.documentElement.classList.add('light-mode');
+        })();
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
@@ -159,6 +166,15 @@ function fullUrl($path, $domain) {
             --glass: rgba(20, 20, 40, 0.4);
             --glass-border: rgba(255, 255, 255, 0.1);
         }
+
+        html.light-mode {
+            --bg-deep: #ffffff;
+            --text-main: #0f0f0f;
+            --text-muted: rgba(0, 0, 0, 0.6);
+            --glass: rgba(255, 255, 255, 0.8);
+            --glass-border: rgba(0, 0, 0, 0.1);
+        }
+
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -219,6 +235,51 @@ function fullUrl($path, $domain) {
             box-shadow: 0 40px 100px rgba(0,0,0,0.8);
             transform: translateY(0);
             animation: slideUpL 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        /* Light Mode Component Overrides */
+        html.light-mode .cat-card,
+        html.light-mode .post-card-social {
+            background: rgba(0, 0, 0, 0.03);
+            border-color: var(--glass-border);
+        }
+        html.light-mode .cat-card:hover,
+        html.light-mode .post-card-social:hover {
+            background: rgba(0, 0, 0, 0.06);
+        }
+        html.light-mode .top-nav {
+            background: transparent;
+            border-bottom: none;
+        }
+        html.light-mode .btn-circle {
+            background: rgba(0,0,0,0.05);
+            border-color: rgba(0,0,0,0.1);
+            color: #000;
+        }
+        html.light-mode .cat-tag {
+            background: rgba(0, 0, 0, 0.08);
+            color: var(--text-main);
+        }
+        html.light-mode .post-text-social {
+            color: #333;
+        }
+        html.light-mode .location-content {
+            background: rgba(255,255,255,0.9);
+            box-shadow: 0 40px 100px rgba(0,0,0,0.1);
+        }
+        html.light-mode .location-overlay {
+            background: rgba(255,255,255,0.4);
+            border-color: rgba(0,0,0,0.05);
+        }
+        html.light-mode .action-btn-social,
+        html.light-mode .order-btn-social {
+            background: rgba(0,0,0,0.05);
+            color: var(--text-main);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        html.light-mode .order-btn-social:hover {
+            background: var(--pink-glow);
+            color: #fff;
         }
 
         @keyframes slideUpL {
@@ -530,7 +591,7 @@ function fullUrl($path, $domain) {
         .order-btn-social:hover { background: var(--pink-glow); color: #fff; transform: scale(1.05); }
 
         /* --- Navigation --- */
-        .top-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(to bottom, rgba(10,10,31,0.8), transparent); backdrop-filter: blur(5px); }
+        .top-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; background: transparent; }
         .btn-circle { width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); color: #fff; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: all 0.3s; }
         .btn-circle:hover { background: var(--pink-glow); border-color: transparent; transform: scale(1.1); box-shadow: 0 0 20px var(--pink-glow); }
 
@@ -593,45 +654,36 @@ function fullUrl($path, $domain) {
             transition: all 0.3s;
         }
         .comment-send-btn:hover { transform: scale(1.1); box-shadow: 0 0 15px var(--pink-glow); }
+
+        /* ✨ Theme Toggle FAB */
+        .theme-fab {
+            position: fixed; bottom: 28px; right: 28px; width: 52px; height: 52px;
+            border-radius: 50%; border: none; cursor: pointer; z-index: 99999;
+            display: flex; align-items: center; justify-content: center; font-size: 20px;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+            background: linear-gradient(135deg, #4a25e1, #2cb5e8); color: #fff;
+            box-shadow: 0 4px 20px rgba(44, 181, 232, 0.4), 0 0 0 1px rgba(255,255,255,0.1);
+        }
+        .theme-fab:hover { transform: scale(1.12) rotate(20deg); box-shadow: 0 8px 32px rgba(44, 181, 232, 0.5), 0 0 0 1px rgba(255,255,255,0.15); }
+        .theme-fab:active { transform: scale(0.96); }
+        html.light-mode .theme-fab { background: linear-gradient(135deg, #ffffff, #f2f2f2); color: #4a25e1; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12), 0 0 0 1px #e5e5e5; }
+        html.light-mode .theme-fab:hover { box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0,0,0,0.1); }
+        .theme-fab .fab-icon { transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s; display: block; }
+        .theme-fab.spinning .fab-icon { transform: rotate(360deg); }
+        @media (max-width: 768px) { .theme-fab { bottom: 84px; right: 16px; width: 44px; height: 44px; font-size: 17px; } }
     </style>
 </head>
 <body class="">
 
+    <!-- ✨ Theme Toggle FAB -->
+    <button class="theme-fab" id="qoon-theme-fab" aria-label="Toggle light/dark mode" onclick="qoonToggleTheme()">
+        <i class="fab-icon" id="qoon-fab-icon"></i>
+    </button>
+
     <nav class="top-nav">
         <div style="display:flex; align-items:center; gap:20px;">
             <a href="index.php" class="btn-circle"><i class="fa-solid fa-arrow-left"></i></a>
-            <img src="logo_qoon_white.png" alt="QOON" style="height:32px; width:auto; object-fit:contain;">
-        </div>
-        
-        <div class="header-actions">
-            <?php if (isset($_COOKIE['qoon_user_id'])): 
-                $uName = $_COOKIE['qoon_user_name'] ?? 'User';
-                $uPhoto = $_COOKIE['qoon_user_photo'] ?? '';
-                $uPhotoUrl = "";
-                if(!$uPhoto || $uPhoto == 'NONE' || $uPhoto == '0') {
-                    $uPhotoUrl = "https://ui-avatars.com/api/?name=".urlencode($uName)."&background=random&color=fff";
-                } else {
-                    if (strpos($uPhoto, 'http') !== false) {
-                        $uPhotoUrl = $uPhoto;
-                    } else {
-                        $uPhotoUrl = (strpos($uPhoto, 'photo/') !== false) ? $DomainNamee . $uPhoto : $DomainNamee . 'photo/' . $uPhoto;
-                    }
-                }
-            ?>
-                <div class="profile-menu-container" style="position:relative;">
-                    <a href="javascript:void(0)" onclick="toggleProfileMenu(event)" class="profile-link" style="display:flex; align-items:center; gap:10px; text-decoration:none; color:#fff; background:rgba(255,255,255,0.1); padding:5px 15px; border-radius:99px; border:1px solid rgba(255,255,255,0.1);">
-                        <img src="<?= htmlspecialchars($uPhotoUrl) ?>" alt="Profile" style="width:30px; height:30px; border-radius:50%; object-fit:cover; border:1px solid rgba(255,255,255,0.3);">
-                        <span style="font-weight:600; font-size:14px; max-width:100px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><?= htmlspecialchars($uName) ?></span>
-                    </a>
-                    <!-- Simplified menu for Kenz -->
-                    <div class="profile-dropdown" id="profileDropdown" style="position:absolute; top:110%; right:0; background:#111; border:1px solid rgba(255,255,255,0.1); border-radius:15px; padding:10px; display:none; flex-direction:column; min-width:160px; z-index:5000;">
-                        <a href="orders.php" style="color:#fff; text-decoration:none; padding:10px; font-size:14px; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-clock-rotate-left"></i> Orders</a>
-                        <a href="logout.php" style="color:#ff3b30; text-decoration:none; padding:10px; font-size:14px; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
-                    </div>
-                </div>
-            <?php else: ?>
-                <a href="javascript:void(0)" onclick="openSignup()" style="padding: 8px 20px; border-radius: 99px; font-weight: 600; font-size: 13px; text-decoration: none; background: rgba(255,255,255,0.08); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); color: #fff; border: 1px solid rgba(255,255,255,0.18); display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s; cursor: pointer;"><i class="fa-solid fa-right-to-bracket" style="font-size: 12px;"></i> Login</a>
-            <?php endif; ?>
+            <img id="qoon-main-logo" src="logo_qoon_white.png" data-dark-src="logo_qoon_white.png" data-light-src="logo_qoon_dark.png" alt="QOON" style="height:32px; width:auto; object-fit:contain;">
         </div>
     </nav>
 
@@ -1077,9 +1129,77 @@ function fullUrl($path, $domain) {
         /* --- GOOGLE LOGIN --- */
         
     </script>
+
+    <script>
+    /* ── Logo theme swap (all logos with data-dark-src / data-light-src) ── */
+    (function() {
+        function applyLogoTheme() {
+            var isLight = document.documentElement.classList.contains('light-mode');
+            document.querySelectorAll('[data-dark-src][data-light-src]').forEach(function(el) {
+                el.src = isLight ? el.dataset.lightSrc : el.dataset.darkSrc;
+            });
+        }
+
+        // Apply immediately
+        applyLogoTheme();
+        
+        // Apply again when DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', applyLogoTheme);
+
+        // Watch for future toggles
+        var observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(m) {
+                if (m.attributeName === 'class') applyLogoTheme();
+            });
+        });
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    })();
+
+    /* ── Theme Toggle Button Logic ── */
+    (function () {
+        var DARK_ICON = '🌙';
+        var LIGHT_ICON = '☀️';
+        var htmlEl = document.documentElement;
+        var fabIcon = document.getElementById('qoon-fab-icon');
+        var fab = document.getElementById('qoon-theme-fab');
+
+        function syncIcon() {
+            if (!fabIcon) return;
+            var isLight = htmlEl.classList.contains('light-mode');
+            fabIcon.textContent = isLight ? DARK_ICON : LIGHT_ICON;
+            fab.title = isLight ? 'Switch to dark mode' : 'Switch to light mode';
+        }
+        syncIcon();
+
+        window.qoonToggleTheme = function () {
+            var isLight = htmlEl.classList.contains('light-mode');
+            if (isLight) {
+                htmlEl.classList.remove('light-mode');
+                localStorage.setItem('qoon_theme', 'dark');
+            } else {
+                htmlEl.classList.add('light-mode');
+                localStorage.setItem('qoon_theme', 'light');
+            }
+            
+            // Sync open iframes immediately
+            document.querySelectorAll('iframe').forEach(function(ifr) {
+                try {
+                    if (ifr.contentWindow && ifr.contentWindow.document) {
+                        var doc = ifr.contentWindow.document.documentElement;
+                        if (isLight) doc.classList.remove('light-mode');
+                        else doc.classList.add('light-mode');
+                    }
+                } catch(e) {}
+            });
+
+            if (fab) {
+                fab.classList.add('spinning');
+                setTimeout(function () { fab.classList.remove('spinning'); }, 500);
+            }
+            syncIcon();
+        };
+    })();
+    </script>
 </body>
-</html>
-
-
 
 

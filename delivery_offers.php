@@ -44,7 +44,7 @@ if(isset($_GET['ajax']) && $_GET['ajax'] == 'offers') {
                                 'rating' => $rate ? $rate : number_format(rand(45,49)/10, 1),
                                 'distance' => number_format(rand(10,30)/10, 1) . ' km',
                                 'time' => rand(3, 15) . ' min',
-                                'price' => $offerVal, // Driver Bid only, no artificial extra cost
+                                'price' => $offerVal, // Driver Bid (already includes commission from addoffer.php)
                                 'img' => (!empty($img) && strpos($img, 'http') !== false) ? $img : "https://ui-avatars.com/api/?name=".urlencode($fName)."&background=random"
                             ];
                         }
@@ -136,6 +136,10 @@ if (!isset($_GET['orderId'])) {
             $orderDetailsStr = 'QOON Order';
         }
 
+        // Parse payment method from POST
+        $postedPayMethod = isset($_POST['payMethod']) ? $con->real_escape_string($_POST['payMethod']) : 'CASH';
+        if ($postedPayMethod === 'COD') $postedPayMethod = 'CASH';
+
         // 3. Clone a perfectly formed real order (Order 4614 is confirmed structurally valid)
         $cloneRes = $con->query("SELECT * FROM Orders WHERE OrderID = 4614 LIMIT 1");
         if($cloneRes && $cloneRes->num_rows > 0) {
@@ -168,6 +172,8 @@ if (!isset($_GET['orderId'])) {
                 else if($k == 'UserPhone') $v = $userPhone;
                 else if($k == 'UserPhoto') $v = $userPhoto;
                 else if($k == 'PlatformFee') $v = $platformFee;
+                else if($k == 'Method') $v = $postedPayMethod;
+                else if($k == 'FourDigit') $v = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
                 
                 if ($v === NULL) {
                     $vals[] = "NULL";
@@ -319,6 +325,13 @@ $orderId = isset($_GET['orderId']) ? htmlspecialchars($_GET['orderId']) : '8492'
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Qoon Express - Finding Drivers</title>
+    <!-- ⚡ Apply theme BEFORE paint to prevent flash -->
+    <script>
+        (function() {
+            var t = localStorage.getItem('qoon_theme') || 'dark';
+            if (t === 'light') document.documentElement.classList.add('light-mode');
+        })();
+    </script>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome -->
@@ -526,6 +539,38 @@ $orderId = isset($_GET['orderId']) ? htmlspecialchars($_GET['orderId']) : '8492'
         .cancel-btn-primary:active { transform: scale(0.96); }
         .cancel-btn-secondary { flex: 1; padding: 14px; border-radius: 12px; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; }
         .cancel-btn-secondary:active { transform: scale(0.96); }
+
+        /* --- LIGHT MODE OVERRIDES --- */
+        html.light-mode {
+            --bg-color: #f8f9fa;
+            --text-main: #0f1115;
+            --text-muted: #6b7280;
+            --glass-bg: #ffffff;
+            --glass-border: rgba(0,0,0,0.08);
+        }
+        html.light-mode body { background-color: #f8f9fa !important; }
+        html.light-mode #sidebar { background: #ffffff; border-right-color: rgba(0,0,0,0.08); }
+        html.light-mode .top-bar { background: #f9fafb; border-bottom-color: rgba(0,0,0,0.05); }
+        html.light-mode .back-btn { background: #f3f4f6; border-color: rgba(0,0,0,0.08); color: #0f1115; }
+        html.light-mode .back-btn:hover { background: #e5e7eb; }
+        html.light-mode .offer-card { background: #ffffff; border-color: rgba(0,0,0,0.08); box-shadow: 0 10px 30px rgba(0,0,0,0.04); }
+        html.light-mode .driver-name { color: #0f1115; }
+        html.light-mode .driver-meta { color: #6b7280; }
+        html.light-mode .driver-avatar { border-color: rgba(0,0,0,0.05); }
+        html.light-mode h3, html.light-mode p { color: #0f1115 !important; }
+        html.light-mode #success-overlay { background: rgba(255,255,255,0.95); }
+        html.light-mode .success-title { color: #0f1115; }
+        html.light-mode .success-desc { color: #4b5563; }
+        html.light-mode .success-desc b { color: #0f1115 !important; }
+        html.light-mode .finish-btn { background: #000; color: #fff; }
+        html.light-mode #cancel-overlay { background: rgba(255,255,255,0.8); }
+        html.light-mode .cancel-modal { background: #ffffff; border-color: rgba(0,0,0,0.08); }
+        html.light-mode .cancel-title { color: #0f1115; }
+        html.light-mode .cancel-desc { color: #6b7280; }
+        html.light-mode .cancel-btn-secondary { background: #f3f4f6; color: #0f1115; border-color: rgba(0,0,0,0.08); }
+        html.light-mode .map-radar-center { border-color: #ffffff; }
+        html.light-mode #offers-list::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); }
+        html.light-mode .top-bar h3, html.light-mode .top-bar p { color: #0f1115 !important; }
     </style>
 </head>
 <body>
@@ -563,7 +608,7 @@ $orderId = isset($_GET['orderId']) ? htmlspecialchars($_GET['orderId']) : '8492'
         <div class="success-circle"><i class="fa-solid fa-check"></i></div>
         <div class="success-title">Order Assigned!</div>
         <div class="success-desc">A driver is heading to the boutique. They will deliver your items shortly.<br><br>Grand Total: <b id="final-total" style="color:white;font-size:18px;"></b> MAD</div>
-        <a href="track_order.php" class="finish-btn"><i class="fa-solid fa-circle-notch fa-spin"></i> Opening Live Chat & Tracker...</a>
+        <a id="finish-track-btn" href="track_order.php?orderId=<?= $orderId ?>" class="finish-btn"><i class="fa-solid fa-circle-notch fa-spin"></i> Opening Live Chat & Tracker...</a>
     </div>
 
     <!-- Cancel Confirmation Overlay -->
@@ -581,7 +626,10 @@ $orderId = isset($_GET['orderId']) ? htmlspecialchars($_GET['orderId']) : '8492'
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdn.firebase.com/js/client/2.2.1/firebase.js"></script>
     <script>
+        const orderId = "<?= $orderId ?>";
+        const trackerRef = new Firebase('https://jibler-37339-default-rtdb.firebaseio.com/OrderTrackers/' + orderId);
         const cartTotal = parseFloat("<?= $totalPrice ?>");
         
         // --- 1. Initialize Map ---
@@ -590,7 +638,12 @@ $orderId = isset($_GET['orderId']) ? htmlspecialchars($_GET['orderId']) : '8492'
         
         const map = L.map('map', { zoomControl: false }).setView([initLat, initLng], 14);
         
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        const isLight = document.documentElement.classList.contains('light-mode');
+        const tileUrl = isLight 
+            ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
+            : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+
+        L.tileLayer(tileUrl, {
             maxZoom: 19,
             attribution: '© OpenStreetMap © CartoDB'
         }).addTo(map);
@@ -704,14 +757,24 @@ $orderId = isset($_GET['orderId']) ? htmlspecialchars($_GET['orderId']) : '8492'
             fd.append('OrderPrice', deliveryPrice);
             fd.append('OfferKey', offerKey);
 
+            // Optimistic Update to Firebase for instant Driver notification
+            try {
+                trackerRef.update({
+                    current_status: 'ACCEPTED',
+                    DelvryId: driverId,
+                    OrderPrice: deliveryPrice,
+                    accepted_at: Math.floor(Date.now() / 1000)
+                });
+            } catch(e) { console.error("Firebase update failed:", e); }
+
             fetch('AcceptOfferUser.php', {
                 method: 'POST',
                 body: fd
             }).then(() => {
-                // Auto-redirect to Live Tracking & Chat after API confirmation and 3s delay
+                // Auto-redirect to Live Tracking & Chat after API confirmation and 1s delay
                 setTimeout(() => {
                     window.location.href = `track_order.php?orderId=<?= $orderId ?>&tot=${finalTotal}`;
-                }, 3000);
+                }, 1000);
             }).catch(console.error);
         }
 

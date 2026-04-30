@@ -5,10 +5,10 @@ require_once 'includes/AliExpressAPI.php';
 header('Content-Type: application/json');
 
 session_start();
-$appKey = getenv('ALI_APP_KEY') ?: "532966";
-$appSecret = getenv('ALI_APP_SECRET') ?: "cTzCrj5XNUjx9lXKsrD6Fo1AuUf1Th2J";
-// Hardcode the known good token for testing
-$token = "50000100827ezZgp7jnnaRwf9df2jpqaTpD9dcT1df32eaaBtxveHgwIXDOqM94vK3KQ";
+$appKey = "532966";
+$appSecret = "7AD6C8dWaQzf2GnjxTpm4eOB0bHe3yNT";
+// Fallback to the known token
+$token     = "50000100827ezZgp7jnnaRwf9df2jpqaTpD9dcT1df32eaaBtxveHgwIXDOqM94vK3KQ";
 
 $api = new AliExpressAPI($appKey, $appSecret, $token);
 
@@ -56,3 +56,4 @@ foreach ($itemIds as $id) {
 }
 
 echo json_encode(['products' => $products]);
+

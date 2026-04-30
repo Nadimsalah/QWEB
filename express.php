@@ -435,7 +435,64 @@ if (isset($_COOKIE['qoon_user_id'])) {
         .map-header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); }
         .map-footer { padding: 15px 20px; background: rgba(255,255,255,0.05); }
 
+        /* --- Light Mode Specifics --- */
+        html.light-mode {
+            --bg-deep: #ffffff;
+            --text-main: #000000;
+            --text-muted: rgba(0, 0, 0, 0.6);
+            --glass: rgba(255, 255, 255, 0.8);
+            --glass-border: rgba(0, 0, 0, 0.1);
+        }
+        html.light-mode body {
+            background-image: radial-gradient(circle at 15% 50%, rgba(44, 181, 232, 0.1), transparent 25%),
+                              radial-gradient(circle at 85% 30%, rgba(255, 0, 128, 0.1), transparent 25%);
+        }
+        html.light-mode .top-nav { background: rgba(255,255,255,0.9); border-bottom: 1px solid rgba(0,0,0,0.05); }
+        html.light-mode .btn-circle { background: rgba(0,0,0,0.05); color: #000; border-color: rgba(0,0,0,0.1); }
+        html.light-mode .btn-circle:hover { background: rgba(0,0,0,0.08); }
+        html.light-mode .action-btn { background: #fff; border-color: rgba(0,0,0,0.1); color: #000; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+        html.light-mode .action-btn:hover { border-color: rgba(0,0,0,0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        html.light-mode .sec-title { color: #000; }
+        html.light-mode .city-card { background: #fff; border-color: rgba(0,0,0,0.1); box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        html.light-mode .city-card-overlay { background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%); }
+        html.light-mode .modal-content { background: #fff; border-color: rgba(0,0,0,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.15); }
+        html.light-mode .modal-content h2, html.light-mode .modal-content .close-modal { color: #000; }
+        html.light-mode .form-input { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.1); color: #000; }
+        html.light-mode .form-label { color: rgba(0,0,0,0.6); }
+        html.light-mode .btn-secondary { background: rgba(0,0,0,0.05); color: #000; }
+        html.light-mode .size-modal-content { background: #fff; border-color: rgba(0,0,0,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.15); }
+        html.light-mode .size-modal-content h3, html.light-mode .size-modal-content button { color: #000; }
+        html.light-mode .size-card { background: #fff; border-color: rgba(0,0,0,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        html.light-mode .size-card-title { color: #000; }
+        html.light-mode .map-modal-content { background: #fff; border-color: rgba(0,0,0,0.1); }
+        html.light-mode .map-header, html.light-mode .map-footer { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.1); }
+        html.light-mode .map-header h3, html.light-mode .map-header button { color: #000; }
+        html.light-mode .header-content p { color: rgba(0,0,0,0.6); }
+
+        /* ✨ Theme Toggle FAB */
+        .theme-fab {
+            position: fixed; bottom: 28px; right: 28px; width: 52px; height: 52px;
+            border-radius: 50%; border: none; cursor: pointer; z-index: 99999;
+            display: flex; align-items: center; justify-content: center; font-size: 20px;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+            background: linear-gradient(135deg, #4a25e1, #2cb5e8); color: #fff;
+            box-shadow: 0 4px 20px rgba(44, 181, 232, 0.4), 0 0 0 1px rgba(255,255,255,0.1);
+        }
+        .theme-fab:hover { transform: scale(1.12) rotate(20deg); box-shadow: 0 8px 32px rgba(44, 181, 232, 0.5), 0 0 0 1px rgba(255,255,255,0.15); }
+        .theme-fab:active { transform: scale(0.96); }
+        html.light-mode .theme-fab { background: linear-gradient(135deg, #ffffff, #f2f2f2); color: #4a25e1; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12), 0 0 0 1px #e5e5e5; }
+        html.light-mode .theme-fab:hover { box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0,0,0,0.1); }
+        .theme-fab .fab-icon { transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s; display: block; }
+        .theme-fab.spinning .fab-icon { transform: rotate(360deg); }
+        @media (max-width: 768px) { .theme-fab { bottom: 84px; right: 16px; width: 44px; height: 44px; font-size: 17px; } }
     </style>
+    <!-- ⚡ Apply theme BEFORE paint to prevent flash -->
+    <script>
+        (function() {
+            var t = localStorage.getItem('qoon_theme') || 'dark';
+            if (t === 'light') document.documentElement.classList.add('light-mode');
+        })();
+    </script>
 </head>
 <body>
 
@@ -847,6 +904,51 @@ if (isset($_COOKIE['qoon_user_id'])) {
             }
             closeMapModal();
         }
+
+        // --- Theme Toggle ---
+        function qoonToggleTheme() {
+            const isLight = document.documentElement.classList.toggle('light-mode');
+            const theme = isLight ? 'light' : 'dark';
+            localStorage.setItem('qoon_theme', theme);
+            
+            const fab = document.getElementById('globalThemeToggle');
+            const icon = fab.querySelector('i');
+            
+            fab.classList.add('spinning');
+            setTimeout(() => {
+                if (isLight) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                } else {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                }
+            }, 150);
+            setTimeout(() => fab.classList.remove('spinning'), 500);
+
+            const logo = document.querySelector('.top-nav img[alt="QOON"]');
+            if (logo) {
+                logo.src = isLight ? 'logo_qoon_dark.png' : 'logo_qoon_white.png';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const isLight = document.documentElement.classList.contains('light-mode');
+            const icon = document.querySelector('#globalThemeToggle i');
+            if (isLight && icon) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            }
+            const logo = document.querySelector('.top-nav img[alt="QOON"]');
+            if (logo && isLight) {
+                logo.src = 'logo_qoon_dark.png';
+            }
+        });
     </script>
+
+    <!-- ✨ Theme Toggle FAB -->
+    <button class="theme-fab" id="globalThemeToggle" onclick="qoonToggleTheme()" title="Toggle White/Dark Mode">
+        <i class="fa-solid fa-moon fab-icon"></i>
+    </button>
 </body>
 </html>

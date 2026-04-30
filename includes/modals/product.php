@@ -257,6 +257,98 @@
             text-transform: uppercase; letter-spacing: 1px; margin: 18px 0 10px;
         }
 
+        /* ── LIGHT MODE OVERRIDES ── */
+        html.light-mode #pm-overlay { background: rgba(255, 255, 255, 0.4); }
+        html.light-mode #pm-modal { background: #ffffff; border-color: rgba(0,0,0,0.08); box-shadow: 0 30px 100px rgba(0,0,0,0.1); }
+        html.light-mode .pm-img-wrap { background: #f5f5f5; border-bottom-color: rgba(0,0,0,0.05); }
+        html.light-mode .pm-close { background: rgba(255, 255, 255, 0.8); color: #000; border-color: rgba(0,0,0,0.1); }
+        html.light-mode .pm-title { color: #0f1115; }
+        html.light-mode .pm-old-price { color: #9ca3af; }
+        html.light-mode .pm-desc { color: #4b5563; }
+        html.light-mode .pm-section-title { color: #6b7280; }
+        html.light-mode .pm-chip { background: #f3f4f6; border-color: rgba(0,0,0,0.05); color: #374151; }
+        html.light-mode .pm-chip span.ch-price { color: #6b7280; }
+        html.light-mode .pm-chip.active { background: rgba(245, 0, 87, 0.1); border-color: #f50057; color: #f50057; }
+        html.light-mode .pm-chip.active span.ch-price { color: #f50057; }
+        html.light-mode .pm-extra-card { background: #f3f4f6; border-color: rgba(0,0,0,0.05); }
+        html.light-mode .pm-extra-name { color: #374151; }
+        html.light-mode .pm-extra-check { border-color: rgba(0,0,0,0.1); }
+        html.light-mode .pm-extra-card.active { border-color: #f50057; background: rgba(245,0,87,0.06); }
+        html.light-mode .pm-extra-card.active .pm-extra-check { background: #f50057; border-color: #f50057; color: #fff; }
+        html.light-mode .pm-bottom-bar { background: rgba(255, 255, 255, 0.85); border-top-color: rgba(0,0,0,0.05); box-shadow: 0 -10px 40px rgba(0,0,0,0.05); }
+        html.light-mode .pm-qty { background: #f3f4f6; border-color: rgba(0,0,0,0.05); }
+        html.light-mode .pm-qty-btn { color: #0f1115; }
+        html.light-mode .pm-qty-val { color: #0f1115; }
+
+        /* Checkout Drawer Light Mode */
+        html.light-mode #co-drawer { background: #ffffff; border-left-color: rgba(0,0,0,0.08); }
+        html.light-mode .co-steps { border-bottom-color: rgba(0,0,0,0.06); }
+        html.light-mode .co-step-btn { color: #9ca3af; }
+        html.light-mode .co-step-btn.active { color: #0f1115; }
+        html.light-mode .co-step-btn .step-num { background: #f3f4f6; color: #6b7280; }
+        html.light-mode .co-step-btn.active .step-num { background: #f50057; color: #fff; }
+        html.light-mode .co-drawer-title { color: #0f1115; }
+        html.light-mode .co-close-btn { background: #f3f4f6; color: #0f1115; }
+        html.light-mode .co2-item { background: #f9fafb; border-color: rgba(0,0,0,0.06); }
+        html.light-mode .co2-name { color: #0f1115; }
+        html.light-mode .co2-ext { color: #6b7280; }
+        html.light-mode .co2-qty { background: #f3f4f6; color: #374151; }
+        html.light-mode .price-row { border-bottom-color: rgba(0,0,0,0.05); color: #4b5563; }
+        html.light-mode .price-row span:last-child { color: #0f1115; }
+        html.light-mode .price-row.total span { color: #0f1115; }
+        html.light-mode .price-row.total span:first-child { color: #6b7280; }
+        html.light-mode .addr-type-chip { background: #f3f4f6; border-color: rgba(0,0,0,0.08); color: #6b7280; }
+        html.light-mode .addr-type-chip.active { background: rgba(245,0,87,0.1); border-color: #f50057; color: #f50057; }
+        html.light-mode .saved-addr-card { background: #f9fafb; border-color: rgba(0,0,0,0.08); }
+        html.light-mode .saved-addr-card.selected { border-color: #f50057; background: rgba(245,0,87,0.05); }
+        html.light-mode .new-loc-btn { border-color: rgba(0,0,0,0.1); color: #6b7280; }
+        html.light-mode #co-map-container { border-color: rgba(0,0,0,0.1); }
+        html.light-mode #co-locate-btn { background: #fff; border-color: rgba(0,0,0,0.1); color: #0f1115; }
+        html.light-mode .co-map-note { color: #9ca3af; }
+        html.light-mode .co-note-input { background: #f3f4f6; border-color: rgba(0,0,0,0.1); color: #0f1115; }
+        html.light-mode .co-note-input::placeholder { color: #9ca3af; }
+        html.light-mode .pay-card { background: #f9fafb; border-color: rgba(0,0,0,0.08); }
+        html.light-mode .pay-card.active { border-color: #f50057; background: rgba(245,0,87,0.05); }
+        html.light-mode .pay-card-label { color: #0f1115; }
+        html.light-mode .pay-card-sub { color: #6b7280; }
+        html.light-mode .pay-card-check { border-color: rgba(0,0,0,0.1); }
+        html.light-mode .qpay-bal-chip { background: rgba(0,0,0,0.05); color: #0f1115; }
+        html.light-mode .qpay-checkout-card { background: linear-gradient(135deg, rgba(245,0,87,0.05) 0%, rgba(120,0,120,0.05) 50%, rgba(44,181,232,0.05) 100%); border-color: rgba(245,0,87,0.2); }
+        html.light-mode .bank-card-visual { background: #f3f4f6; border-color: rgba(0,0,0,0.1); }
+        html.light-mode .bank-input { background: #fff; border-color: rgba(0,0,0,0.1); color: #0f1115; }
+        html.light-mode .co-cta-bar { background: #fff; border-top-color: rgba(0,0,0,0.06); }
+        html.light-mode .co-section-lbl { color: #9ca3af; }
+        html.light-mode .co-no-results { color: #9ca3af !important; font-size: 13px; padding: 10px 0; }
+        html.light-mode .saved-addr-name { color: #0f1115 !important; }
+        html.light-mode .saved-addr-city { color: #6b7280 !important; font-size: 12px; margin-top: 2px; }
+        html.light-mode .saved-addr-icon { background: #f3f4f6 !important; color: #6b7280 !important; }
+        html.light-mode .saved-addr-card:hover { background: #f3f4f6 !important; }
+
+        /* Cart Drawer Light Mode */
+        html.light-mode #cart-drawer-overlay { background: rgba(255, 255, 255, 0.4); }
+        html.light-mode #cart-drawer { background: #ffffff; border-left-color: rgba(0,0,0,0.08); box-shadow: -10px 0 40px rgba(0,0,0,0.05); }
+        html.light-mode .cart-drawer-hd { border-bottom-color: rgba(0,0,0,0.06); }
+        html.light-mode .cart-drawer-title { color: #0f1115; }
+        html.light-mode .cart-close-btn { background: #f3f4f6; color: #374151; }
+        html.light-mode .cart-close-btn:hover { background: #e5e7eb; color: #000; }
+        html.light-mode .cart-items-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); }
+        html.light-mode .cart-item { background: #f9fafb; border-color: rgba(0,0,0,0.05); }
+        html.light-mode .cart-item:hover { background: #f3f4f6; }
+        html.light-mode .cart-item-name { color: #0f1115; }
+        html.light-mode .cart-item-meta { color: #6b7280; }
+        html.light-mode .cart-qty-ctrl { background: #f3f4f6; border-color: rgba(0,0,0,0.05); }
+        html.light-mode .cart-qty-btn { color: #0f1115; }
+        html.light-mode .cart-qty-num { color: #0f1115; }
+        html.light-mode .cart-footer { background: #ffffff; border-top-color: rgba(0,0,0,0.06); }
+        html.light-mode .cart-summary-lbl { color: #6b7280; }
+        html.light-mode .cart-summary-val { color: #0f1115; }
+        html.light-mode .cart-clear-btn { color: #9ca3af; }
+
+        html.light-mode #floating-cart-widget { background: var(--primary) !important; color: #fff !important; }
+        html.light-mode #checkout-modal { background: #ffffff !important; border-top-color: rgba(0,0,0,0.08) !important; }
+        html.light-mode .co-header { border-bottom-color: rgba(0,0,0,0.05) !important; }
+        html.light-mode .co-title { color: #0f1115 !important; }
+
     </style>
 
     <!-- RIGHT-DRAWER CHECKOUT -->
@@ -1050,6 +1142,13 @@
                     return;
                 }
             }
+
+            // Redirect AliExpress products to the standalone page
+            if (data && data.id && String(data.id).startsWith('ALI_')) {
+                const aliId = String(data.id).replace('ALI_', '');
+                window.location.href = `ali_product.php?id=${aliId}`;
+                return;
+            }
             currentProductData = data;
             currentModalPrice = parseFloat(data.price);
             currentModalQty = 1;
@@ -1155,15 +1254,7 @@
             setTimeout(() => {
                 const scrollArea = document.getElementById('pm-scroll-area');
                 const imgWrap = document.getElementById('pm-img-wrap');
-                if (scrollArea && imgWrap) {
-                    scrollArea.addEventListener('scroll', () => {
-                        if (scrollArea.scrollTop > 30) {
-                            imgWrap.classList.add('scrolled');
-                        } else {
-                            imgWrap.classList.remove('scrolled');
-                        }
-                    });
-                }
+                // Scroll listener for aspect-ratio removed for mobile performance
 
                 const slidesContainer = document.getElementById('pm-slides');
                 if (slidesContainer) {
@@ -1515,7 +1606,11 @@
             const uid = getCookie('qoon_user_id');
             if (!uid || uid === '0') {
                 localStorage.setItem('qoon_pending_cart_<?= $shopId ?>', JSON.stringify(cartItems));
-                window.location.href = 'index.php?auth_required=1&return_to=' + encodeURIComponent(window.location.href);
+                if (typeof window.openSignup === 'function') {
+                    window.openSignup();
+                } else {
+                    window.location.href = 'index.php?auth_required=1&return_to=' + encodeURIComponent(window.location.href);
+                }
                 return;
             }
 
@@ -1603,8 +1698,11 @@
         // Alias for old code
         function closeCheckoutModal() { closeCheckoutDrawer(); }
 
+        const qoonPhpUserId = '<?= isset($_COOKIE['qoon_user_id']) ? $_COOKIE['qoon_user_id'] : '' ?>';
         function getCookie(name) {
-            return (document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)') || [])[2] || '';
+            let val = (document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)') || [])[2] || '';
+            if (!val && name === 'qoon_user_id') return qoonPhpUserId;
+            return val;
         }
 
         /* ── Fee from API ── */
@@ -1645,31 +1743,29 @@
                 const data = await res.json();
                 const addresses = data?.data || [];
                 if (addresses.length === 0) {
-                    container.innerHTML = `<div style="color:rgba(255,255,255,0.3); font-size:13px; padding:10px 0;">No saved addresses yet.</div>`;
+                    container.innerHTML = `<div class="co-no-results">No saved addresses yet.</div>`;
                     return;
                 }
                 let html = '';
                 addresses.forEach((addr, i) => {
                     const street = addr.StreetName || addr.AdressName || addr.AddressText || 'Address ' + (i+1);
                     const city = addr.CityName || addr.City || '';
-                    // Escape quotes for the onclick attribute
                     const safeStreet = street.replace(/'/g, "\\'").replace(/"/g, "&quot;");
                     html += `<div class="saved-addr-card ${i===0?'selected':''}" onclick="selectSavedAddr(this, ${addr.AddressLat||0}, ${addr.AddressLon||addr.AddressLongt||0}, '${safeStreet}')">
                         <div class="saved-addr-icon"><i class="fa-solid fa-location-dot"></i></div>
                         <div style="flex:1; min-width:0;">
-                            <div style="font-weight:700; color:#fff; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${street}</div>
-                            ${city ? `<div style="font-size:12px; color:rgba(255,255,255,0.4); margin-top:2px;">${city}</div>` : ''}
+                            <div class="saved-addr-name">${street}</div>
+                            ${city ? `<div class="saved-addr-city">${city}</div>` : ''}
                         </div>
                         <i class="fa-solid fa-circle-check" style="color:#f50057; font-size:18px; ${i===0?'':'opacity:0;'} transition:0.2s;"></i>
                     </div>`;
                 });
                 container.innerHTML = html;
-                // Auto-select first
                 const firstAddr = addresses[0];
                 coDeliveryLat = parseFloat(firstAddr.AddressLat || 0) || null;
                 coDeliveryLon = parseFloat(firstAddr.AddressLon || firstAddr.AddressLongt || 0) || null;
             } catch(e) {
-                container.innerHTML = `<div style="color:rgba(255,255,255,0.3); font-size:13px; padding:10px 0;">Could not load addresses.</div>`;
+                container.innerHTML = `<div class="co-no-results">Could not load addresses.</div>`;
             }
         }
 
@@ -1823,23 +1919,60 @@
 
         /* ── Payment Method ── */
         let coQPayLoaded = false;
+        let coQPayBalance = 0;
+
         function selectNewPayment(method) {
+            if (method === 'CARD' || method === 'PAYPAL') {
+                alert("service not avilabele rn soon will be active");
+                return;
+            }
+
+            const total = coSubtotal + coPlatformFee;
+            
+            // Fast fail if already loaded and insufficient balance
+            if (method === 'QOON' && coQPayLoaded) {
+                if (coQPayBalance < total) {
+                    showInsufficientModal(coQPayBalance);
+                    method = 'COD';
+                }
+            }
+
             selectedPaymentMethod = method;
             document.querySelectorAll('.pay-card').forEach(c => c.classList.remove('active'));
-            document.getElementById('pay-card-' + method).classList.add('active');
+            const activeCard = document.getElementById('pay-card-' + method);
+            if(activeCard) activeCard.classList.add('active');
+
             // Toggle bank card fields
             const bv = document.getElementById('bank-card-visual');
             if (bv) bv.classList.toggle('show', method === 'CARD');
+
             // Load QOON Pay balance once
             if (method === 'QOON' && !coQPayLoaded) {
                 coQPayLoaded = true;
+                const ctaBtn = document.getElementById('co-cta-btn');
+                const ctaLabel = document.getElementById('co-cta-label');
+                const origText = ctaLabel ? ctaLabel.textContent : '';
+                if(ctaBtn) ctaBtn.disabled = true;
+                if(ctaLabel) ctaLabel.textContent = "Checking balance...";
+
                 fetch('qpay_balance.php')
                     .then(r => r.json())
                     .then(d => {
-                        const bal = parseFloat(d?.balance || 0);
-                        document.getElementById('co-qpay-balance').textContent = bal.toFixed(2) + ' MAD';
+                        coQPayBalance = parseFloat(d?.balance || 0);
+                        document.getElementById('co-qpay-balance').textContent = coQPayBalance.toFixed(2) + ' MAD';
+                        
+                        if(ctaBtn) ctaBtn.disabled = false;
+                        if(ctaLabel) ctaLabel.textContent = origText;
+
+                        if (coQPayBalance < total) {
+                            showInsufficientModal(coQPayBalance);
+                            selectNewPayment('COD');
+                        }
                     })
-                    .catch(() => {});
+                    .catch(() => {
+                        if(ctaBtn) ctaBtn.disabled = false;
+                        if(ctaLabel) ctaLabel.textContent = origText;
+                    });
             }
         }
 
@@ -1878,6 +2011,27 @@
                 document.getElementById('co-cta-btn').classList.add('green');
             } else {
                 document.getElementById('co-cta-btn').classList.remove('green');
+            }
+        }
+
+        function showInsufficientModal(balance) {
+            const modal = document.getElementById('qpay-insufficient-modal');
+            if(modal) {
+                document.getElementById('qpay-current-bal').textContent = parseFloat(balance).toFixed(2);
+                modal.style.display = 'flex';
+                // Trigger reflow for animation
+                void modal.offsetWidth;
+                modal.style.opacity = '1';
+                modal.querySelector('.checkout-modal-content').style.transform = 'translateY(0) scale(1)';
+            }
+        }
+
+        function closeInsufficientModal() {
+            const modal = document.getElementById('qpay-insufficient-modal');
+            if(modal) {
+                modal.style.opacity = '0';
+                modal.querySelector('.checkout-modal-content').style.transform = 'translateY(20px) scale(0.95)';
+                setTimeout(() => { modal.style.display = 'none'; }, 300);
             }
         }
 
@@ -2371,3 +2525,25 @@
             }
         }
     </script>
+
+    <!-- QOON Pay Insufficient Balance Modal -->
+    <div id="qpay-insufficient-modal" style="display: none; position: fixed; inset: 0; z-index: 10001; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease;">
+        <div class="checkout-modal-content" style="text-align: center; width: 90%; max-width: 340px; padding: 30px 20px; background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 28px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); transform: translateY(20px) scale(0.95); transition: transform 0.3s cubic-bezier(0.2,0.8,0.2,1);">
+            <div style="width: 70px; height: 70px; border-radius: 50%; background: rgba(255, 71, 87, 0.1); color: #ff4757; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 16px;">
+                <i class="fa-solid fa-wallet"></i>
+            </div>
+            <h3 style="font-size: 20px; color: #fff; font-weight: 800; margin: 0 0 8px;">Insufficient Balance</h3>
+            <p style="color: rgba(255,255,255,0.6); font-size: 14px; margin: 0 0 24px; line-height: 1.5;">
+                Your QOON Pay balance (<span id="qpay-current-bal" style="color:#fff; font-weight:700;">0.00</span> MAD) is not enough for this order. Please top up or choose another payment method.
+            </p>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button class="co-btn-primary" style="background: var(--brand-purple); color: #fff; border: none; box-shadow: 0 4px 15px rgba(155, 45, 241, 0.4); padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.2s;" onclick="window.location.href='wallet.php'">
+                    <i class="fa-solid fa-plus-circle"></i> Top Up Now
+                </button>
+                <button class="co-btn-primary" style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.2s;" onclick="closeInsufficientModal()">
+                    <i class="fa-solid fa-money-bill"></i> Use Cash on Delivery
+                </button>
+            </div>
+        </div>
+    </div>

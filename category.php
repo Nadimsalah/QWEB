@@ -101,7 +101,7 @@ if ($con && count($shops)) {
                       JOIN Shops ON Shops.ShopID = ShopsCategory.ShopID
                       WHERE Shops.ShopID IN ($shopIds) AND Shops.Status='ACTIVE'
                         AND Foods.FoodPhoto != '' AND Foods.FoodPhoto != '0'
-                      ORDER BY RAND() LIMIT 4");
+                      ORDER BY RAND() LIMIT 20");
     if ($r)
         while ($row = $r->fetch_assoc())
             $products[] = $row;
@@ -154,7 +154,14 @@ if ($con && count($shops)) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $catName ?> Â· QOON</title>
+    <title><?= $catName ?> · QOON</title>
+    <!-- ⚡ Apply theme BEFORE paint to prevent flash -->
+    <script>
+        (function() {
+            var t = localStorage.getItem('qoon_theme') || 'dark';
+            if (t === 'light') document.documentElement.classList.add('light-mode');
+        })();
+    </script>
     <meta name="description" content="Explore <?= $catName ?> shops, products, stories and reels on QOON.">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -170,6 +177,17 @@ if ($con && count($shops)) {
             --accent-glow-2: #ffffff;
             --accent-glow-3: #9b2df1;
             --accent: #ffffff;
+        }
+
+        html.light-mode {
+            --bg-color: #ffffff;
+            --text-main: #0f0f0f;
+            --text-muted: rgba(0, 0, 0, 0.6);
+            --glass-bg: rgba(0, 0, 0, 0.05);
+            --glass-border: rgba(0, 0, 0, 0.10);
+            --glass-hover: rgba(0, 0, 0, 0.10);
+            --accent-glow-2: #cccccc;
+            --accent: #0f0f0f;
         }
 
         *,
@@ -563,10 +581,19 @@ if ($con && count($shops)) {
 
         /* ── Featured Products Grid ── */
         .products-big-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            display: flex;
             gap: 24px;
-            margin-bottom: 32px;
+            overflow-x: auto;
+            width: calc(100% + 50vw - 50%);
+            padding-right: calc(50vw - 50% + 20px);
+            margin-bottom: 40px;
+            padding-bottom: 24px;
+            scrollbar-width: none;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+        .products-big-grid::-webkit-scrollbar {
+            display: none;
         }
 
         .premium-floating-card {
@@ -584,6 +611,8 @@ if ($con && count($shops)) {
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             padding: 24px;
             cursor: pointer;
+            flex: 0 0 260px;
+            scroll-snap-align: start;
         }
 
         .premium-floating-card:hover {
@@ -966,9 +995,19 @@ if ($con && count($shops)) {
         /* â”€â”€ Products Grid â”€â”€ */
         /* ── Big Products Grid (Post Style) ── */
         .products-big-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            display: flex;
             gap: 20px;
+            overflow-x: auto;
+            width: calc(100% + 50vw - 50%);
+            padding-right: calc(50vw - 50% + 20px);
+            margin-bottom: 40px;
+            padding-bottom: 24px;
+            scrollbar-width: none;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+        .products-big-grid::-webkit-scrollbar {
+            display: none;
         }
 
         .product-card-big {
@@ -1094,7 +1133,8 @@ if ($con && count($shops)) {
             display: flex;
             gap: 20px;
             overflow-x: auto;
-            width: 100%;
+            width: calc(100% + 50vw - 50%);
+            padding-right: calc(50vw - 50% + 20px);
             margin-bottom: 40px;
             padding-bottom: 24px;
             scrollbar-width: none;
@@ -1284,6 +1324,8 @@ if ($con && count($shops)) {
             display: flex;
             gap: 14px;
             overflow-x: auto;
+            width: calc(100% + 50vw - 50%);
+            padding-right: calc(50vw - 50% + 20px);
             padding-bottom: 8px;
             scrollbar-width: none;
         }
@@ -1615,9 +1657,10 @@ if ($con && count($shops)) {
                 overflow-x: auto;
                 scrollbar-width: none;
                 scroll-snap-type: x mandatory;
+                scroll-behavior: smooth;
                 width: calc(100% + 40px);
-                margin-left: -20px;
-                padding: 0 20px 20px;
+                margin: -10px -20px -40px -20px;
+                padding: 10px 20px 40px 20px;
                 gap: 14px;
             }
 
@@ -1625,12 +1668,14 @@ if ($con && count($shops)) {
                 display: none;
             }
 
-            .product-card-big {
-                flex: 0 0 150px;
+            .premium-floating-card {
+                flex: 0 0 180px;
                 scroll-snap-align: start;
-                padding: 12px;
-                gap: 10px;
+                padding: 16px;
+                aspect-ratio: 4/5;
             }
+            .pfc-name { font-size: 16px !important; }
+            .pfc-price { font-size: 14px !important; }
 
             .pb-photo {
                 border-radius: 10px;
@@ -1667,6 +1712,84 @@ if ($con && count($shops)) {
                 border-radius: 0;
             }
         }
+
+        /* --- Light Mode Specifics --- */
+        html.light-mode .grid-bg { background-image: radial-gradient(rgba(0, 0, 0, 0.08) 1px, transparent 1px); }
+        html.light-mode .grid-glow { display: block; background-image: radial-gradient(rgba(44,181,232,0.8) 2px, transparent 2px); opacity: 0.6; }
+        html.light-mode .aurora-container { display: block; }
+        html.light-mode .aurora-blob { opacity: 0.15; mix-blend-mode: multiply; }
+        
+        html.light-mode .topbar { background: transparent; }
+        html.light-mode .back-btn { background: rgba(0,0,0,0.05); color: #000; border-color: rgba(0,0,0,0.1); }
+        html.light-mode .cat-hero h1 { text-shadow: none; color: #0f0f0f; }
+        html.light-mode .cat-hero p { color: rgba(0,0,0,0.6); }
+        html.light-mode .cat-hero-eyebrow { background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.1); color: #0f0f0f; }
+        
+        html.light-mode .sec-title { color: #0f0f0f; }
+        html.light-mode .see-all-btn { background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.1); color: #0f0f0f; }
+        html.light-mode .see-all-btn:hover { background: rgba(0,0,0,0.08); border-color: rgba(0,0,0,0.2); }
+        
+        html.light-mode .premium-floating-card { background: #fff; border-color: rgba(0,0,0,0.1); box-shadow: 0 8px 30px rgba(0,0,0,0.06); }
+        html.light-mode .pfc-name { text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
+        
+        html.light-mode .search-wrapper { background: #fff; border-color: rgba(0,0,0,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+        html.light-mode .search-wrapper i { color: #000; }
+        html.light-mode .search-input { color: #000; }
+        html.light-mode .search-input::placeholder { color: rgba(0,0,0,0.5); }
+        
+        html.light-mode .cat-stat { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.1); }
+        html.light-mode .logo-carousel-item { background: #fff; border-color: rgba(0,0,0,0.08); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        html.light-mode .logo-carousel-item img { filter: none; opacity: 1; }
+        html.light-mode .logo-carousel-item:hover img { transform: scale(1.05); }
+        
+        html.light-mode .product-card-big,
+        html.light-mode .shop-card,
+        html.light-mode .post-card,
+        html.light-mode .reel-card {
+            background: #fff;
+            border-color: rgba(0,0,0,0.08);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+        }
+        
+        html.light-mode .pb-name,
+        html.light-mode .shop-name,
+        html.light-mode .post-shop-name,
+        html.light-mode .post-text { color: #0f0f0f; }
+        
+        html.light-mode .pb-shop,
+        html.light-mode .shop-cats,
+        html.light-mode .post-time { color: rgba(0,0,0,0.6); }
+
+        html.light-mode .tbb-gradient-text { background: none !important; -webkit-text-fill-color: #0f0f0f !important; color: #0f0f0f !important; }
+
+        html.light-mode .feed-divider { background: rgba(0,0,0,0.08); }
+        
+        html.light-mode .feed-section { background-color: #ffffff; box-shadow: 0 -1px 0 rgba(0,0,0,0.05); }
+        html.light-mode .feed-section::before { background: linear-gradient(to bottom, transparent, #ffffff); }
+
+        html.light-mode .feed-inline-product { background: rgba(0, 0, 0, 0.03); border-color: rgba(0, 0, 0, 0.08); color: #000; }
+        html.light-mode .feed-inline-product:hover { background: rgba(0, 0, 0, 0.06); border-color: rgba(0, 0, 0, 0.15); }
+        html.light-mode .fip-icon-holder { background: rgba(44, 181, 232, 0.1); color: #0d8abc; }
+        html.light-mode .fip-name { color: #000; }
+        html.light-mode .fip-price { color: #0d8abc; }
+        html.light-mode .fip-right { color: rgba(0, 0, 0, 0.3); }
+
+        /* ✨ Theme Toggle FAB */
+        .theme-fab {
+            position: fixed; bottom: 28px; right: 28px; width: 52px; height: 52px;
+            border-radius: 50%; border: none; cursor: pointer; z-index: 99999;
+            display: flex; align-items: center; justify-content: center; font-size: 20px;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+            background: linear-gradient(135deg, #4a25e1, #2cb5e8); color: #fff;
+            box-shadow: 0 4px 20px rgba(44, 181, 232, 0.4), 0 0 0 1px rgba(255,255,255,0.1);
+        }
+        .theme-fab:hover { transform: scale(1.12) rotate(20deg); box-shadow: 0 8px 32px rgba(44, 181, 232, 0.5), 0 0 0 1px rgba(255,255,255,0.15); }
+        .theme-fab:active { transform: scale(0.96); }
+        html.light-mode .theme-fab { background: linear-gradient(135deg, #ffffff, #f2f2f2); color: #4a25e1; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12), 0 0 0 1px #e5e5e5; }
+        html.light-mode .theme-fab:hover { box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0,0,0,0.1); }
+        .theme-fab .fab-icon { transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s; display: block; }
+        .theme-fab.spinning .fab-icon { transform: rotate(360deg); }
+        @media (max-width: 768px) { .theme-fab { bottom: 84px; right: 16px; width: 44px; height: 44px; font-size: 17px; } }
     </style>
 </head>
 
@@ -2025,8 +2148,8 @@ if ($con && count($shops)) {
 
                             <div class="post-actions">
                                 <div class="action-group">
-                                    <button class="action-btn" onclick="handleLike(this)"><i class="fa-regular fa-heart"></i>
-                                        <?= intval($p['PostLikes'] ?? 0) ?></button>
+                                    <button class="action-btn" onclick="handleLike(this, <?= $p['PostId'] ?? $p['PostID'] ?? '0' ?>, <?= $p['ShopID'] ?? '0' ?>)"><i class="fa-regular fa-heart"></i>
+                                        <span><?= intval($p['PostLikes'] ?? 0) ?></span></button>
                                     <button class="action-btn" onclick="openCommentModal(<?= $p['PostId'] ?? $p['PostID'] ?? '0' ?>, '<?= addslashes(htmlspecialchars($p['ShopName'] ?? 'Shop')) ?>')"><i class="fa-regular fa-comment"></i>
                                         <?= intval($p['Postcomments'] ?? 0) ?></button>
                                     <button class="action-btn"><i class="fa-solid fa-share-nodes"></i></button>
@@ -2574,26 +2697,7 @@ if ($con && count($shops)) {
                 }
             );
         }
-        // --- AUTH CHECKS FOR GUEST INTERACTIONS ---
-        function handleLike(btn) {
-            const uid = (document.cookie.match('(^|;) ?qoon_user_id=([^;]*)(;|$)')||[])[2];
-            const isLoggedIn = (uid && uid !== '0' && uid !== '');
-            if (!isLoggedIn) {
-                if (typeof openSignup === 'function') openSignup();
-                else window.location.href = 'index.php?auth_required=1';
-                return;
-            }
-            const icon = btn.querySelector('i');
-            if (icon.classList.contains('fa-regular')) {
-                icon.classList.remove('fa-regular');
-                icon.classList.add('fa-solid');
-                icon.style.color = '#ff3b30';
-            } else {
-                icon.classList.remove('fa-solid');
-                icon.classList.add('fa-regular');
-                icon.style.color = '';
-            }
-        }
+
     </script>
 
     
@@ -2608,6 +2712,45 @@ if ($con && count($shops)) {
     <?php include 'includes/modals/comments.php'; ?>
     <?php include 'includes/modals/product.php'; ?>
 
+    <!-- ✨ Theme Toggle FAB -->
+    <button class="theme-fab" id="qoon-theme-fab" aria-label="Toggle light/dark mode" onclick="qoonToggleTheme()">
+        <i class="fab-icon" id="qoon-fab-icon"></i>
+    </button>
+
+    <script>
+    /* ── Theme Toggle Button Logic ── */
+    (function () {
+        var DARK_ICON = '🌙';
+        var LIGHT_ICON = '☀️';
+        var htmlEl = document.documentElement;
+        var fabIcon = document.getElementById('qoon-fab-icon');
+        var fab = document.getElementById('qoon-theme-fab');
+
+        function syncIcon() {
+            if (!fabIcon) return;
+            var isLight = htmlEl.classList.contains('light-mode');
+            fabIcon.textContent = isLight ? DARK_ICON : LIGHT_ICON;
+            fab.title = isLight ? 'Switch to dark mode' : 'Switch to light mode';
+        }
+        syncIcon();
+
+        window.qoonToggleTheme = function () {
+            var isLight = htmlEl.classList.contains('light-mode');
+            if (isLight) {
+                htmlEl.classList.remove('light-mode');
+                localStorage.setItem('qoon_theme', 'dark');
+            } else {
+                htmlEl.classList.add('light-mode');
+                localStorage.setItem('qoon_theme', 'light');
+            }
+            if (fab) {
+                fab.classList.add('spinning');
+                setTimeout(function () { fab.classList.remove('spinning'); }, 500);
+            }
+            syncIcon();
+        };
+    })();
+    </script>
 </body>
 </html>
 

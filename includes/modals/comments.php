@@ -1,3 +1,20 @@
+<style>
+    /* ── COMMENTS LIGHT MODE OVERRIDES ── */
+    html.light-mode #comments-modal-overlay { background: rgba(255, 255, 255, 0.4); }
+    html.light-mode #comments-modal { background: #ffffff !important; border-top-color: rgba(0,0,0,0.08) !important; box-shadow: 0 -10px 40px rgba(0,0,0,0.05) !important; }
+    html.light-mode #comments-modal h3 { color: #0f1115 !important; border-bottom-color: rgba(0,0,0,0.05) !important; }
+    html.light-mode #comments-modal .comment-drag-handle { background: rgba(0,0,0,0.1) !important; }
+    html.light-mode #comments-modal .comment-author { color: #0f1115 !important; }
+    html.light-mode #comments-modal .comment-text { color: #374151 !important; }
+    html.light-mode #comments-modal .comment-time, 
+    html.light-mode #comments-modal .comment-reply-btn, 
+    html.light-mode #comments-modal .comment-likes { color: #6b7280 !important; }
+    html.light-mode #comments-modal .comment-input-wrap { background: #ffffff !important; border-top-color: rgba(0,0,0,0.05) !important; }
+    html.light-mode #comments-modal #comment-input { background: #f3f4f6 !important; border-color: rgba(0,0,0,0.1) !important; color: #0f1115 !important; }
+    html.light-mode #comments-modal #comment-input:focus { border-color: rgba(0,0,0,0.2) !important; }
+    html.light-mode #comments-modal .send-btn { background: #0f1115 !important; color: #ffffff !important; }
+</style>
+
     <!-- COMMENTS MODAL -->
     <div id="comments-modal-overlay"
         style="position: fixed; inset: 0; z-index: 10000; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); display: none; align-items: flex-end; justify-content: center; opacity: 0; transition: opacity 0.3s ease;">
@@ -6,7 +23,7 @@
 
             <div style="width: 100%; display: flex; justify-content: center; padding: 12px 0; cursor: pointer;"
                 onclick="closeCommentModal()">
-                <div style="width: 40px; height: 5px; background: rgba(255,255,255,0.2); border-radius: 10px;"></div>
+                <div class="comment-drag-handle" style="width: 40px; height: 5px; background: rgba(255,255,255,0.2); border-radius: 10px;"></div>
             </div>
 
             <h3
@@ -20,17 +37,17 @@
                         style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">
                     <div style="flex: 1;">
                         <div style="display: flex; align-items: baseline; gap: 8px;">
-                            <span style="font-weight: 600; font-size: 14px; color: #fff;">Sarah M.</span>
-                            <span style="font-size: 12px; color: rgba(255,255,255,0.5);">2h</span>
+                            <span class="comment-author" style="font-weight: 600; font-size: 14px; color: #fff;">Sarah M.</span>
+                            <span class="comment-time" style="font-size: 12px; color: rgba(255,255,255,0.5);">2h</span>
                         </div>
-                        <p style="font-size: 14px; color: rgba(255,255,255,0.8); margin-top: 4px; line-height: 1.4;">
+                        <p class="comment-text" style="font-size: 14px; color: rgba(255,255,255,0.8); margin-top: 4px; line-height: 1.4;">
                             This looks amazing! Can't wait to try it out.</p>
                         <div style="display: flex; gap: 16px; margin-top: 8px;">
-                            <span
+                            <span class="comment-reply-btn"
                                 style="font-size: 12px; color: rgba(255,255,255,0.5); font-weight: 500; cursor: pointer; transition: color 0.2s;"
                                 onmouseover="this.style.color='#fff'"
                                 onmouseout="this.style.color='rgba(255,255,255,0.5)'">Reply</span>
-                            <span
+                            <span class="comment-likes"
                                 style="font-size: 12px; color: rgba(255,255,255,0.5); font-weight: 500; cursor: pointer;"><i
                                     class="fa-regular fa-heart"></i> 12</span>
                         </div>
@@ -38,7 +55,7 @@
                 </div>
             </div>
 
-            <div
+            <div class="comment-input-wrap"
                 style="padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.05); background: #0a0a0a; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; padding-bottom: 32px;">
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <img src="https://ui-avatars.com/api/?name=Me&background=2cb5e8&color=fff"
@@ -48,7 +65,7 @@
                             style="width: 100%; height: 44px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 22px; padding: 0 44px 0 16px; color: #fff; font-size: 14px; font-family: Inter, sans-serif; outline: none; transition: border-color 0.2s;"
                             onfocus="this.style.borderColor='rgba(255,255,255,0.3)'"
                             onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
-                        <button onclick="sendComment()"
+                        <button class="send-btn" onclick="sendComment()"
                             style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 28px; height: 28px; border-radius: 50%; background: #fff; color: #000; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s;"
                             onmouseover="this.style.transform='translateY(-50%) scale(1.1)'"
                             onmouseout="this.style.transform='translateY(-50%) scale(1)'">
@@ -89,8 +106,8 @@
             return Math.floor(diff / 86400) + 'd';
         }
 
-        function handleLike(btn) {
-            const uid = (document.cookie.match('(^|;) ?qoon_user_id=([^;]*)(;|$)')||[])[2];
+        function handleLike(btn, postId, shopId) {
+            const uid = getCookie('qoon_user_id');
             const isLoggedIn = (uid && uid !== '0' && uid !== '');
             if (!isLoggedIn) {
                 if (typeof openSignup === 'function') {
@@ -100,21 +117,44 @@
                 }
                 return;
             }
-            // Visual toggle for authenticated users (API call can be added here)
+            
+            if (!postId || postId == '0') return;
+            shopId = shopId || '0';
+
             const icon = btn.querySelector('i');
-            if (icon.classList.contains('fa-regular')) {
+            const span = btn.querySelector('span');
+            let count = span ? parseInt(span.innerText) || 0 : 0;
+            const isLiked = icon.classList.contains('fa-solid');
+            const endpoint = isLiked ? 'RemoveLike.php' : 'AddLike.php';
+
+            // Optimistic UI Toggle
+            if (!isLiked) {
                 icon.classList.remove('fa-regular');
                 icon.classList.add('fa-solid');
                 icon.style.color = '#ff3b30';
+                count++;
             } else {
                 icon.classList.remove('fa-solid');
                 icon.classList.add('fa-regular');
                 icon.style.color = '';
+                count = Math.max(0, count - 1);
             }
+            if (span) span.innerText = count;
+
+            // API Request
+            let fd = new FormData();
+            fd.append('UserID', uid);
+            fd.append('PostID', postId);
+            fd.append('ShopID', shopId);
+
+            fetch(endpoint, {
+                method: 'POST',
+                body: fd
+            }).catch(e => console.error("Error toggling like:", e));
         }
 
         function openCommentModal(postId, shopName) {
-            const uid = (document.cookie.match('(^|;) ?qoon_user_id=([^;]*)(;|$)')||[])[2];
+            const uid = getCookie('qoon_user_id');
             const isLoggedIn = (uid && uid !== '0' && uid !== '');
             if (!isLoggedIn) {
                 if (typeof openSignup === 'function') {
@@ -173,13 +213,13 @@
                                 <img src="${photo}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=${color}&color=fff'">
                                 <div style="flex: 1;">
                                     <div style="display: flex; align-items: baseline; gap: 8px;">
-                                        <span style="font-weight: 600; font-size: 14px; color: #fff;">${userName}</span>
-                                        <span style="font-size: 12px; color: rgba(255,255,255,0.5);">${timeAgo(c.CreatedAtComments)}</span>
+                                        <span class="comment-author" style="font-weight: 600; font-size: 14px; color: #fff;">${userName}</span>
+                                        <span class="comment-time" style="font-size: 12px; color: rgba(255,255,255,0.5);">${timeAgo(c.CreatedAtComments)}</span>
                                     </div>
-                                    <p style="font-size: 14px; color: rgba(255,255,255,0.8); margin-top: 4px; line-height: 1.4; word-break: break-word;">${text}</p>
+                                    <p class="comment-text" style="font-size: 14px; color: rgba(255,255,255,0.8); margin-top: 4px; line-height: 1.4; word-break: break-word;">${text}</p>
                                     <div style="display: flex; gap: 16px; margin-top: 8px;">
-                                        <span style="font-size: 12px; color: rgba(255,255,255,0.5); font-weight: 500; cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.5)'" onclick="setReply('${userName}')">Reply</span>
-                                        <span style="font-size: 12px; color: rgba(255,255,255,0.5); font-weight: 500; cursor: pointer;"><i class="fa-regular fa-heart"></i> 0</span>
+                                        <span class="comment-reply-btn" style="font-size: 12px; color: rgba(255,255,255,0.5); font-weight: 500; cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.5)'" onclick="setReply('${userName}')">Reply</span>
+                                        <span class="comment-likes" style="font-size: 12px; color: rgba(255,255,255,0.5); font-weight: 500; cursor: pointer;"><i class="fa-regular fa-heart"></i> 0</span>
                                     </div>
                                 </div>
                             </div>
@@ -240,9 +280,11 @@
                 });
         }
 
+        const qoonPhpUserIdComments = '<?= isset($_COOKIE['qoon_user_id']) ? $_COOKIE['qoon_user_id'] : '' ?>';
         function getCookie(name) {
             let match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
             if (match) return match[2];
+            if (name === 'qoon_user_id') return qoonPhpUserIdComments;
             return null;
         }
 

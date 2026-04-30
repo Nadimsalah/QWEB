@@ -7,11 +7,372 @@
             --glass-border: rgba(255, 255, 255, 0.12);
             --glass-hover: rgba(255, 255, 255, 0.15);
             --accent-glow-1: #4a25e1;
-            /* Deep Purple */
             --accent-glow-2: #2cb5e8;
-            /* Cyan/Blue */
             --accent-glow-3: #9b2df1;
-            /* Magenta/Pink */
+            --grid-dot-base: rgba(255, 255, 255, 0.15);
+            --grid-dot-glow: rgba(255, 255, 255, 0.8);
+            --nav-bg: rgba(5, 5, 5, 0.4);
+            --nav-border: rgba(255, 255, 255, 0.05);
+            --mobile-nav-bg: #080808;
+            --mobile-nav-border: rgba(255, 255, 255, 0.08);
+            --feed-bg: #000000;
+            --post-card-bg: rgba(255, 255, 255, 0.03);
+            --post-card-border: rgba(255, 255, 255, 0.08);
+            --post-text-color: #e0e0e0;
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           ✨  LIGHT MODE — Creative Ivory & Glass Theme
+           Activated by adding class "light-mode" to <html>
+        ═══════════════════════════════════════════════════════════ */
+        /* ── YouTube-style clean light mode ── */
+        html.light-mode {
+            --bg-color: #ffffff;
+            --text-main: #0f0f0f;
+            --text-muted: #606060;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --glass-hover: rgba(255, 255, 255, 1);
+            --accent-glow-1: #4a25e1;
+            --accent-glow-2: #0e97d0;
+            --accent-glow-3: #7c1fd4;
+            --grid-dot-base: rgba(0, 0, 0, 0.07);
+            --grid-dot-glow: rgba(74, 37, 225, 0.35);
+            --nav-bg: rgba(255, 255, 255, 0.92);
+            --nav-border: #e5e5e5;
+            --mobile-nav-bg: #ffffff;
+            --mobile-nav-border: #e5e5e5;
+            --feed-bg: #ffffff;
+            --post-card-bg: #ffffff;
+            --post-card-border: #e5e5e5;
+            --post-text-color: #0f0f0f;
+        }
+
+        /* Light mode body */
+        html.light-mode body {
+            background-color: var(--bg-color);
+        }
+
+        /* Light mode aurora – cool blue/purple tint matching brand accent */
+        html.light-mode .aurora-blob {
+            opacity: 0.18;
+            filter: blur(160px) saturate(1.6);
+        }
+        html.light-mode .blob-1 {
+            background: linear-gradient(135deg, #2cb5e8, #6ee7f7);
+        }
+        html.light-mode .blob-2 {
+            background: linear-gradient(135deg, #4a25e1, #818cf8);
+        }
+        html.light-mode .blob-3 {
+            background: linear-gradient(135deg, #9b2df1, #c084fc);
+        }
+
+        /* Light mode grid dots */
+        html.light-mode .grid-bg {
+            background-image: radial-gradient(var(--grid-dot-base) 1px, transparent 1px);
+        }
+        html.light-mode .grid-glow {
+            background-image: radial-gradient(var(--grid-dot-glow) 1.5px, transparent 1.5px);
+            opacity: 0.6;
+        }
+
+        /* Light mode nav */
+        html.light-mode header {
+            background: var(--nav-bg) !important;
+            backdrop-filter: blur(20px) saturate(2);
+            border-bottom-color: var(--nav-border) !important;
+        }
+        html.light-mode .logo-text { color: var(--text-main); }
+        html.light-mode .badge { border-color: var(--text-muted); color: var(--text-muted); }
+        html.light-mode .signup-btn { background: #0f0f0f; color: #fff; }
+        html.light-mode .signup-btn:hover { background: #1a1a1a; }
+        html.light-mode .btn-primary { background: #0f0f0f; color: #fff; }
+
+        /* Light mode profile link */
+        html.light-mode .profile-link {
+            background: rgba(255, 255, 255, 0.6);
+            border-color: rgba(0, 0, 0, 0.12);
+            color: #0f0f0f;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        html.light-mode .profile-link:hover {
+            background: rgba(255, 255, 255, 0.85);
+            border-color: rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        html.light-mode .profile-link span { color: #0f0f0f; }
+        html.light-mode .profile-link:hover span { color: var(--accent-glow-2); }
+
+        /* Light mode prompt/search bar */
+        html.light-mode .prompt-container {
+            background: rgba(255, 255, 255, 0.65);
+            border-color: rgba(0, 0, 0, 0.1);
+            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255,255,255,0.9);
+            backdrop-filter: blur(30px) saturate(1.8);
+        }
+        html.light-mode .prompt-container:focus-within {
+            border-color: var(--accent-glow-2);
+            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.15), 0 0 0 3px rgba(44, 181, 232, 0.15);
+        }
+        html.light-mode .prompt-input { color: var(--text-main); }
+        html.light-mode .prompt-input::placeholder { color: var(--text-muted); }
+        html.light-mode .icon-btn { color: var(--text-muted); }
+        html.light-mode .icon-btn:hover { color: var(--text-main); background: rgba(0, 0, 0, 0.06); }
+        html.light-mode .platform-toggle { background: rgba(0, 0, 0, 0.05); }
+        html.light-mode .toggle-btn { color: var(--text-muted); }
+        html.light-mode .toggle-btn.active { background: rgba(0, 0, 0, 0.12); color: var(--text-main); }
+        html.light-mode .toggle-btn:not(.active):hover { background: rgba(0, 0, 0, 0.07); color: var(--text-main); }
+        html.light-mode .submit-btn { background: rgba(0, 0, 0, 0.05); }
+        html.light-mode .submit-btn:hover { background: #0f0f0f; color: #fff; }
+
+        /* Light mode glass action buttons */
+        html.light-mode .glass-action-btn {
+            background: rgba(255, 255, 255, 0.65);
+            border-color: rgba(0, 0, 0, 0.1);
+            color: #0f0f0f;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        html.light-mode .glass-action-btn:hover {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+        /* Light mode QOON Pay logo — slightly larger to match visual scale */
+        html.light-mode .qpay-extra-logo { filter: none; opacity: 0.85; height: 48px !important; }
+
+        /* Light mode hero text — no shadows */
+        html.light-mode .hero-text h1 {
+            text-shadow: none;
+            color: var(--text-main);
+        }
+        html.light-mode .hero-text p {
+            color: var(--text-muted);
+            text-shadow: none;
+        }
+
+        /* Light mode category cards */
+        html.light-mode .cat-card {
+            background: rgba(255, 255, 255, 0.6);
+            border-color: rgba(0, 0, 0, 0.07);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            backdrop-filter: blur(20px);
+            background-image: radial-gradient(at 0% 0%, rgba(44, 181, 232, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(155, 45, 241, 0.05) 0px, transparent 50%);
+        }
+        html.light-mode .cat-card:hover {
+            background-color: rgba(255, 255, 255, 0.85);
+            border-color: rgba(0, 0, 0, 0.1);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
+        html.light-mode .cat-name { color: var(--text-main); }
+        html.light-mode .cat-tag { background: rgba(0, 0, 0, 0.06); color: var(--text-muted); }
+        html.light-mode .cat-img-wrapper {
+            border-color: rgba(0,0,0,0.05);
+            background: linear-gradient(90deg,
+                rgba(44, 181, 232, 0.12) 25%,
+                rgba(155, 45, 241, 0.2) 50%,
+                rgba(74, 37, 225, 0.1) 75%);
+        }
+        html.light-mode .nav-arrow {
+            border-color: rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.5);
+            color: var(--text-muted);
+        }
+        html.light-mode .nav-arrow:hover {
+            background: rgba(255, 255, 255, 0.85);
+            border-color: rgba(0, 0, 0, 0.2);
+            color: var(--text-main);
+        }
+
+        /* Light mode feed section */
+        html.light-mode .feed-section {
+            background-color: var(--feed-bg);
+            border-top-color: rgba(0,0,0,0.06);
+        }
+        html.light-mode .post-card {
+            background: var(--post-card-bg);
+            border-color: var(--post-card-border);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        }
+        html.light-mode .post-text { color: var(--post-text-color); }
+        html.light-mode .post-shop-name { color: var(--text-main); }
+        html.light-mode .post-time { color: var(--text-muted); }
+        html.light-mode .post-actions { border-top-color: rgba(0,0,0,0.06); }
+        html.light-mode .action-btn { color: var(--text-muted); }
+        html.light-mode .action-btn:hover { color: var(--text-main); }
+        html.light-mode .post-avatar { border-color: rgba(0,0,0,0.1); }
+        html.light-mode .order-btn { background: #0f0f0f; color: #fff; }
+        html.light-mode .carousel-dot { background: rgba(0,0,0,0.25); }
+        html.light-mode .carousel-dot.active { background: #0f0f0f; }
+
+        /* Light mode reel shimmer */
+        html.light-mode .reel-shimmer {
+            background: rgba(0, 0, 0, 0.06) !important;
+        }
+
+        /* Light mode section title */
+        html.light-mode .section-title { color: var(--text-main) !important; }
+
+        /* Light mode scrollbars */
+        html.light-mode ::-webkit-scrollbar-track { background: rgba(0,0,0,0.02); }
+        html.light-mode ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); }
+        html.light-mode ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.3); }
+
+        /* Light mode modals */
+        html.light-mode .auth-modal {
+            background: #ffffff;
+            border-color: rgba(0,0,0,0.08);
+            box-shadow: 0 32px 64px rgba(0,0,0,0.15);
+        }
+        html.light-mode .auth-title { color: #0f0f0f; }
+        html.light-mode .auth-subtitle { color: var(--text-muted); }
+        html.light-mode .form-input {
+            background: rgba(255,255,255,0.8);
+            border-color: rgba(0,0,0,0.12);
+            color: #0f0f0f;
+        }
+        html.light-mode .form-input:focus { border-color: var(--accent-glow-2); background: #fff; }
+        html.light-mode .auth-submit-btn { background: #0f0f0f; color: #fff; }
+        html.light-mode .auth-toggle-link { color: var(--text-muted); }
+        html.light-mode .auth-toggle-link span { color: #0f0f0f; }
+        html.light-mode .btn-email {
+            background: rgba(0,0,0,0.05);
+            color: #0f0f0f;
+            border-color: rgba(0,0,0,0.1);
+        }
+        html.light-mode .btn-email:hover { background: rgba(0,0,0,0.08); }
+        html.light-mode .social-btn { border-color: rgba(0,0,0,0.1); }
+
+        /* Light mode profile dropdown */
+        html.light-mode .profile-dropdown {
+            background: #ffffff;
+            border-color: rgba(0,0,0,0.08);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+        }
+        html.light-mode .dropdown-item { color: rgba(15,14,13,0.75); }
+        html.light-mode .dropdown-item:hover { background: rgba(0,0,0,0.05); color: #0f0f0f; }
+        html.light-mode .dropdown-divider { background: rgba(0,0,0,0.06); }
+
+        /* Light mode mobile nav */
+        html.light-mode .mobile-nav {
+            background-color: var(--mobile-nav-bg) !important;
+            border-top-color: var(--mobile-nav-border) !important;
+        }
+        html.light-mode .mobile-nav-item { color: rgba(15,14,13,0.4); }
+        html.light-mode .mobile-nav-item.active { color: #0f0f0f; }
+        html.light-mode .mobile-nav-center {
+            background: #fff;
+            border-color: rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        /* Light mode teleport modal */
+        html.light-mode #teleport-modal {
+            background: #ffffff;
+            border-color: rgba(0,0,0,0.08);
+            box-shadow: 0 40px 100px rgba(0,0,0,0.2);
+        }
+        html.light-mode #teleport-search-bar {
+            background: rgba(255,255,255,0.8);
+            border-color: rgba(0,0,0,0.12);
+            color: #0f0f0f;
+        }
+        html.light-mode .teleport-close {
+            background: rgba(0,0,0,0.06);
+            color: #0f0f0f;
+        }
+        html.light-mode #teleport-results {
+            background: #ffffff;
+            border-color: rgba(0,0,0,0.1);
+        }
+        html.light-mode .teleport-result-item { border-bottom-color: rgba(0,0,0,0.05); }
+        html.light-mode .teleport-result-item:hover { background: rgba(0,0,0,0.04); }
+
+        /* Light mode location overlay */
+        html.light-mode .location-overlay {
+            background: rgba(240, 237, 232, 0.6);
+            border-color: rgba(0,0,0,0.06);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.12);
+        }
+        html.light-mode .location-content {
+            background: rgba(255,255,255,0.7);
+            border-color: rgba(0,0,0,0.08);
+            box-shadow: 0 40px 100px rgba(0,0,0,0.15);
+        }
+        html.light-mode .location-btn { background: #0f0f0f; color: #fff; }
+        html.light-mode .location-status { color: var(--accent-glow-2); }
+
+        /* Light mode — s-commerce title gradient stays vibrant */
+        html.light-mode .s-commerce-anim { text-shadow: none; }
+
+        /* Light mode logout/QR cards */
+        html.light-mode .logout-card {
+            background: rgba(255,255,255,0.8);
+            border-color: rgba(0,0,0,0.08);
+        }
+        html.light-mode .logout-card h2 { color: #0f0f0f; }
+        html.light-mode .logout-card p { color: var(--text-muted); }
+        html.light-mode .l-btn.cancel { background: rgba(0,0,0,0.05); color: #0f0f0f; border-color: rgba(0,0,0,0.1); }
+        html.light-mode .qr-card {
+            background: rgba(255,255,255,0.75);
+            border-color: rgba(0,0,0,0.08);
+        }
+        html.light-mode .qr-card h2 { color: #0f0f0f; }
+        html.light-mode .qr-card p { color: var(--text-muted); }
+        html.light-mode .close-qr { background: rgba(0,0,0,0.06); color: #0f0f0f; }
+        html.light-mode .u-phone-qr { color: var(--text-muted); }
+
+        /* ── Theme Toggle Button ── */
+        .theme-fab {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+            /* Dark mode look */
+            background: linear-gradient(135deg, #4a25e1, #2cb5e8);
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(44, 181, 232, 0.4), 0 0 0 1px rgba(255,255,255,0.1);
+        }
+        .theme-fab:hover {
+            transform: scale(1.12) rotate(20deg);
+            box-shadow: 0 8px 32px rgba(44, 181, 232, 0.5), 0 0 0 1px rgba(255,255,255,0.15);
+        }
+        .theme-fab:active { transform: scale(0.96); }
+
+        html.light-mode .theme-fab {
+            background: linear-gradient(135deg, #ffffff, #f2f2f2);
+            color: #4a25e1;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12), 0 0 0 1px #e5e5e5;
+        }
+        html.light-mode .theme-fab:hover {
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0,0,0,0.1);
+        }
+
+        /* Icon spin animation on toggle */
+        .theme-fab .fab-icon {
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s;
+            display: block;
+        }
+        .theme-fab.spinning .fab-icon {
+            transform: rotate(360deg);
+        }
+
+        /* ── Mobile: hide FAB when nav is at bottom to avoid overlap ── */
+        @media (max-width: 768px) {
+            .theme-fab { bottom: 84px; right: 16px; width: 44px; height: 44px; font-size: 17px; }
         }
 
         * {
@@ -183,8 +544,8 @@
             position: fixed;
             inset: 0;
             z-index: 1;
-            /* Faint base grid */
-            background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+            /* Faint base grid — uses CSS var so it changes with light/dark mode */
+            background-image: radial-gradient(var(--grid-dot-base) 1px, transparent 1px);
             background-size: 24px 24px;
             pointer-events: none;
         }
@@ -194,8 +555,8 @@
             position: fixed;
             inset: 0;
             z-index: 2;
-            /* Brighter grid */
-            background-image: radial-gradient(rgba(255, 255, 255, 0.8) 1.5px, transparent 1.5px);
+            /* Brighter grid — uses CSS var so it responds to light/dark mode */
+            background-image: radial-gradient(var(--grid-dot-glow) 1.5px, transparent 1.5px);
             background-size: 24px 24px;
             pointer-events: none;
             /* Mask reveals this brighter grid only near the mouse */
@@ -350,9 +711,11 @@
         .category-grid {
             display: flex;
             gap: 20px;
-            padding: 0;
+            padding: 20px 4px 40px 4px;
+            margin: -20px -4px -40px -4px;
             overflow-x: auto;
             scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
             scrollbar-width: none;
         }
 
@@ -463,7 +826,7 @@
         }
 
         .feed-section {
-            background-color: #000000;
+            background-color: var(--feed-bg);
             width: 100%;
             margin: 0;
             padding: 80px 0;
@@ -483,8 +846,8 @@
         }
 
         .post-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: var(--post-card-bg);
+            border: 1px solid var(--post-card-border);
             border-radius: 24px;
             padding: 24px;
             display: flex;
@@ -1214,9 +1577,9 @@
                 height: 70px;
                 padding: 0 24px;
                 z-index: 15000;
-                background: rgba(5, 5, 5, 0.4);
+                background: var(--nav-bg) !important;
                 backdrop-filter: blur(12px);
-                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                border-bottom: 1px solid var(--nav-border) !important;
                 margin-bottom: 0;
             }
 
@@ -1361,14 +1724,12 @@
                 width: 100% !important;
                 height: 70px !important;
                 padding-bottom: env(safe-area-inset-bottom);
-                background-color: #080808 !important;
-                /* Solid dark color */
-                border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+                background-color: var(--mobile-nav-bg) !important;
+                border-top: 1px solid var(--mobile-nav-border) !important;
                 z-index: 999999 !important;
                 align-items: center;
                 justify-content: space-around;
                 margin: 0 !important;
-                /* NO transforms, NO backdrop-filters to ensure perfect fixed positioning */
             }
 
             .mobile-nav-item {

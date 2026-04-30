@@ -9,13 +9,15 @@ function loadEnv($path = null) {
     $envFile = $path ?? __DIR__ . '/.env';
     if (!file_exists($envFile)) return;
     $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    foreach ($lines as $line) {
+    foreach ($lines as $i => $line) {
+        // Strip UTF-8 BOM from first line
+        if ($i === 0) $line = ltrim($line, "\xEF\xBB\xBF");
         if (strpos(trim($line), '#') === 0) continue;
         if (strpos($line, '=') === false) continue;
         [$name, $value] = explode('=', $line, 2);
         $name  = trim($name);
         $value = trim($value);
-        if (!array_key_exists($name, $_ENV)) {
+        if (!empty($name) && !array_key_exists($name, $_ENV)) {
             putenv("$name=$value");
             $_ENV[$name]    = $value;
             $_SERVER[$name] = $value;
@@ -26,7 +28,8 @@ function loadEnv($path = null) {
 // ── Security Response Headers ────────────────────────────────
 function secureHeaders() {
     header('X-Frame-Options: SAMEORIGIN');
-    header('X-Content-Type-Options: nosniff');
+    // Set default Content-Type for API responses to JSON to prevent mobile app parsing errors
+    header('Content-Type: application/json; charset=utf-8');
     header('X-XSS-Protection: 1; mode=block');
     header('Referrer-Policy: strict-origin-when-cross-origin');
     header('Permissions-Policy: geolocation=(self), camera=(), microphone=()');
@@ -138,7 +141,9 @@ function requireAuth($con, bool $dieOnFail = true): ?array {
         return null;
     }
 
-    if (($user['AccountState'] ?? 'Active') !== 'Active') {
+    // Block explicitly suspended accounts. Accept 'Active', 'NewAccount', etc.
+    $accountState = $user['AccountState'] ?? 'Active';
+    if (stripos($accountState, 'suspend') !== false || stripos($accountState, 'ban') !== false) {
         if ($dieOnFail) {
             http_response_code(403);
             echo json_encode(['success' => false, 'message' => 'Account is suspended']);
@@ -166,7 +171,7 @@ function requireDriverAuth($con, bool $dieOnFail = true): ?array {
         return null;
     }
 
-    $stmt = $con->prepare("SELECT DriverID, DriverName, DriverPhone, LANG FROM Drivers WHERE DriverToken=? LIMIT 1");
+    $stmt = $con->prepare("SELECT DriverID, FName, LName, DriverPhone, LANG FROM Drivers WHERE DriverToken=? LIMIT 1");
     if (!$stmt) { if ($dieOnFail) { echo json_encode(['success'=>false,'message'=>'Auth error']); exit; } return null; }
     $stmt->bind_param("s", $token);
     $stmt->execute();

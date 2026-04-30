@@ -99,16 +99,19 @@ try {
                 shuffle($finalRp); // Scatters products from same shop
 
                 if (!empty($finalRp)) {
-                    $html .= '<div style="width:100%;padding:30px 0;margin-top:20px;margin-bottom:20px;background:transparent;overflow:hidden;border-top:1px solid rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.05);">';
+                    $html .= '<div style="width:100%;padding:30px 0;margin-top:20px;margin-bottom:20px;background:transparent;overflow:hidden;border-top:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border);">';
                     $html .= '<h3 style="font-size:18px;font-weight:600;padding:0;margin-bottom:24px;color:var(--text-main);">Discover Products</h3>';
                     $html .= '<div class="no-scrollbar" style="display:flex;gap:16px;overflow-x:auto;padding:0;width:100%;scrollbar-width:none; ">';
                     foreach ($finalRp as $kp) {
                         $kpPhotoRaw = $kp['FoodPhoto'] ?? $kp['PostPhoto'] ?? $kp['PostPhoto1'] ?? null;
-                        
+
                         $rawPhotosF = array_filter(array_map('trim', explode(',', $kp['FoodPhoto'] ?? '')));
                         $imgUrlsF = [];
-                        foreach($rawPhotosF as $rp) { if($rp) $imgUrlsF[] = get_img_url($rp, $DomainNamee ?? null); }
-                        
+                        foreach ($rawPhotosF as $rp) {
+                            if ($rp)
+                                $imgUrlsF[] = get_img_url($rp, $DomainNamee ?? null);
+                        }
+
                         $kpPhoto = get_img_url($kpPhotoRaw, $DomainNamee ?? null);
                         $kpImg = !empty($imgUrlsF) ? $imgUrlsF[0] : htmlspecialchars($kpPhoto ?: 'https://ui-avatars.com/api/?name=Item&background=222&color=fff');
                         $kpShopLogo = get_img_url($kp['ShopLogo'] ?? null, $DomainNamee ?? null);
@@ -118,7 +121,7 @@ try {
                         $kpPriceHtml = (!empty($kp['FoodPrice']) && $kp['FoodPrice'] > 0) ? '<div style="font-size: 12px; font-weight: 700; color: var(--purple-glow);">' . htmlspecialchars($kp['FoodPrice']) . ' MAD</div>' : '';
                         $kpPriceVal = floatval($kp['FoodOfferPrice'] ?? 0) > 0 ? floatval($kp['FoodOfferPrice']) : floatval($kp['FoodPrice'] ?? 0);
                         $kpOldPrice = floatval($kp['FoodOfferPrice'] ?? 0) > 0 ? floatval($kp['FoodPrice'] ?? 0) : null;
-                        
+
                         $finalImages = (count($imgUrlsF) > 0) ? $imgUrlsF : [$kpImg];
                         $foodJson = json_encode([
                             'id' => $kp['FoodID'] ?? $kp['ProductID'] ?? 0,
@@ -134,10 +137,10 @@ try {
                             'extra1_p' => floatval($kp['ExtraPriceOne'] ?? 0),
                             'extra2_p' => floatval($kp['ExtraPriceTwo'] ?? 0)
                         ]);
-                        $html .= '<div style="flex: 0 0 160px; scroll-snap-align: start; display: flex; flex-direction: column; gap: 8px; cursor: pointer; border-radius: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); overflow: hidden; padding-bottom: 12px; transition: background 0.2s;" onclick="openProductModal(this)" data-product=\'' . htmlspecialchars($foodJson, ENT_QUOTES, 'UTF-8') . '\'>
-                                      <img src="' . $kpImg . '" onerror="this.src=\'https://ui-avatars.com/api/?name=Item&background=222&color=fff\'" style="width:100%; aspect-ratio: 1; object-fit: cover; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        $html .= '<div style="flex: 0 0 160px; scroll-snap-align: start; display: flex; flex-direction: column; gap: 8px; cursor: pointer; border-radius: 16px; background: var(--post-card-bg); border: 1px solid var(--post-card-border); overflow: hidden; padding-bottom: 12px; transition: background 0.2s;" onclick="openProductModal(this)" data-product=\'' . htmlspecialchars($foodJson, ENT_QUOTES, 'UTF-8') . '\'>
+                                      <img src="' . $kpImg . '" onerror="this.src=\'https://ui-avatars.com/api/?name=Item&background=222&color=fff\'" style="width:100%; aspect-ratio: 1; object-fit: cover; border-bottom: 1px solid var(--glass-border);">
                                       <div style="padding: 0 12px;">
-                                          <div style="font-size: 13px; font-weight: 600; color: #fff; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; margin-bottom: 4px;">' . $kpName . '</div>
+                                          <div style="font-size: 13px; font-weight: 600; color: var(--text-main); text-overflow: ellipsis; white-space: nowrap; overflow: hidden; margin-bottom: 4px;">' . $kpName . '</div>
                                           <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
                                               <img src="' . $kpSLogo . '" onerror="this.src=\'https://ui-avatars.com/api/?name=S\'" style="width: 14px; height: 14px; border-radius: 50%; object-fit: cover;">
                                               <span style="font-size: 11px; color: var(--text-muted); text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">' . $kpSName . '</span>
@@ -172,7 +175,7 @@ try {
                               AND Foods.FoodPhoto != '' AND Foods.FoodPhoto IS NOT NULL AND Foods.FoodPhoto != 'NONE'
                             ORDER BY RAND() 
                             LIMIT 10";
-                
+
                 $finalRp = [];
                 $stmtRP = $con->prepare($rpQuery);
                 if ($stmtRP) {
@@ -187,19 +190,22 @@ try {
                 }
 
                 if (!empty($finalRp)) {
-                    $html .= '<div style="width:100%;padding:30px 0;margin-top:20px;margin-bottom:20px;background:transparent;overflow:hidden;border-top:1px solid rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.05);">';
+                    $html .= '<div style="width:100%;padding:30px 0;margin-top:20px;margin-bottom:20px;background:transparent;overflow:hidden;border-top:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border);">';
                     $html .= '<h3 style="font-size:18px;font-weight:600;padding:0;margin-bottom:24px;color:#f1c40f; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Try before buy</h3>';
                     $html .= '<div class="no-scrollbar" style="display:flex;gap:16px;overflow-x:auto;padding:0;width:100%;scrollbar-width:none;">';
                     foreach ($finalRp as $kp) {
                         $kpPhotoRaw = $kp['FoodPhoto'] ?? null;
-                        
+
                         $rawPhotosF = array_filter(array_map('trim', explode(',', $kp['FoodPhoto'] ?? '')));
                         $imgUrlsF = [];
-                        foreach($rawPhotosF as $rp) { if($rp) $imgUrlsF[] = get_img_url($rp, $DomainNamee ?? null); }
-                        
+                        foreach ($rawPhotosF as $rp) {
+                            if ($rp)
+                                $imgUrlsF[] = get_img_url($rp, $DomainNamee ?? null);
+                        }
+
                         $kpPhoto = get_img_url($kpPhotoRaw, $DomainNamee ?? null);
                         $kpImg = !empty($imgUrlsF) ? $imgUrlsF[0] : htmlspecialchars($kpPhoto ?: 'https://ui-avatars.com/api/?name=Item&background=222&color=fff');
-                        
+
                         $kpShopLogo = get_img_url($kp['ShopLogo'] ?? null, $DomainNamee ?? null);
                         $kpName = htmlspecialchars($kp['FoodName'] ?? 'Fashion Item');
                         $kpSLogo = htmlspecialchars($kpShopLogo ?: 'https://ui-avatars.com/api/?name=S');
@@ -207,7 +213,7 @@ try {
                         $kpPriceHtml = (!empty($kp['FoodPrice']) && $kp['FoodPrice'] > 0) ? '<div style="font-size: 12px; font-weight: 700; color: #f1c40f;">' . htmlspecialchars($kp['FoodPrice']) . ' MAD</div>' : '';
                         $kpPriceVal = floatval($kp['FoodOfferPrice'] ?? 0) > 0 ? floatval($kp['FoodOfferPrice']) : floatval($kp['FoodPrice'] ?? 0);
                         $kpOldPrice = floatval($kp['FoodOfferPrice'] ?? 0) > 0 ? floatval($kp['FoodPrice'] ?? 0) : null;
-                        
+
                         $finalImages = (count($imgUrlsF) > 0) ? $imgUrlsF : [$kpImg];
                         $foodJson = json_encode([
                             'id' => $kp['FoodID'] ?? 0,
@@ -223,13 +229,13 @@ try {
                             'extra1_p' => floatval($kp['ExtraPriceOne'] ?? 0),
                             'extra2_p' => floatval($kp['ExtraPriceTwo'] ?? 0)
                         ]);
-                        $html .= '<div style="flex: 0 0 160px; scroll-snap-align: start; display: flex; flex-direction: column; gap: 8px; cursor: pointer; border-radius: 16px; background: rgba(241, 196, 15, 0.05); border: 1px solid rgba(241, 196, 15, 0.2); overflow: hidden; padding-bottom: 12px; transition: background 0.2s;" onclick="openProductModal(this)" data-product=\'' . htmlspecialchars($foodJson, ENT_QUOTES, 'UTF-8') . '\'>
+                        $html .= '<div style="flex: 0 0 160px; scroll-snap-align: start; display: flex; flex-direction: column; gap: 8px; cursor: pointer; border-radius: 16px; background: var(--post-card-bg); border: 1px solid var(--post-card-border); overflow: hidden; padding-bottom: 12px; transition: background 0.2s;" onclick="openProductModal(this)" data-product=\'' . htmlspecialchars($foodJson, ENT_QUOTES, 'UTF-8') . '\'>
                                       <div style="position:relative; width:100%; aspect-ratio:3/4;">
-                                          <img src="' . $kpImg . '" onerror="this.src=\'https://ui-avatars.com/api/?name=Item&background=222&color=fff\'" style="width:100%; height:100%; object-fit: cover; border-bottom: 1px solid rgba(241, 196, 15, 0.1);">
+                                          <img src="' . $kpImg . '" onerror="this.src=\'https://ui-avatars.com/api/?name=Item&background=222&color=fff\'" style="width:100%; height:100%; object-fit: cover; border-bottom: 1px solid var(--glass-border);">
                                           <div style="position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); color:#fff; font-size:10px; font-weight:700; padding:4px 8px; border-radius:99px; border:1px solid rgba(255,255,255,0.2);"><i class="fa-solid fa-vr-cardboard"></i> AR</div>
                                       </div>
                                       <div style="padding: 0 12px;">
-                                          <div style="font-size: 13px; font-weight: 600; color: #fff; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; margin-bottom: 4px;">' . $kpName . '</div>
+                                          <div style="font-size: 13px; font-weight: 600; color: var(--text-main); text-overflow: ellipsis; white-space: nowrap; overflow: hidden; margin-bottom: 4px;">' . $kpName . '</div>
                                           <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
                                               <img src="' . $kpSLogo . '" onerror="this.src=\'https://ui-avatars.com/api/?name=S\'" style="width: 14px; height: 14px; border-radius: 50%; object-fit: cover;">
                                               <span style="font-size: 11px; color: var(--text-muted); text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">' . $kpSName . '</span>
@@ -273,7 +279,7 @@ try {
                 $domain = $DomainNamee ?? 'https://qoon.app/dash/';
                 $uuid = uniqid();
 
-                $html = '<div class="feed-inline-reels" style="width:100vw;position:relative;left:50%;transform:translateX(-50%);padding:40px 0;margin-top:20px;margin-bottom:20px;background:transparent;overflow:hidden;border-top:1px solid rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.05);">';
+                $html = '<div class="feed-inline-reels" style="width:100vw;position:relative;left:50%;transform:translateX(-50%);padding:40px 0;margin-top:20px;margin-bottom:20px;background:transparent;overflow:hidden;border-top:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border);">';
                 $html .= '<h3 style="font-size:18px;font-weight:600;padding:0 max(20px,calc(50vw - 340px));margin-bottom:24px;color:var(--text-main);">Suggested Reels</h3>';
                 $html .= '<div id="reels-track-' . $uuid . '" class="reels-track" style="display:flex;gap:16px;overflow-x:auto;padding:0 max(20px,calc(50vw - 340px));scroll-padding-inline:max(20px,calc(50vw - 340px));width:100%;scrollbar-width:none;">';
 
@@ -394,16 +400,16 @@ try {
                         }
                         if ($globalIndex % 10 == 6 && $globalIndex >= 6) {
                             $aliId = "ali_feed_" . $globalIndex;
-                            $htmlOut .= '<div style="width:100%;padding:30px 0;margin-top:20px;margin-bottom:20px;background:transparent;overflow:hidden;border-top:1px solid rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.05);">';
+                            $htmlOut .= '<div style="width:100%;padding:30px 0;margin-top:20px;margin-bottom:20px;background:transparent;overflow:hidden;border-top:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border);">';
                             $htmlOut .= '<h3 style="font-size:18px;font-weight:600;padding:0;margin-bottom:24px;color:#ff4081; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-globe"></i> International Products</h3>';
                             $htmlOut .= '<div id="' . $aliId . '" class="ali-slider-container no-scrollbar" style="display:flex;gap:16px;overflow-x:auto;padding:0;width:100%;scrollbar-width:none;min-height:180px;align-items:flex-start;justify-content:flex-start;">';
                             // Pre-render shimmer placeholders (shown before JS loads the products)
                             for ($s = 0; $s < 4; $s++) {
                                 $htmlOut .= '<div style="flex:0 0 auto;width:140px;display:flex;flex-direction:column;">';
-                                $htmlOut .= '<div style="width:140px;height:180px;border-radius:12px;overflow:hidden;background:rgba(255,255,255,0.05);position:relative;">';
+                                $htmlOut .= '<div style="width:140px;height:180px;border-radius:12px;overflow:hidden;background:var(--glass-bg);position:relative;">';
                                 $htmlOut .= '<div style="position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.07) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 1.4s infinite;"></div>';
                                 $htmlOut .= '</div>';
-                                $htmlOut .= '<div style="margin-top:8px;height:14px;width:80%;border-radius:4px;background:rgba(255,255,255,0.05);position:relative;overflow:hidden;">';
+                                $htmlOut .= '<div style="margin-top:8px;height:14px;width:80%;border-radius:4px;background:var(--glass-bg);position:relative;overflow:hidden;">';
                                 $htmlOut .= '<div style="position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.07) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 1.4s infinite;"></div>';
                                 $htmlOut .= '</div>';
                                 $htmlOut .= '</div>';
@@ -666,31 +672,35 @@ if (empty($posts)) {
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 
-    
+
 
     <script>
-        
+        (function() {
+            var t = localStorage.getItem('qoon_theme') || 'dark';
+            if (t === 'light') document.documentElement.classList.add('light-mode');
+        })();
     </script>
     <link rel="stylesheet" href="assets/css/main.css">
     <style>
         /* ─── GUARANTEED FULL-BLEED LAYOUT (BYPASS CACHE) ─── */
-        html, body {
+        html,
+        body {
             max-width: 100vw !important;
             overflow-x: clip !important;
-            
+
         }
-        
+
         .content-wrapper {
             padding-left: 0 !important;
             padding-right: 0 !important;
             overflow-x: clip !important;
         }
-        
-        .content-wrapper > main {
+
+        .content-wrapper>main {
             padding-left: 40px !important;
             padding-right: 40px !important;
         }
-        
+
         .feed-section {
             width: 100% !important;
             margin-left: 0 !important;
@@ -701,54 +711,63 @@ if (empty($posts)) {
         /* Force category cards to touch screen edges WITHOUT negative margins */
         .categories-section {
             width: 100% !important;
-            overflow: hidden !important;
-            padding: 16px 0 0 0 !important;
+            overflow-x: hidden !important;
+            overflow-y: visible !important;
+            padding: 16px 0 20px 0 !important;
             margin: 0 !important;
         }
+
         .category-grid {
             display: flex !important;
             overflow-x: auto !important;
-            padding: 0 40px 0 40px !important;
-            margin-bottom: 0 !important;
+            padding: 20px 40px 40px 40px !important;
+            margin-bottom: -40px !important;
             gap: 24px !important;
+            scroll-behavior: smooth;
             scrollbar-width: none !important;
             -webkit-overflow-scrolling: touch !important;
         }
+
         .category-grid::-webkit-scrollbar {
             display: none !important;
         }
+
         .category-grid::after {
             content: '' !important;
             display: block !important;
             flex: 0 0 20px !important;
         }
+
         .cat-header {
             padding-left: 40px !important;
             padding-right: 40px !important;
         }
+
         @media (max-width: 768px) {
             .cat-header {
                 padding-left: 20px !important;
                 padding-right: 20px !important;
             }
+
             .category-grid {
-                padding: 0 20px 0 20px !important;
+                padding: 20px 20px 40px 20px !important;
+                margin-bottom: -40px !important;
                 gap: 16px !important;
             }
         }
-        
+
         /* ─── PREMIUM UI ENHANCEMENTS ─── */
 
         /* 1. Glassmorphism Hover Effects for Cards */
         div[onclick*="openProductModal"],
-        div[onclick*="window.location.href"],
+        .active-order-card,
         .cat-card,
         .reel-card {
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
         }
 
         div[onclick*="openProductModal"]:hover,
-        div[onclick*="window.location.href"]:hover,
+        .active-order-card:hover,
         .cat-card:hover,
         .reel-card:hover {
             transform: translateY(-4px);
@@ -759,7 +778,7 @@ if (empty($posts)) {
 
         /* 2. Tactile Click/Tap Effect */
         div[onclick*="openProductModal"]:active,
-        div[onclick*="window.location.href"]:active,
+        .active-order-card:active,
         .cat-card:active,
         .glass-action-btn:active {
             transform: scale(0.96) !important;
@@ -837,11 +856,37 @@ if (empty($posts)) {
         ::-webkit-scrollbar-thumb:hover {
             background: rgba(255, 255, 255, 0.3);
         }
+
+        /* ─── LIGHT MODE OVERRIDES ─── */
+        html.light-mode body { background: #f8f9fa !important; color: #0f1115 !important; }
+        html.light-mode .hero-text h1 { color: #0f1115; }
+        html.light-mode .hero-text p { color: rgba(0,0,0,0.6); }
+        html.light-mode .active-order-card { background: #ffffff !important; border-color: rgba(0,0,0,0.06) !important; box-shadow: 0 8px 32px rgba(0,0,0,0.05) !important; }
+        html.light-mode .ao-shop-name { color: #0f1115 !important; }
+        html.light-mode .ao-desc { color: rgba(0,0,0,0.5) !important; }
+        html.light-mode .ao-chevron { background: rgba(0,0,0,0.03) !important; border-color: rgba(0,0,0,0.05) !important; color: #0f1115 !important; }
+        html.light-mode .prompt-container { background: #ffffff !important; border-color: rgba(0,0,0,0.1) !important; box-shadow: 0 10px 40px rgba(0,0,0,0.04) !important; }
+        html.light-mode .prompt-input { color: #0f1115 !important; }
+        html.light-mode .icon-btn i { color: #0f1115 !important; }
+        html.light-mode .toggle-btn { background: rgba(0,0,0,0.03) !important; color: #0f1115 !important; border-color: transparent !important; }
+        html.light-mode .toggle-btn.active { background: #ffffff !important; border-color: rgba(0,0,0,0.1) !important; box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important; }
+        html.light-mode .glass-action-btn { background: rgba(0,0,0,0.03) !important; border-color: rgba(0,0,0,0.05) !important; color: #0f1115 !important; }
+        html.light-mode .glass-action-btn:hover { background: rgba(0,0,0,0.05) !important; }
+        html.light-mode .section-title { color: #0f1115 !important; text-shadow: none !important; }
+        html.light-mode .grid-bg { opacity: 0.05; }
+        html.light-mode .aurora-container { opacity: 0.3; }
     </style>
+    <!-- ⚡ Apply theme BEFORE paint to prevent flash -->
+    <script>
+        (function() {
+            var t = localStorage.getItem('qoon_theme') || 'dark';
+            if (t === 'light') document.documentElement.classList.add('light-mode');
+        })();
+    </script>
     <script>
         // Early definition of auth functions to prevent glitches if clicked before page fully loads
         if (typeof window.openSignup !== 'function') {
-            window.openSignup = function() {
+            window.openSignup = function () {
                 // If clicked early, show a loading spinner on body and redirect if modal doesn't load shortly
                 document.body.style.cursor = 'wait';
                 setTimeout(() => {
@@ -892,7 +937,7 @@ if (empty($posts)) {
                       FROM Orders o 
                       LEFT JOIN Shops s ON o.ShopID = s.ShopID 
                       WHERE o.UserID = '$uid' 
-                      AND LOWER(o.OrderState) NOT IN ('cancelled', 'canceled', 'finish', 'done', 'rated', 'delivered', 'order delivered', 'cancel')
+                      AND LOWER(o.OrderState) NOT IN ('cancelled', 'canceled', 'finish', 'done', 'rated', 'delivered', 'order delivered', 'cancel', 'returned')
                       ORDER BY o.OrderID DESC LIMIT 10";
                 $res = $con->query($q);
                 if ($res) {
@@ -940,27 +985,31 @@ if (empty($posts)) {
                         }
                         $desc = htmlspecialchars(mb_strimwidth($ao['OrderDetails'] ?? 'Your order is active', 0, 40, "..."));
                         ?>
+                        <?php $linkDest = in_array($statusRaw, ['waiting', 'driver_offer']) ? 'delivery_offers.php' : 'track_order.php'; ?>
                         <div class="active-order-card"
                             style="flex: 0 0 <?= count($activeOrders) > 1 ? 'calc(100% - 32px)' : '100%' ?>; scroll-snap-align: start; min-width: <?= count($activeOrders) > 1 ? 'calc(100% - 32px)' : '100%' ?>; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(16px); border-radius: 20px; padding: 16px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: 0.3s; box-shadow: 0 8px 32px rgba(0,0,0,0.2);"
-                            onclick="window.location.href='track_order.php?orderId=<?= $ao['OrderID'] ?>'">
+                            onclick="window.location.href='<?= $linkDest ?>?orderId=<?= $ao['OrderID'] ?>'">
                             <img src="<?= $logo ?>" onerror="this.src='https://ui-avatars.com/api/?name=S'"
                                 style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,0.1);">
                             <div style="flex: 1; min-width: 0;">
                                 <div
                                     style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                                    <div
+                                    <div class="ao-shop-name"
                                         style="font-weight: 800; color: #fff; font-size: 15px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">
-                                        <?= $shopName ?></div>
-                                    <div
+                                        <?= $shopName ?>
+                                    </div>
+                                    <div class="ao-status"
                                         style="background: rgba(46, 204, 113, 0.15); color: #2ecc71; font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 8px; text-transform: uppercase;">
                                         <i class="fa-solid fa-satellite-dish fa-fade"
-                                            style="margin-right:4px;"></i><?= $statusStr ?></div>
+                                            style="margin-right:4px;"></i><?= $statusStr ?>
+                                    </div>
                                 </div>
-                                <div
+                                <div class="ao-desc"
                                     style="font-size: 13px; color: rgba(255,255,255,0.6); text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">
-                                    <?= $desc ?></div>
+                                    <?= $desc ?>
+                                </div>
                             </div>
-                            <div
+                            <div class="ao-chevron"
                                 style="width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0;">
                                 <i class="fa-solid fa-chevron-right" style="font-size: 12px;"></i>
                             </div>
@@ -974,8 +1023,7 @@ if (empty($posts)) {
                     <button class="icon-btn" style="margin-left: 4px;"><i
                             class="fa-solid fa-magnifying-glass"></i></button>
 
-                    <input type="text" class="prompt-input" readonly
-                        onclick="window.location.href='search.php'"
+                    <input type="text" class="prompt-input" readonly onclick="window.location.href='search.php'"
                         placeholder="Search shops, products, reels...">
 
                     <div class="prompt-toolbar">
@@ -988,7 +1036,9 @@ if (empty($posts)) {
                             </button>
                         </div>
 
-                        <button class="submit-btn" onclick="event.stopPropagation(); openImageSearch();" title="Search by image" style="background:linear-gradient(135deg,#a855f7,#6366f1); color:#fff;">
+                        <button class="submit-btn" onclick="event.stopPropagation(); openImageSearch();"
+                            title="Search by image"
+                            style="background:linear-gradient(135deg,#a855f7,#6366f1); color:#fff;">
                             <i class="fa-solid fa-camera" id="idx-cam-icon"></i>
                         </button>
                     </div>
@@ -997,7 +1047,11 @@ if (empty($posts)) {
                 <!-- NEW: Search Extras (Logo & Glass Buttons) -->
                 <div class="search-extras" style="position: relative; z-index: 50; pointer-events: auto;">
                     <div class="extra-left">
-                        <img src="qoon_pay_logo.png" alt="QOON Pay" class="qpay-extra-logo"
+                        <img id="qoon-pay-logo"
+                            src="qoon_pay_logo.png"
+                            data-dark-src="qoon_pay_logo.png"
+                            data-light-src="qoon_pay_logo_dark.png"
+                            alt="QOON Pay" class="qpay-extra-logo"
                             onclick="<?php echo isset($_COOKIE['qoon_user_id']) ? "openQpayDrawer()" : "openSignup()"; ?>"
                             style="cursor:pointer;">
                     </div>
@@ -1042,7 +1096,8 @@ if (empty($posts)) {
                         $targetUrl = (stripos($catTitle, 'Kenz') !== false) ? "kenz.php?cat=" . $cat['CategoryId'] : "category.php?cat=" . $cat['CategoryId'];
                     }
                     ?>
-                    <div class="cat-card" data-id="<?= htmlspecialchars($cat['CategoryId']) ?>" onclick="window.location.href='<?= $targetUrl ?>'">
+                    <div class="cat-card" data-id="<?= htmlspecialchars($cat['CategoryId']) ?>"
+                        onclick="window.location.href='<?= $targetUrl ?>'">
                         <div class="cat-img-wrapper">
                             <img class="cat-img" loading="lazy" src="<?= htmlspecialchars($cat['Photo'] ?? '') ?>"
                                 onerror="this.src='https://ui-avatars.com/api/?name=S&background=2cb5e8&color=fff'"
@@ -1059,7 +1114,8 @@ if (empty($posts)) {
 
         <!-- --- Feed Section --- -->
         <section class="feed-section">
-            <h2 class="section-title" style="font-size: clamp(26px, 3.2vw, 35px); text-align: center; margin-bottom: 48px;">S-Commerce</h2>
+            <h2 class="section-title"
+                style="font-size: clamp(26px, 3.2vw, 35px); text-align: center; margin-bottom: 48px;">S-Commerce</h2>
 
             <?php if ($locationRequired ?? true): ?>
                 <div id="locationOverlay" class="location-overlay">
@@ -1310,7 +1366,7 @@ if (empty($posts)) {
 
                         <?php if ($index == 1 && !empty($kenzProducts)): ?>
                             <div
-                                style="width:100%;padding:30px 0;margin-top:20px;margin-bottom:20px;background:transparent;overflow:hidden;border-top:1px solid rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.05);">
+                                style="width:100%;padding:30px 0;margin-top:20px;margin-bottom:20px;background:transparent;overflow:hidden;border-top:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border);">
                                 <h3 style="font-size:18px;font-weight:600;padding:0;margin-bottom:24px;color:var(--text-main);">
                                     Suggested from Kenz Madinty</h3>
                                 <div class="no-scrollbar"
@@ -1318,20 +1374,23 @@ if (empty($posts)) {
                                     <?php foreach ($kenzProducts as $kp): ?>
                                         <?php
                                         $kpPhotoRaw = $kp['FoodPhoto'] ?? $kp['PostPhoto'] ?? $kp['PostPhoto1'] ?? null;
-                                        
+
                                         $rawPhotosF = array_filter(array_map('trim', explode(',', $kp['FoodPhoto'] ?? '')));
                                         $imgUrlsF = [];
-                                        foreach($rawPhotosF as $rp) { if($rp) $imgUrlsF[] = get_img_url($rp, $DomainNamee ?? null); }
-                                        
+                                        foreach ($rawPhotosF as $rp) {
+                                            if ($rp)
+                                                $imgUrlsF[] = get_img_url($rp, $DomainNamee ?? null);
+                                        }
+
                                         $kpPhoto = get_img_url($kpPhotoRaw, $DomainNamee ?? null);
                                         $kpImg = !empty($imgUrlsF) ? $imgUrlsF[0] : htmlspecialchars($kpPhoto ?: 'https://ui-avatars.com/api/?name=Item&background=222&color=fff');
-                                        
+
                                         $kpShopLogo = get_img_url($kp['ShopLogo'] ?? null, $DomainNamee ?? null);
                                         $kpPriceVal = floatval($kp['FoodOfferPrice'] ?? 0) > 0 ? floatval($kp['FoodOfferPrice']) : floatval($kp['FoodPrice'] ?? 0);
                                         $kpOldPrice = floatval($kp['FoodOfferPrice'] ?? 0) > 0 ? floatval($kp['FoodPrice'] ?? 0) : null;
-                                        
+
                                         $finalImages = (count($imgUrlsF) > 0) ? $imgUrlsF : [$kpImg];
-                                        
+
                                         $foodJson = json_encode([
                                             'id' => $kp['FoodID'] ?? $kp['ProductID'] ?? 0,
                                             'name' => $kp['FoodName'] ?? 'Product',
@@ -1347,15 +1406,15 @@ if (empty($posts)) {
                                             'extra2_p' => floatval($kp['ExtraPriceTwo'] ?? 0)
                                         ]);
                                         ?>
-                                        <div style="flex: 0 0 160px; scroll-snap-align: start; display: flex; flex-direction: column; gap: 8px; cursor: pointer; border-radius: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); overflow: hidden; padding-bottom: 12px; transition: background 0.2s;"
+                                        <div style="flex: 0 0 160px; scroll-snap-align: start; display: flex; flex-direction: column; gap: 8px; cursor: pointer; border-radius: 16px; background: var(--post-card-bg); border: 1px solid var(--post-card-border); overflow: hidden; padding-bottom: 12px; transition: background 0.2s;"
                                             onclick="openProductModal(this)"
                                             data-product='<?= htmlspecialchars($foodJson, ENT_QUOTES, 'UTF-8') ?>'>
                                             <img src="<?= htmlspecialchars($kpPhoto ?: 'https://ui-avatars.com/api/?name=Item&background=222&color=fff') ?>"
                                                 onerror="this.src='https://ui-avatars.com/api/?name=Item&background=222&color=fff'"
-                                                style="width:100%; aspect-ratio: 1; object-fit: cover; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                                style="width:100%; aspect-ratio: 1; object-fit: cover; border-bottom: 1px solid var(--glass-border);">
                                             <div style="padding: 0 12px;">
                                                 <div
-                                                    style="font-size: 13px; font-weight: 600; color: #fff; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; margin-bottom: 4px;">
+                                                    style="font-size: 13px; font-weight: 600; color: var(--text-main); text-overflow: ellipsis; white-space: nowrap; overflow: hidden; margin-bottom: 4px;">
                                                     <?= htmlspecialchars($kp['FoodName'] ?? $kp['PostText'] ?? 'Exclusive Item') ?>
                                                 </div>
                                                 <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
@@ -1867,7 +1926,7 @@ if (empty($posts)) {
             return JSON.parse(jsonPayload);
         }
 
-        
+
         // --- LOGOUT CONFIRMATION ---
         function confirmLogout() {
             const modal = document.createElement('div');
@@ -2246,33 +2305,33 @@ if (empty($posts)) {
         });
                             <?php endif; ?>
 
-        // AliExpress Feed Fetcher
-        function loadAliExpressFeeds() {
+                            // AliExpress Feed Fetcher
+                            function loadAliExpressFeeds() {
             const containers = document.querySelectorAll('.ali-slider-container:not(.loaded)');
-            if (containers.length === 0) return;
+                            if (containers.length === 0) return;
 
             containers.forEach(container => {
-                container.classList.add('loaded'); // Mark as loaded immediately to prevent duplicate fetches
-                
-                fetch('ajax_get_ali_feed.php')
+                                container.classList.add('loaded'); // Mark as loaded immediately to prevent duplicate fetches
+
+                            fetch('ajax_get_ali_feed.php')
                     .then(res => res.json())
                     .then(data => {
                         if (data.products && data.products.length > 0) {
-                            let html = '';
+                                let html = '';
                             data.products.forEach(p => {
                                 const pJson = JSON.stringify(p).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
-                                let aliId = String(p.id).replace('ALI_', '');
-                                html += `
-                                <div style="flex:0 0 auto;width:140px;display:flex;flex-direction:column;cursor:pointer;" onclick="window.location.href='ali_product.php?id=${aliId}'">
-                                    <div style="width:140px;height:180px;border-radius:12px;overflow:hidden;background:#222;position:relative;">
-                                        <img src="${p.img}" style="width:100%;height:100%;object-fit:cover;">
+                            let aliId = String(p.id).replace('ALI_', '');
+                            html += `
+                            <div style="flex:0 0 auto;width:140px;display:flex;flex-direction:column;cursor:pointer;" onclick="window.location.href='ali_product.php?id=${aliId}'">
+                                <div style="width:140px;height:180px;border-radius:12px;overflow:hidden;background:#222;position:relative;">
+                                    <img src="${p.img}" style="width:100%;height:100%;object-fit:cover;">
                                         <div style="position:absolute;top:8px;left:8px;background:rgba(255,64,129,0.9);color:#fff;padding:4px 8px;border-radius:12px;font-size:10px;font-weight:700;">Global</div>
                                         ${p.oldPrice > p.price ? `<div style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.7);color:#fff;padding:4px 6px;border-radius:8px;font-size:10px;backdrop-filter:blur(4px);"><span style="text-decoration:line-through;opacity:0.6;">${p.oldPrice}</span> <span style="color:#ff4081;font-weight:700;">${p.price} MAD</span></div>` : `<div style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.7);color:#fff;padding:4px 6px;border-radius:8px;font-size:10px;backdrop-filter:blur(4px);font-weight:700;">${p.price} MAD</div>`}
-                                    </div>
-                                    <div style="margin-top:8px;padding:0 4px;">
-                                        <p style="margin:0;font-size:12px;color:#eee;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.name}</p>
-                                    </div>
-                                </div>`;
+                                </div>
+                                <div style="margin-top:8px;padding:0 4px;">
+                                    <p style="margin:0;font-size:12px;color:#eee;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.name}</p>
+                                </div>
+                            </div>`;
                             });
                             container.innerHTML = html;
                             container.style.justifyContent = 'flex-start';
@@ -2312,296 +2371,584 @@ if (empty($posts)) {
 
 
 
-<!-- ══ IMAGE SEARCH MODAL — index page ══ -->
-<style>
-    /* Overlay */
-    #idx-overlay {
-        display: none; position: fixed; inset: 0; z-index: 9000;
-        align-items: center; justify-content: center;
-        background: rgba(0,0,0,0.55);
-        backdrop-filter: blur(20px) saturate(180%);
-        -webkit-backdrop-filter: blur(20px) saturate(180%);
-    }
-    /* Liquid glass card */
-    #idx-modal {
-        position: relative; width: 92%; max-width: 460px;
-        border-radius: 32px; padding: 28px 24px 24px;
-        background: linear-gradient(135deg,rgba(255,255,255,0.13) 0%,rgba(255,255,255,0.06) 50%,rgba(168,85,247,0.08) 100%);
-        border: 1px solid rgba(255,255,255,0.18);
-        box-shadow: 0 40px 100px rgba(0,0,0,0.55),0 0 0 0.5px rgba(255,255,255,0.1) inset,0 1px 0 rgba(255,255,255,0.25) inset;
-        backdrop-filter: blur(40px) saturate(200%);
-        -webkit-backdrop-filter: blur(40px) saturate(200%);
-        animation: idxIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
-        overflow: hidden;
-    }
-    @keyframes idxIn { from{opacity:0;transform:translateY(28px) scale(0.94)} to{opacity:1;transform:translateY(0) scale(1)} }
-    #idx-modal::before {
-        content:''; position:absolute; top:0; left:-60%; width:50%; height:100%;
-        background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,0.08) 50%,transparent 70%);
-        pointer-events:none;
-    }
-    /* Drop zone */
-    #idx-drop {
-        position:relative; border:1.5px dashed rgba(168,85,247,0.45); border-radius:22px;
-        padding:32px 20px; text-align:center; cursor:pointer;
-        transition:all 0.25s ease; background:rgba(168,85,247,0.04); overflow:hidden;
-    }
-    #idx-drop:hover { border-color:rgba(168,85,247,0.85); background:rgba(168,85,247,0.09); transform:scale(1.01); }
-    #idx-drop.drag-over { border-color:#a855f7; background:rgba(168,85,247,0.12); box-shadow:0 0 30px rgba(168,85,247,0.25); }
-    /* Preview */
-    #idx-prev-wrap { display:none; }
-    .idx-pg { position:relative; border-radius:20px; overflow:hidden; margin-bottom:14px; box-shadow:0 12px 40px rgba(0,0,0,0.4); }
-    #idx-prev-img { width:100%; max-height:220px; object-fit:cover; display:block; border-radius:20px; transition:filter 0.5s ease; }
-    /* Scan overlay */
-    .idx-scan { position:absolute; inset:0; border-radius:20px; display:none; overflow:hidden; pointer-events:none; }
-    .idx-beam { position:absolute; left:0; right:0; height:3px; top:0;
-        background:linear-gradient(90deg,transparent,#a855f7,#6366f1,#a855f7,transparent);
-        box-shadow:0 0 18px 6px rgba(168,85,247,0.6);
-        animation:idxBeam 1.8s cubic-bezier(0.4,0,0.6,1) infinite; }
-    @keyframes idxBeam { 0%{top:0%;opacity:1}48%{top:100%;opacity:1}50%{top:100%;opacity:0}52%{top:0%;opacity:0}54%{top:0%;opacity:1}100%{top:100%;opacity:1} }
-    .idx-corner { position:absolute; width:22px; height:22px; border-color:#a855f7; border-style:solid; border-width:0; opacity:0.9; }
-    .idx-tl{top:8px;left:8px;border-top-width:2.5px;border-left-width:2.5px;border-radius:4px 0 0 0}
-    .idx-tr{top:8px;right:8px;border-top-width:2.5px;border-right-width:2.5px;border-radius:0 4px 0 0}
-    .idx-bl{bottom:8px;left:8px;border-bottom-width:2.5px;border-left-width:2.5px;border-radius:0 0 0 4px}
-    .idx-br{bottom:8px;right:8px;border-bottom-width:2.5px;border-right-width:2.5px;border-radius:0 0 4px 0}
-    .idx-grid { position:absolute; inset:0;
-        background-image:linear-gradient(rgba(168,85,247,0.07) 1px,transparent 1px),linear-gradient(90deg,rgba(168,85,247,0.07) 1px,transparent 1px);
-        background-size:28px 28px; animation:idxGridFade 1.8s ease infinite; }
-    @keyframes idxGridFade{0%,100%{opacity:0}50%{opacity:1}}
-    .idx-scanning #idx-prev-img { filter:brightness(0.75) saturate(0.4); }
-    /* Status / buttons */
-    #idx-status { font-size:13px; color:rgba(255,255,255,0.55); text-align:center; margin-top:4px; min-height:18px; letter-spacing:0.3px; transition:color 0.3s; }
-    #idx-go { width:100%; padding:13px; border:none; border-radius:16px;
-        background:linear-gradient(135deg,#a855f7,#6366f1); color:#fff;
-        font-size:15px; font-weight:700; cursor:pointer;
-        box-shadow:0 6px 24px rgba(168,85,247,0.4); transition:all 0.2s ease; }
-    #idx-go:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 32px rgba(168,85,247,0.55)}
-    #idx-go:disabled{opacity:0.6;cursor:default;transform:none}
-    .idx-pills { display:flex; gap:10px; margin-top:12px; }
-    .idx-pill { flex:1; display:flex; align-items:center; justify-content:center; gap:7px;
-        padding:10px 16px; border-radius:50px;
-        background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12);
-        color:rgba(255,255,255,0.75); font-size:13px; font-weight:500;
-        cursor:pointer; transition:all 0.2s ease; }
-    .idx-pill:hover{background:rgba(168,85,247,0.15);border-color:rgba(168,85,247,0.4);color:#fff;transform:translateY(-1px)}
-    .idx-pill i{color:#a855f7}
-    .idx-x { position:absolute; top:16px; right:16px; width:30px; height:30px; border-radius:50%;
-        background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.14);
-        color:rgba(255,255,255,0.7); font-size:14px; cursor:pointer;
-        display:flex; align-items:center; justify-content:center;
-        transition:all 0.2s; backdrop-filter:blur(8px); }
-    .idx-x:hover{background:rgba(255,255,255,0.18);color:#fff;transform:scale(1.1)}
-    /* Mobile: bottom sheet */
-    @media(max-width:600px){
-        #idx-overlay{align-items:flex-end}
-        #idx-modal{width:100%;max-width:100%;border-radius:28px 28px 0 0;
-            padding:24px 20px max(20px,env(safe-area-inset-bottom));
-            max-height:90vh;overflow-y:auto;
-            animation:idxSheet 0.35s cubic-bezier(0.34,1.2,0.64,1)}
-        @keyframes idxSheet{from{transform:translateY(100%);opacity:.8}to{transform:translateY(0);opacity:1}}
-        #idx-modal::after{content:'';display:block;width:40px;height:4px;background:rgba(255,255,255,0.2);
-            border-radius:2px;position:absolute;top:10px;left:50%;transform:translateX(-50%)}
-        #idx-drop{padding:24px 16px}
-        #idx-prev-img{max-height:180px}
-        .idx-pill{padding:13px 16px;font-size:14px}
-        #idx-go{padding:15px;font-size:16px}
-    }
-</style>
+    <!-- ══ IMAGE SEARCH MODAL — index page ══ -->
+    <style>
+        /* Overlay */
+        #idx-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9000;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+        }
 
-<!-- Modal HTML -->
-<div id="idx-overlay" onclick="idxClose(event)">
-    <div id="idx-modal">
-        <button class="idx-x" onclick="idxClose()">✕</button>
+        /* Liquid glass card */
+        #idx-modal {
+            position: relative;
+            width: 92%;
+            max-width: 460px;
+            border-radius: 32px;
+            padding: 28px 24px 24px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.06) 50%, rgba(168, 85, 247, 0.08) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.55), 0 0 0 0.5px rgba(255, 255, 255, 0.1) inset, 0 1px 0 rgba(255, 255, 255, 0.25) inset;
+            backdrop-filter: blur(40px) saturate(200%);
+            -webkit-backdrop-filter: blur(40px) saturate(200%);
+            animation: idxIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            overflow: hidden;
+        }
 
-        <div style="margin-bottom:20px;padding-right:36px;">
-            <div style="font-size:17px;font-weight:700;letter-spacing:-0.3px;">
-                <i class="fa-solid fa-camera-viewfinder" style="color:#a855f7;margin-right:8px;"></i>Search by Image
-            </div>
-            <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:4px;">
-                Upload any product photo to find similar items on QOON
-            </div>
-        </div>
+        @keyframes idxIn {
+            from {
+                opacity: 0;
+                transform: translateY(28px) scale(0.94)
+            }
 
-        <!-- Drop zone -->
-        <div id="idx-drop"
-            onclick="document.getElementById('idx-file').click()"
-            ondragover="event.preventDefault();this.classList.add('drag-over')"
-            ondragleave="this.classList.remove('drag-over')"
-            ondrop="idxDrop(event)">
-            <i class="fa-solid fa-cloud-arrow-up" style="font-size:38px;color:#a855f7;margin-bottom:12px;display:block;"></i>
-            <div style="font-size:15px;font-weight:600;margin-bottom:5px;">Drop image here</div>
-            <div style="font-size:12px;color:rgba(255,255,255,0.38);">Any format — auto-converted to JPEG</div>
-        </div>
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1)
+            }
+        }
 
-        <!-- Preview + scan -->
-        <div id="idx-prev-wrap">
-            <div class="idx-pg" id="idx-pg">
-                <img id="idx-prev-img" alt="Preview">
-                <div class="idx-scan" id="idx-scan">
-                    <div class="idx-grid"></div>
-                    <div class="idx-beam"></div>
-                    <div class="idx-corner idx-tl"></div>
-                    <div class="idx-corner idx-tr"></div>
-                    <div class="idx-corner idx-bl"></div>
-                    <div class="idx-corner idx-br"></div>
+        #idx-modal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -60%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.08) 50%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* --- LIGHT MODE OVERRIDES --- */
+        html.light-mode .active-order-card { background: #ffffff !important; border-color: rgba(0,0,0,0.06) !important; box-shadow: 0 4px 20px rgba(0,0,0,0.04) !important; }
+        html.light-mode .active-order-card img { border-color: rgba(0,0,0,0.05) !important; }
+        html.light-mode .ao-shop-name { color: #0f1115 !important; }
+        html.light-mode .ao-status { background: rgba(46, 204, 113, 0.1) !important; }
+        html.light-mode .ao-desc { color: #6b7280 !important; }
+        html.light-mode .ao-chevron { background: rgba(0,0,0,0.05) !important; border-color: rgba(0,0,0,0.05) !important; color: #0f1115 !important; }
+
+        /* Drop zone */
+        #idx-drop {
+            position: relative;
+            border: 1.5px dashed rgba(168, 85, 247, 0.45);
+            border-radius: 22px;
+            padding: 32px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            background: rgba(168, 85, 247, 0.04);
+            overflow: hidden;
+        }
+
+        #idx-drop:hover {
+            border-color: rgba(168, 85, 247, 0.85);
+            background: rgba(168, 85, 247, 0.09);
+            transform: scale(1.01);
+        }
+
+        #idx-drop.drag-over {
+            border-color: #a855f7;
+            background: rgba(168, 85, 247, 0.12);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.25);
+        }
+
+        /* Preview */
+        #idx-prev-wrap {
+            display: none;
+        }
+
+        .idx-pg {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 14px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        #idx-prev-img {
+            width: 100%;
+            max-height: 220px;
+            object-fit: cover;
+            display: block;
+            border-radius: 20px;
+            transition: filter 0.5s ease;
+        }
+
+        /* Scan overlay */
+        .idx-scan {
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            display: none;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .idx-beam {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 3px;
+            top: 0;
+            background: linear-gradient(90deg, transparent, #a855f7, #6366f1, #a855f7, transparent);
+            box-shadow: 0 0 18px 6px rgba(168, 85, 247, 0.6);
+            animation: idxBeam 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes idxBeam {
+            0% {
+                top: 0%;
+                opacity: 1
+            }
+
+            48% {
+                top: 100%;
+                opacity: 1
+            }
+
+            50% {
+                top: 100%;
+                opacity: 0
+            }
+
+            52% {
+                top: 0%;
+                opacity: 0
+            }
+
+            54% {
+                top: 0%;
+                opacity: 1
+            }
+
+            100% {
+                top: 100%;
+                opacity: 1
+            }
+        }
+
+        .idx-corner {
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            border-color: #a855f7;
+            border-style: solid;
+            border-width: 0;
+            opacity: 0.9;
+        }
+
+        .idx-tl {
+            top: 8px;
+            left: 8px;
+            border-top-width: 2.5px;
+            border-left-width: 2.5px;
+            border-radius: 4px 0 0 0
+        }
+
+        .idx-tr {
+            top: 8px;
+            right: 8px;
+            border-top-width: 2.5px;
+            border-right-width: 2.5px;
+            border-radius: 0 4px 0 0
+        }
+
+        .idx-bl {
+            bottom: 8px;
+            left: 8px;
+            border-bottom-width: 2.5px;
+            border-left-width: 2.5px;
+            border-radius: 0 0 0 4px
+        }
+
+        .idx-br {
+            bottom: 8px;
+            right: 8px;
+            border-bottom-width: 2.5px;
+            border-right-width: 2.5px;
+            border-radius: 0 0 4px 0
+        }
+
+        .idx-grid {
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(168, 85, 247, 0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(168, 85, 247, 0.07) 1px, transparent 1px);
+            background-size: 28px 28px;
+            animation: idxGridFade 1.8s ease infinite;
+        }
+
+        @keyframes idxGridFade {
+
+            0%,
+            100% {
+                opacity: 0
+            }
+
+            50% {
+                opacity: 1
+            }
+        }
+
+        .idx-scanning #idx-prev-img {
+            filter: brightness(0.75) saturate(0.4);
+        }
+
+        /* Status / buttons */
+        #idx-status {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.55);
+            text-align: center;
+            margin-top: 4px;
+            min-height: 18px;
+            letter-spacing: 0.3px;
+            transition: color 0.3s;
+        }
+
+        #idx-go {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 6px 24px rgba(168, 85, 247, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        #idx-go:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 32px rgba(168, 85, 247, 0.55)
+        }
+
+        #idx-go:disabled {
+            opacity: 0.6;
+            cursor: default;
+            transform: none
+        }
+
+        .idx-pills {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .idx-pill {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 10px 16px;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .idx-pill:hover {
+            background: rgba(168, 85, 247, 0.15);
+            border-color: rgba(168, 85, 247, 0.4);
+            color: #fff;
+            transform: translateY(-1px)
+        }
+
+        .idx-pill i {
+            color: #a855f7
+        }
+
+        .idx-x {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            backdrop-filter: blur(8px);
+        }
+
+        .idx-x:hover {
+            background: rgba(255, 255, 255, 0.18);
+            color: #fff;
+            transform: scale(1.1)
+        }
+
+        /* Mobile: bottom sheet */
+        @media(max-width:600px) {
+            #idx-overlay {
+                align-items: flex-end
+            }
+
+            #idx-modal {
+                width: 100%;
+                max-width: 100%;
+                border-radius: 28px 28px 0 0;
+                padding: 24px 20px max(20px, env(safe-area-inset-bottom));
+                max-height: 90vh;
+                overflow-y: auto;
+                animation: idxSheet 0.35s cubic-bezier(0.34, 1.2, 0.64, 1)
+            }
+
+            @keyframes idxSheet {
+                from {
+                    transform: translateY(100%);
+                    opacity: .8
+                }
+
+                to {
+                    transform: translateY(0);
+                    opacity: 1
+                }
+            }
+
+            #idx-modal::after {
+                content: '';
+                display: block;
+                width: 40px;
+                height: 4px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 2px;
+                position: absolute;
+                top: 10px;
+                left: 50%;
+                transform: translateX(-50%)
+            }
+
+            #idx-drop {
+                padding: 24px 16px
+            }
+
+            #idx-prev-img {
+                max-height: 180px
+            }
+
+            .idx-pill {
+                padding: 13px 16px;
+                font-size: 14px
+            }
+
+            #idx-go {
+                padding: 15px;
+                font-size: 16px
+            }
+        }
+    </style>
+
+    <!-- Modal HTML -->
+    <div id="idx-overlay" onclick="idxClose(event)">
+        <div id="idx-modal">
+            <button class="idx-x" onclick="idxClose()">✕</button>
+
+            <div style="margin-bottom:20px;padding-right:36px;">
+                <div style="font-size:17px;font-weight:700;letter-spacing:-0.3px;">
+                    <i class="fa-solid fa-camera-viewfinder" style="color:#a855f7;margin-right:8px;"></i>Search by Image
+                </div>
+                <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:4px;">
+                    Upload any product photo to find similar items on QOON
                 </div>
             </div>
-            <div id="idx-status">Image ready — tap below to search</div>
-            <button id="idx-go" onclick="idxSearch()">
-                <i class="fa-solid fa-magnifying-glass" style="margin-right:8px;"></i>Find Similar Products
-            </button>
-        </div>
 
-        <!-- Action pills -->
-        <div class="idx-pills" id="idx-pills">
-            <button class="idx-pill" onclick="document.getElementById('idx-file').click()">
-                <i class="fa-solid fa-folder-open"></i> Browse Files
-            </button>
-            <button class="idx-pill" onclick="document.getElementById('idx-cam').click()">
-                <i class="fa-solid fa-camera"></i> Take Photo
-            </button>
-        </div>
+            <!-- Drop zone -->
+            <div id="idx-drop" onclick="document.getElementById('idx-file').click()"
+                ondragover="event.preventDefault();this.classList.add('drag-over')"
+                ondragleave="this.classList.remove('drag-over')" ondrop="idxDrop(event)">
+                <i class="fa-solid fa-cloud-arrow-up"
+                    style="font-size:38px;color:#a855f7;margin-bottom:12px;display:block;"></i>
+                <div style="font-size:15px;font-weight:600;margin-bottom:5px;">Drop image here</div>
+                <div style="font-size:12px;color:rgba(255,255,255,0.38);">Any format — auto-converted to JPEG</div>
+            </div>
 
-        <input type="file" id="idx-file" accept="image/*"               style="display:none" onchange="idxFile(this)">
-        <input type="file" id="idx-cam"  accept="image/*" capture="environment" style="display:none" onchange="idxFile(this)">
+            <!-- Preview + scan -->
+            <div id="idx-prev-wrap">
+                <div class="idx-pg" id="idx-pg">
+                    <img id="idx-prev-img" alt="Preview">
+                    <div class="idx-scan" id="idx-scan">
+                        <div class="idx-grid"></div>
+                        <div class="idx-beam"></div>
+                        <div class="idx-corner idx-tl"></div>
+                        <div class="idx-corner idx-tr"></div>
+                        <div class="idx-corner idx-bl"></div>
+                        <div class="idx-corner idx-br"></div>
+                    </div>
+                </div>
+                <div id="idx-status">Image ready — tap below to search</div>
+                <button id="idx-go" onclick="idxSearch()">
+                    <i class="fa-solid fa-magnifying-glass" style="margin-right:8px;"></i>Find Similar Products
+                </button>
+            </div>
+
+            <!-- Action pills -->
+            <div class="idx-pills" id="idx-pills">
+                <button class="idx-pill" onclick="document.getElementById('idx-file').click()">
+                    <i class="fa-solid fa-folder-open"></i> Browse Files
+                </button>
+                <button class="idx-pill" onclick="document.getElementById('idx-cam').click()">
+                    <i class="fa-solid fa-camera"></i> Take Photo
+                </button>
+            </div>
+
+            <input type="file" id="idx-file" accept="image/*" style="display:none" onchange="idxFile(this)">
+            <input type="file" id="idx-cam" accept="image/*" capture="environment" style="display:none"
+                onchange="idxFile(this)">
+        </div>
     </div>
-</div>
 
-<script>
-(function(){
-    let imgFile = null;
+    <script>
+                            (function(){
+                                let imgFile = null;
 
-    /* ── Open / Close ── */
-    window.openImageSearch = function() {
+                            /* ── Open / Close ── */
+                            window.openImageSearch = function() {
         const ov = document.getElementById('idx-overlay');
-        ov.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-        // Reset
-        document.getElementById('idx-drop').style.display = 'block';
-        document.getElementById('idx-prev-wrap').style.display = 'none';
-        document.getElementById('idx-pills').style.display = 'flex';
-        document.getElementById('idx-status').textContent = '';
-        document.getElementById('idx-status').style.color = '';
-        imgFile = null;
+                            ov.style.display = 'flex';
+                            document.body.style.overflow = 'hidden';
+                            // Reset
+                            document.getElementById('idx-drop').style.display = 'block';
+                            document.getElementById('idx-prev-wrap').style.display = 'none';
+                            document.getElementById('idx-pills').style.display = 'flex';
+                            document.getElementById('idx-status').textContent = '';
+                            document.getElementById('idx-status').style.color = '';
+                            imgFile = null;
     };
-    window.idxClose = function(e) {
+                            window.idxClose = function(e) {
         if (e instanceof Event && e.target !== document.getElementById('idx-overlay')) return;
-        document.getElementById('idx-overlay').style.display = 'none';
-        document.body.style.overflow = '';
+                            document.getElementById('idx-overlay').style.display = 'none';
+                            document.body.style.overflow = '';
     };
 
-    /* ── Drag & drop ── */
-    window.idxDrop = function(e) {
-        e.preventDefault();
-        document.getElementById('idx-drop').classList.remove('drag-over');
-        const f = e.dataTransfer.files[0];
-        if (f) idxProcess(f);
+                            /* ── Drag & drop ── */
+                            window.idxDrop = function(e) {
+                                e.preventDefault();
+                            document.getElementById('idx-drop').classList.remove('drag-over');
+                            const f = e.dataTransfer.files[0];
+                            if (f) idxProcess(f);
     };
-    window.idxFile = function(input) {
+                            window.idxFile = function(input) {
         if (input.files && input.files[0]) idxProcess(input.files[0]);
     };
 
-    /* ── Process: read → convert to JPEG → show preview + scan ── */
-    function idxProcess(file) {
-        if (!file.type.startsWith('image/')) { alert('Please select an image file.'); return; }
-        if (file.size > 15 * 1024 * 1024) { alert('Image too large. Max 15MB.'); return; }
-        imgFile = null;
-        const go = document.getElementById('idx-go');
-        const st = document.getElementById('idx-status');
-        go.disabled = true;
-        go.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin" style="margin-right:8px;"></i>Converting…';
+                            /* ── Process: read → convert to JPEG → show preview + scan ── */
+                            function idxProcess(file) {
+        if (!file.type.startsWith('image/')) {alert('Please select an image file.'); return; }
+        if (file.size > 15 * 1024 * 1024) {alert('Image too large. Max 15MB.'); return; }
+                            imgFile = null;
+                            const go = document.getElementById('idx-go');
+                            const st = document.getElementById('idx-status');
+                            go.disabled = true;
+                            go.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin" style="margin-right:8px;"></i>Converting…';
 
-        const reader = new FileReader();
+                            const reader = new FileReader();
         reader.onload = ev => {
-            document.getElementById('idx-prev-img').src = ev.target.result;
-            document.getElementById('idx-prev-wrap').style.display = 'block';
-            document.getElementById('idx-drop').style.display = 'none';
-            document.getElementById('idx-pills').style.display = 'none';
+                                document.getElementById('idx-prev-img').src = ev.target.result;
+                            document.getElementById('idx-prev-wrap').style.display = 'block';
+                            document.getElementById('idx-drop').style.display = 'none';
+                            document.getElementById('idx-pills').style.display = 'none';
 
-            const scan = document.getElementById('idx-scan');
-            const pg   = document.getElementById('idx-pg');
-            scan.style.display = 'block';
-            pg.classList.add('idx-scanning');
-            st.textContent = 'Analysing image…';
+                            const scan = document.getElementById('idx-scan');
+                            const pg   = document.getElementById('idx-pg');
+                            scan.style.display = 'block';
+                            pg.classList.add('idx-scanning');
+                            st.textContent = 'Analysing image…';
 
-            const img = new Image();
+                            const img = new Image();
             img.onload = () => {
-                let w = img.width, h = img.height;
-                const MAX = 800;
+                                let w = img.width, h = img.height;
+                            const MAX = 800;
                 if (w > MAX || h > MAX) {
-                    if (w > h) { h = Math.round(h*MAX/w); w = MAX; }
-                    else       { w = Math.round(w*MAX/h); h = MAX; }
+                    if (w > h) {h = Math.round(h * MAX / w); w = MAX; }
+                            else       {w = Math.round(w * MAX / h); h = MAX; }
                 }
-                const canvas = document.createElement('canvas');
-                canvas.width = w; canvas.height = h;
-                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                            const canvas = document.createElement('canvas');
+                            canvas.width = w; canvas.height = h;
+                            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
                 canvas.toBlob(blob => {
-                    if (!blob) { alert('Could not convert image.'); return; }
-                    imgFile = new File([blob], 'search.jpg', { type: 'image/jpeg' });
+                    if (!blob) {alert('Could not convert image.'); return; }
+                            imgFile = new File([blob], 'search.jpg', {type: 'image/jpeg' });
                     setTimeout(() => {
-                        scan.style.display = 'none';
-                        pg.classList.remove('idx-scanning');
-                        st.textContent = '✓ Ready — ' + (imgFile.size/1024).toFixed(0) + ' KB';
-                        go.disabled = false;
-                        go.innerHTML = '<i class="fa-solid fa-magnifying-glass" style="margin-right:8px;"></i>Find Similar Products';
+                                scan.style.display = 'none';
+                            pg.classList.remove('idx-scanning');
+                            st.textContent = '✓ Ready — ' + (imgFile.size/1024).toFixed(0) + ' KB';
+                            go.disabled = false;
+                            go.innerHTML = '<i class="fa-solid fa-magnifying-glass" style="margin-right:8px;"></i>Find Similar Products';
                     }, 900);
                 }, 'image/jpeg', 0.88);
             };
-            img.src = ev.target.result;
+                            img.src = ev.target.result;
         };
-        reader.readAsDataURL(file);
+                            reader.readAsDataURL(file);
     }
 
-    /* ── Search: upload → redirect ── */
-    window.idxSearch = function() {
-        if (!imgFile) { alert('Please select an image first.'); return; }
-        const go   = document.getElementById('idx-go');
-        const st   = document.getElementById('idx-status');
-        const scan = document.getElementById('idx-scan');
-        const pg   = document.getElementById('idx-pg');
+                            /* ── Search: upload → redirect ── */
+                            window.idxSearch = function() {
+        if (!imgFile) {alert('Please select an image first.'); return; }
+                            const go   = document.getElementById('idx-go');
+                            const st   = document.getElementById('idx-status');
+                            const scan = document.getElementById('idx-scan');
+                            const pg   = document.getElementById('idx-pg');
 
-        scan.style.display = 'block';
-        pg.classList.add('idx-scanning');
-        go.disabled = true;
-        go.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin" style="margin-right:8px;"></i>Searching AliExpress…';
+                            scan.style.display = 'block';
+                            pg.classList.add('idx-scanning');
+                            go.disabled = true;
+                            go.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin" style="margin-right:8px;"></i>Searching AliExpress…';
 
-        const msgs = ['Scanning image…','Identifying product…','Matching catalogue…','Almost there…'];
-        let mi = 0;
-        st.textContent = msgs[0];
-        const iv = setInterval(() => { st.textContent = msgs[++mi % msgs.length]; }, 1400);
+                            const msgs = ['Scanning image…','Identifying product…','Matching catalogue…','Almost there…'];
+                            let mi = 0;
+                            st.textContent = msgs[0];
+        const iv = setInterval(() => {st.textContent = msgs[++mi % msgs.length]; }, 1400);
 
-        const fd = new FormData();
-        fd.append('image', imgFile);
-        fd.append('country', 'MA');
-        fd.append('currency', 'MAD');
-        fd.append('page', '1');
+                            const fd = new FormData();
+                            fd.append('image', imgFile);
+                            fd.append('country', 'MA');
+                            fd.append('currency', 'MAD');
+                            fd.append('page', '1');
 
-        fetch('ajax_image_search.php', { method:'POST', body:fd })
+                            fetch('ajax_image_search.php', {method:'POST', body:fd })
         .then(r => r.json())
         .then(data => {
-            clearInterval(iv);
-            scan.style.display = 'none';
-            pg.classList.remove('idx-scanning');
-            go.disabled = false;
-            go.innerHTML = '<i class="fa-solid fa-magnifying-glass" style="margin-right:8px;"></i>Find Similar Products';
+                                clearInterval(iv);
+                            scan.style.display = 'none';
+                            pg.classList.remove('idx-scanning');
+                            go.disabled = false;
+                            go.innerHTML = '<i class="fa-solid fa-magnifying-glass" style="margin-right:8px;"></i>Find Similar Products';
 
-            if (data.error) { st.textContent = 'Error: ' + data.error; st.style.color='#f87171'; return; }
+                            if (data.error) {st.textContent = 'Error: ' + data.error; st.style.color='#f87171'; return; }
             if (data.products && data.products.length > 0) {
-                sessionStorage.setItem('imgSearchResults', JSON.stringify(data));
-                window.location.href = 'search.php?mode=img_results';
+                                sessionStorage.setItem('imgSearchResults', JSON.stringify(data));
+                            window.location.href = 'search.php?mode=img_results';
             } else {
-                st.textContent = 'No results found. Try a clearer product photo.';
-                st.style.color = '#f87171';
+                                st.textContent = 'No results found. Try a clearer product photo.';
+                            st.style.color = '#f87171';
             }
         })
         .catch(() => {
-            clearInterval(iv);
-            scan.style.display = 'none';
-            pg.classList.remove('idx-scanning');
-            go.disabled = false;
-            go.innerHTML = '<i class="fa-solid fa-magnifying-glass" style="margin-right:8px;"></i>Find Similar Products';
-            st.textContent = 'Search failed. Please try again.';
-            st.style.color = '#f87171';
+                                clearInterval(iv);
+                            scan.style.display = 'none';
+                            pg.classList.remove('idx-scanning');
+                            go.disabled = false;
+                            go.innerHTML = '<i class="fa-solid fa-magnifying-glass" style="margin-right:8px;"></i>Find Similar Products';
+                            st.textContent = 'Search failed. Please try again.';
+                            st.style.color = '#f87171';
         });
     };
 
@@ -2609,6 +2956,60 @@ if (empty($posts)) {
     document.addEventListener('keydown', e => {
         if (e.key === 'Escape') idxClose();
     });
+})();
+    </script>
+
+<!-- ✨ Theme Toggle FAB -->
+<button class="theme-fab" id="qoon-theme-fab" aria-label="Toggle light/dark mode" onclick="qoonToggleTheme()">
+    <i class="fab-icon" id="qoon-fab-icon"></i>
+</button>
+
+<script>
+(function () {
+    var DARK_ICON = '🌙';
+    var LIGHT_ICON = '☀️';
+    var htmlEl = document.documentElement;
+    var fabIcon = document.getElementById('qoon-fab-icon');
+    var fab = document.getElementById('qoon-theme-fab');
+
+    // Set initial icon based on current theme
+    function syncIcon() {
+        if (!fabIcon) return;
+        var isLight = htmlEl.classList.contains('light-mode');
+        fabIcon.textContent = isLight ? DARK_ICON : LIGHT_ICON;
+        fab.title = isLight ? 'Switch to dark mode' : 'Switch to light mode';
+    }
+    syncIcon();
+
+    window.qoonToggleTheme = function () {
+        var isLight = htmlEl.classList.contains('light-mode');
+        if (isLight) {
+            htmlEl.classList.remove('light-mode');
+            localStorage.setItem('qoon_theme', 'dark');
+        } else {
+            htmlEl.classList.add('light-mode');
+            localStorage.setItem('qoon_theme', 'light');
+        }
+        
+        // Sync open iframes immediately (chat, orders, qpay, profile)
+        document.querySelectorAll('iframe').forEach(function(ifr) {
+            try {
+                if (ifr.contentWindow && ifr.contentWindow.document) {
+                    var doc = ifr.contentWindow.document.documentElement;
+                    if (isLight) {
+                        doc.classList.remove('light-mode');
+                    } else {
+                        doc.classList.add('light-mode');
+                    }
+                }
+            } catch(e) {}
+        });
+
+        // Spin animation
+        fab.classList.add('spinning');
+        setTimeout(function () { fab.classList.remove('spinning'); }, 500);
+        syncIcon();
+    };
 })();
 </script>
 

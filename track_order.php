@@ -8,7 +8,8 @@ $shopName = 'QOON Shop';
 $shopImgUrl = "https://ui-avatars.com/api/?name=QOON+Shop&background=FFD700&color=000";
 $driverName = 'Ahmed R.';
 $driverImgUrl = "https://randomuser.me/api/portraits/men/32.jpg";
-$fourDigitPin = rand(1000, 9999);
+// Initial placeholder; will be replaced by DB value or random generation below
+$fourDigitPin = '----';
 
 if ($con && $orderId !== '0') {
     $res = $con->query("SELECT o.*, d.FName, d.LName, d.PersonalPhoto as DriverImg, s.ShopName as SName, s.ShopLogo as SPhoto 
@@ -35,12 +36,10 @@ if ($con && $orderId !== '0') {
         }
         if (!empty($row['DriverImg']) && strpos($row['DriverImg'], 'http') !== false) {
             $driverImgUrl = $row['DriverImg'];
+        } else if (!empty($row['DriverImg']) && strlen($row['DriverImg']) > 5) {
+            $driverImgUrl = "https://dash.qoon.app/assets/images/users/" . $row['DriverImg'];
         } else if (!empty($row['FName'])) {
             $driverImgUrl = "https://ui-avatars.com/api/?name=".urlencode($driverName)."&background=random";
-        }
-        
-        if (!empty($row['FourDigit'])) {
-            $fourDigitPin = $row['FourDigit'];
         }
         
         $actualDriverId = $row['DelvryId'] ?? '0';
@@ -60,6 +59,13 @@ if ($con && $orderId !== '0') {
         $tPrice = $productsFee + $deliveryFee + $userFees;
         if ($tPrice > 0) {
             $totalPrice = $tPrice;
+        }
+
+        if (isset($row['FourDigit']) && $row['FourDigit'] !== '' && $row['FourDigit'] !== '0') {
+            $fourDigitPin = str_pad($row['FourDigit'], 4, '0', STR_PAD_LEFT);
+        } else {
+            $fourDigitPin = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
+            $con->query("UPDATE Orders SET FourDigit='$fourDigitPin' WHERE OrderID='$orderId'");
         }
         
         $orderDetailsStr = $row['OrderDetails'] ?? '';
@@ -86,30 +92,31 @@ if (isset($rawStatus)) {
     $r = strtolower(trim($rawStatus));
     
     // Final States
-    if (in_array($r, ['cancelled', 'canceled'])) {
-        $orderStatusText = 'Cancelled';
+    if (in_array($r, ['cancelled', 'canceled', 'returned', 'refunded'])) {
+        $cancelMsg = !empty($row['Comment']) ? str_replace('Cancelled: ', '', $row['Comment']) : '';
+        $orderStatusText = !empty($cancelMsg) ? 'Cancelled: ' . $cancelMsg : 'Cancelled';
         $stepIndex = 6;
     } else if (in_array($r, ['done', 'finish', 'rated', 'order delivered', 'delivered'])) {
         $orderStatusText = 'Order delivered';
         $stepIndex = 6;
     } 
     // Driver Heading to User
-    else if (in_array($r, ['doing', 'found', 'come to take it', 'on way', 'on the way'])) {
+    else if (in_array($r, ['found', 'come to take it', 'on way', 'on the way', 'arrived'])) {
         $orderStatusText = 'Come to take it';
         $stepIndex = 5;
     } 
     // Order Picked Up
-    else if (in_array($r, ['order pickup', 'pickup', 'picked', 'picked up'])) {
+    else if (in_array($r, ['order pickup', 'pickup', 'picked', 'picked up', 'ready'])) {
         $orderStatusText = 'Order pickup';
         $stepIndex = 4;
     } 
     // Order Processed / Prepared
-    else if (in_array($r, ['prepared', 'order processed', 'processed']) || (isset($row['IsPrepared']) && $row['IsPrepared'] == 'YES')) {
+    else if (in_array($r, ['prepared', 'order processed', 'processed', 'preparing']) || (isset($row['IsPrepared']) && $row['IsPrepared'] == 'YES')) {
         $orderStatusText = 'Order processed';
         $stepIndex = 3;
     } 
     // Order Confirmed
-    else if (in_array($r, ['accept', 'yes', 'order confirmed', 'confirmed'])) {
+    else if (in_array($r, ['accept', 'accepted', 'yes', 'order confirmed', 'confirmed', 'doing'])) {
         $orderStatusText = 'Order confirmed';
         $stepIndex = 2;
     } 
@@ -126,6 +133,13 @@ if (isset($rawStatus)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Track Order & Group Chat - QOON</title>
+    <!-- ⚡ Apply theme BEFORE paint to prevent flash -->
+    <script>
+        (function() {
+            var t = localStorage.getItem('qoon_theme') || 'dark';
+            if (t === 'light') document.documentElement.classList.add('light-mode');
+        })();
+    </script>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome -->
@@ -214,7 +228,7 @@ if (isset($rawStatus)) {
         .chat-msg.me { align-self: flex-end; flex-direction: row-reverse; }
         
         .chat-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(255,255,255,0.1); flex-shrink: 0;}
-        .chat-content { display: flex; flex-direction: column; gap: 4px; }
+        .chat-content { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
         .chat-msg.me .chat-content { align-items: flex-end; }
         
         .chat-name { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); display: flex; gap: 6px; align-items: center;}
@@ -231,8 +245,19 @@ if (isset($rawStatus)) {
         .chat-msg.driver .chat-name { color: var(--accent-glow-2); }
         .chat-msg.shop .chat-name { color: #FFD700; }
 
-        /* Chat Input Field & Attachments */
+        /* Chat Closed Banner */
+        #chat-closed-banner {
+            padding: 16px 20px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            background: rgba(0,0,0,0.4);
+            display: none; align-items: center; justify-content: center; gap: 10px;
+            font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.5);
+            flex-shrink: 0;
+        }
+        html.light-mode #chat-closed-banner { background: #f8fafc; color: #64748b; border-top-color: rgba(0,0,0,0.05); }
+
         .chat-input-wrapper { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.5); display: flex; gap: 12px; align-items: center;}
+
         
         .attach-btn { width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; transition: 0.2s; flex-shrink: 0;}
         .attach-btn:active { transform: scale(0.9); }
@@ -244,13 +269,34 @@ if (isset($rawStatus)) {
         .send-btn:active { transform: scale(0.9); }
 
         /* Shared Location Bubble */
-        .location-bubble { padding: 0 !important; overflow: hidden; width: 220px; border-radius: 16px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-top-right-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); position: relative;}
-        .loc-map-wrapper { position: relative; width: 100%; height: 120px; }
-        .loc-map-bg { width: 100%; height: 100%; background: url('https://b.basemaps.cartocdn.com/dark_all/16/31336/26601.png') center/cover; opacity: 0.9; }
-        .loc-map-bg-icon { position: absolute; top:50%; left:50%; transform:translate(-50%,-100%); color: var(--accent-glow-3); font-size: 36px; z-index: 2; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); }
-        .loc-details { padding: 12px 14px; background: rgba(10,10,10,0.85); backdrop-filter: blur(10px);}
-        .loc-title { font-weight: 800; font-size: 13px; color: #fff; margin-bottom: 2px;}
-        .loc-sub { font-size: 11px; color: var(--accent-glow-2); }
+        .location-bubble { 
+            padding: 0 !important; overflow: hidden; width: 240px; border-radius: 20px; 
+            background: var(--glass-bg); border: 1px solid var(--glass-border); 
+            border-top-right-radius: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); position: relative;
+            transition: transform 0.2s;
+        }
+        .location-bubble:active { transform: scale(0.98); }
+        .loc-map-wrapper { position: relative; width: 100%; height: 130px; overflow: hidden; }
+        .loc-map-bg { 
+            width: 100%; height: 100%; 
+            background: url('https://b.basemaps.cartocdn.com/dark_all/16/31336/26601.png') center/cover; 
+            opacity: 0.85; transition: 0.3s;
+        }
+        .loc-map-bg-icon { 
+            position: absolute; top:50%; left:50%; transform:translate(-50%,-100%); 
+            color: var(--accent-glow-3); font-size: 38px; z-index: 2; 
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)); 
+        }
+        .loc-details { padding: 14px 16px; background: rgba(10,10,10,0.85); backdrop-filter: blur(15px); border-top: 1px solid rgba(255,255,255,0.05);}
+        .loc-title { font-weight: 800; font-size: 14px; color: #fff; margin-bottom: 2px;}
+        .loc-sub { font-size: 12px; color: var(--accent-glow-2); font-weight: 600; opacity: 0.9; }
+        
+        html.light-mode .location-bubble { box-shadow: 0 10px 40px rgba(0,0,0,0.08) !important; border-color: rgba(0,0,0,0.05) !important; }
+        html.light-mode .loc-map-bg { background-image: url('https://b.basemaps.cartocdn.com/light_all/16/31336/26601.png') !important; opacity: 1 !important; }
+        html.light-mode .loc-details { background: #ffffff !important; border-top-color: rgba(0,0,0,0.05) !important; }
+        html.light-mode .loc-title { color: #0f1115 !important; }
+        html.light-mode .loc-sub { color: #2cb5e8 !important; opacity: 1 !important; }
+
 
         /* Payment Summary Bar */
         .payment-summary-bar {
@@ -292,7 +338,7 @@ if (isset($rawStatus)) {
 
         .call-modal-header { display: flex; justify-content: space-between; align-items: center; }
         .call-modal-header h3 { font-size: 18px; color: #fff; font-weight: 800; margin: 0;}
-        .close-modal { background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; transition: 0.2s;}
+        .close-modal { background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; transition: 0.2s; }
         .close-modal:hover { color: var(--accent-glow-3); }
 
         .call-option {
@@ -384,6 +430,128 @@ if (isset($rawStatus)) {
         
         .rating-avatar { width: 88px; height: 88px; border-radius: 50%; border: 3px solid var(--accent-glow-2); object-fit: cover; margin: 0 auto; box-shadow: 0 0 20px rgba(44, 181, 232, 0.4);}
         #rating-step-shop .rating-avatar { border-color: #FFD700; box-shadow: 0 0 20px rgba(255,215,0,0.4); }
+
+        /* --- LIGHT MODE OVERRIDES --- */
+        html.light-mode {
+            --bg-color: #f8f9fa;
+            --text-main: #0f1115;
+            --text-muted: #6b7280;
+            --glass-bg: #ffffff;
+            --glass-border: rgba(0,0,0,0.08);
+        }
+        html.light-mode body { background-color: #f8f9fa !important; color: #0f1115 !important; }
+        html.light-mode #sidebar { background: #ffffff !important; border-right-color: rgba(0,0,0,0.08) !important; }
+        html.light-mode .top-bar { background: #f9fafb !important; border-bottom-color: rgba(0,0,0,0.05) !important; }
+        html.light-mode .back-btn { background: #f3f4f6 !important; border-color: rgba(0,0,0,0.08) !important; color: #0f1115 !important; }
+        html.light-mode .back-btn:hover { background: #e5e7eb !important; }
+        html.light-mode .chat-area { background: #ffffff !important; }
+        html.light-mode .chat-bubble { background: #f3f4f6 !important; border-color: rgba(0,0,0,0.05) !important; color: #0f1115 !important; }
+        html.light-mode .chat-msg.me .chat-bubble { background: linear-gradient(135deg, #4a25e1, #9b2df1) !important; color: #fff !important; border: none !important; }
+        html.light-mode .chat-name { color: #6b7280 !important; }
+        html.light-mode .tracker-board { background: #f9fafb !important; border-bottom-color: rgba(0,0,0,0.05) !important; }
+        html.light-mode .tracker-steps { color: #9ca3af !important; }
+        html.light-mode .step.active { color: #0f1115 !important; }
+        html.light-mode .chat-input-wrapper { background: #f9fafb !important; border-top-color: rgba(0,0,0,0.05) !important; }
+        html.light-mode .chat-input { background: #ffffff !important; border-color: rgba(0,0,0,0.1) !important; color: #0f1115 !important; }
+        html.light-mode .chat-input::placeholder { color: #9ca3af !important; }
+        html.light-mode .attach-btn { background: #f3f4f6 !important; color: #0f1115 !important; border-color: rgba(0,0,0,0.08) !important; }
+        html.light-mode .payment-summary-bar { background: rgba(46, 204, 113, 0.05) !important; border-top-color: rgba(0,0,0,0.05) !important; }
+        html.light-mode .payment-summary-bar:hover { background: rgba(46, 204, 113, 0.1) !important; }
+        html.light-mode .attach-menu { background: #ffffff !important; border-color: rgba(0,0,0,0.08) !important; }
+        html.light-mode .attach-menu-item { color: #0f1115 !important; }
+        html.light-mode .attach-menu-item:hover { background: #f3f4f6 !important; }
+        html.light-mode .modal-overlay { background: rgba(255,255,255,0.8) !important; }
+        html.light-mode .call-modal-content, 
+        html.light-mode .picker-modal-content, 
+        html.light-mode .rating-modal-inner { 
+            background: #ffffff !important; border-color: rgba(0,0,0,0.08) !important; box-shadow: 0 10px 40px rgba(0,0,0,0.1) !important; 
+        }
+        html.light-mode .call-modal-header h3, 
+        html.light-mode .picker-modal-header h3, 
+        html.light-mode .rating-modal-inner h2,
+        html.light-mode .call-name,
+        html.light-mode .loc-title { color: #0f1115 !important; }
+        html.light-mode .close-modal { color: #0f1115 !important; }
+        html.light-mode .call-option { background: #f9fafb !important; border-color: rgba(0,0,0,0.05) !important; }
+        html.light-mode .call-option:hover { background: #f3f4f6 !important; }
+        html.light-mode .rating-stars { color: rgba(0,0,0,0.05) !important; }
+        html.light-mode .map-icon { border-color: #ffffff !important; }
+        html.light-mode #chatbox::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1) !important; }
+        html.light-mode .loc-details { background: rgba(255,255,255,0.9) !important; }
+        html.light-mode .co-header h3 { color: #0f1115 !important; }
+        html.light-mode .secure-pin-box { background: #ffffff !important; border-color: rgba(0,0,0,0.08) !important; color: #0f1115 !important; }
+        html.light-mode .chat-msg.driver .chat-name { color: #2cb5e8 !important; }
+        html.light-mode .chat-msg.shop .chat-name { color: #f39c12 !important; }
+        html.light-mode .pay-icon { background: rgba(46, 204, 113, 0.1) !important; }
+        html.light-mode #chatbox h3 { color: #0f1115 !important; }
+        html.light-mode #chatbox p { color: #6b7280 !important; }
+        html.light-mode .shop-name-top { color: #0f1115 !important; }
+        html.light-mode .order-id-top { color: #6b7280 !important; }
+        html.light-mode .secure-pin-lbl { color: #6b7280 !important; }
+        html.light-mode .pay-summary-lbl { color: #6b7280 !important; }
+        html.light-mode .pay-summary-val { color: #0f1115 !important; }
+        html.light-mode .pay-summary-total { color: #2ecc71 !important; }
+        html.light-mode .pay-summary-total-lbl { color: #6b7280 !important; }
+        html.light-mode .chat-msg .chat-bubble { background: #f3f4f6 !important; color: #0f1115 !important; border-color: rgba(0,0,0,0.05) !important; }
+        html.light-mode .chat-msg.me .chat-bubble { background: linear-gradient(135deg, #4a25e1, #9b2df1) !important; color: #fff !important; border: none !important; }
+        html.light-mode .chat-msg.driver .chat-bubble { border-left: 3px solid #2cb5e8 !important; }
+        html.light-mode .chat-msg.shop .chat-bubble { border-left: 3px solid #f1c40f !important; }
+        html.light-mode .open-map-btn { background: #f3f4f6 !important; border-color: rgba(0,0,0,0.08) !important; color: #0f1115 !important; }
+        html.light-mode .close-map-btn { background: #ffffff !important; border-color: rgba(0,0,0,0.08) !important; color: #0f1115 !important; }
+        html.light-mode .mobile-map-status { background: #ffffff !important; border-color: rgba(44, 181, 232, 0.4) !important; box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important; }
+        html.light-mode .mobile-map-status-title { color: #0f1115 !important; }
+        html.light-mode .call-desc { color: rgba(0,0,0,0.5) !important; }
+        html.light-mode .call-btn { background: #f3f4f6 !important; border-color: rgba(0,0,0,0.08) !important; color: #0f1115 !important; }
+        html.light-mode .call-modal-content { background: #ffffff !important; color: #0f1115 !important; border-color: rgba(0,0,0,0.08) !important; }
+        html.light-mode .call-modal-content > div:nth-child(2) { background: #f8f9fa !important; border-color: rgba(0,0,0,0.05) !important; }
+        html.light-mode hr { background: rgba(0,0,0,0.1) !important; }
+        
+        /* Dual Avatar Light Mode Overrides */
+        html.light-mode .dual-avatar { border-color: #ffffff !important; box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important; }
+        html.light-mode .chat-area div[style*="background: rgba(255,255,255,0.05)"] { background: #f3f4f6 !important; border-color: rgba(0,0,0,0.05) !important; color: #cbd5e1 !important; }
+        
+        /* Receipt Modal Fixes */
+        html.light-mode #receipt-modal div[style*="background: rgba(255,255,255,0.03)"],
+        html.light-mode #receipt-modal div[style*="background:rgba(255,255,255,0.03)"] { 
+            background: rgba(0,0,0,0.03) !important; border-color: rgba(0,0,0,0.08) !important; 
+        }
+        html.light-mode #receipt-modal div[style*="color:#fff"], 
+        html.light-mode #receipt-modal div[style*="color: #fff"], 
+        html.light-mode #receipt-modal span[style*="color:#fff"],
+        html.light-mode #receipt-modal span[style*="color: #fff"],
+        html.light-mode #receipt-modal div[style*="color:white"],
+        html.light-mode #receipt-modal span[style*="color:white"] { 
+            color: #0f1115 !important; 
+        }
+        html.light-mode #receipt-modal div[style*="color: rgba(255,255,255,0.6)"],
+        html.light-mode #receipt-modal div[style*="color:rgba(255,255,255,0.6)"] { 
+            color: #6b7280 !important; 
+        }
+        html.light-mode #receipt-modal div[style*="color: rgba(255,255,255,0.8)"],
+        html.light-mode #receipt-modal div[style*="color:rgba(255,255,255,0.8)"] { 
+            color: #374151 !important; 
+        }
+        html.light-mode #receipt-modal button.send-btn { 
+            background: #f3f4f6 !important; color: #0f1115 !important; border: 1px solid rgba(0,0,0,0.1) !important;
+        }
+        html.light-mode #receipt-modal hr { 
+            background: rgba(0,0,0,0.1) !important; opacity: 1 !important;
+        }
+        
+        /* Cancel Modal Fixes */
+        html.light-mode #cancel-modal h3 { color: #0f1115 !important; }
+        html.light-mode #cancel-modal p { color: rgba(0,0,0,0.5) !important; }
+        html.light-mode #cancel-modal button[style*="background: rgba(255,255,255,0.1)"] { background: #f3f4f6 !important; color: #0f1115 !important; }
+        
+        /* Cancelled Alert Modal Fixes */
+        html.light-mode #cancelled-alert-modal h3 { color: #0f1115 !important; }
+        html.light-mode #cancelled-alert-modal p { color: #6b7280 !important; }
+        html.light-mode #cancelled-alert-modal button.send-btn { 
+            background: rgba(255, 71, 87, 0.08) !important; 
+            color: #dc2626 !important; 
+            border: 1px solid rgba(220, 38, 38, 0.2) !important; 
+        }
+
     </style>
 </head>
 <body>
@@ -397,8 +565,8 @@ if (isset($rawStatus)) {
                     <!-- Shop Logo -->
                     <img src="<?= $shopImgUrl ?>" style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.1); object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
                     <div>
-                        <div style="font-weight: 800; color: #fff; font-size: 15px;"><?= htmlspecialchars($shopName) ?> <i class="fa-solid fa-circle-check" style="color:var(--accent-glow-2); font-size:12px;"></i></div>
-                        <div style="font-size: 11px; color: rgba(255,255,255,0.5);">Order #<?= $orderId ?></div>
+                        <div class="shop-name-top" style="font-weight: 800; color: #fff; font-size: 15px;"><?= htmlspecialchars($shopName) ?> <i class="fa-solid fa-circle-check" style="color:var(--accent-glow-2); font-size:12px;"></i></div>
+                        <div class="order-id-top" style="font-size: 11px; color: rgba(255,255,255,0.5);">Order #<?= $orderId ?></div>
                     </div>
                 </div>
             </div>
@@ -413,7 +581,7 @@ if (isset($rawStatus)) {
 
         <!-- Tracker Line -->
         <?php 
-            $isCancelled = (strtolower($rawStatus ?? '') == 'cancelled');
+            $isCancelled = in_array(strtolower($rawStatus ?? ''), ['cancelled', 'canceled', 'returned', 'refunded']);
             $barWidth = $isCancelled ? "100%" : (($stepIndex / 6) * 100) . "%";
         ?>
         <div class="tracker-board" id="main-tracker-board">
@@ -435,16 +603,33 @@ if (isset($rawStatus)) {
             <div style="display: flex; align-items: center; gap: 12px;">
                 <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(155, 45, 241, 0.15); color: var(--accent-glow-3); display: flex; align-items: center; justify-content: center; font-size: 16px;"><i class="fa-solid fa-shield-halved"></i></div>
                 <div>
-                    <div style="font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 600;">Secure Delivery PIN</div>
+                    <div class="secure-pin-lbl" style="font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 600;">Secure Delivery PIN</div>
                     <div style="font-size: 12px; color: var(--accent-glow-3); font-weight: 700;">Give to driver to complete</div>
                 </div>
             </div>
-            <div style="font-size: 26px; font-weight: 900; letter-spacing: 6px; color: #fff; font-family: monospace; background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+            <div class="secure-pin-box" style="font-size: 26px; font-weight: 900; letter-spacing: 6px; color: #fff; font-family: monospace; background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
                 <?= $fourDigitPin ?>
             </div>
         </div>
 
         <div class="chat-area" id="chatbox">
+            <!-- Shop & Driver Dual Avatar Header inside Chat -->
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 30px 0; text-align: center;">
+                <div style="position: relative; width: 110px; height: 90px; margin-bottom: 12px;">
+                    <!-- Shop Image (Bottom Left) -->
+                    <img src="<?= $shopImgUrl ?>" class="dual-avatar shop-avatar-large" style="width: 76px; height: 76px; border-radius: 50%; object-fit: cover; border: 3px solid rgba(255,255,255,0.2); box-shadow: 0 10px 25px rgba(0,0,0,0.3); position: absolute; left: 0; bottom: 0; z-index: 2;">
+                    <!-- Driver Image (Top Right) -->
+                    <?php if ($driverName !== 'Waiting for Driver'): ?>
+                        <img src="<?= $driverImgUrl ?>" class="dual-avatar driver-avatar-large" style="width: 66px; height: 66px; border-radius: 50%; object-fit: cover; border: 3px solid rgba(255,255,255,0.2); box-shadow: 0 10px 25px rgba(0,0,0,0.3); position: absolute; right: 0; top: 0; z-index: 1;">
+                    <?php else: ?>
+                        <div style="width: 66px; height: 66px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 3px solid rgba(255,255,255,0.1); box-shadow: 0 10px 25px rgba(0,0,0,0.2); position: absolute; right: 0; top: 0; z-index: 1; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.3); font-size: 24px;">
+                            <i class="fa-solid fa-user-clock"></i>
+                        </div>
+                    <?php endif; ?>
+                </div>
+                <h3 style="color: #fff; font-size: 18px; font-weight: 800; margin: 0;"><?= htmlspecialchars($shopName) ?> <i class="fa-solid fa-circle-check" style="color:var(--accent-glow-2); font-size:14px;"></i></h3>
+                <p style="color: rgba(255,255,255,0.5); font-size: 12px; margin: 4px 0 0;">Order #<?= $orderId ?> Chat</p>
+            </div>
             <!-- Messages will be injected by Firebase Realtime DB -->
         </div>
 
@@ -453,20 +638,21 @@ if (isset($rawStatus)) {
             <div style="display: flex; align-items: center; gap: 12px;">
                 <div class="pay-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
                 <div>
-                    <div style="font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 600;">Payment Method</div>
-                    <div style="font-size: 14px; color: #fff; font-weight: 800;"><?= htmlspecialchars($paymentMethodText ?? 'Cash on Delivery') ?></div>
+                    <div class="pay-summary-lbl" style="font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 600;">Payment Method</div>
+                    <div class="pay-summary-val" style="font-size: 14px; color: #fff; font-weight: 800;"><?= htmlspecialchars($paymentMethodText ?? 'Cash on Delivery') ?></div>
                 </div>
             </div>
             <div style="text-align: right; display: flex; align-items: center; gap: 10px;">
                 <div>
-                    <div style="font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 600;">To Pay</div>
-                    <div style="font-size: 16px; color: #2ecc71; font-weight: 800;"><?= $totalPrice ?> MAD</div>
+                    <div class="pay-summary-total-lbl" style="font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 600;">To Pay</div>
+                    <div class="pay-summary-total" style="font-size: 16px; color: #2ecc71; font-weight: 800;"><?= $totalPrice ?> MAD</div>
                 </div>
                 <i class="fa-solid fa-chevron-right" style="color: rgba(255,255,255,0.2); font-size: 14px;"></i>
             </div>
         </div>
 
-        <div class="chat-input-wrapper" style="position: relative;">
+        <div class="chat-input-wrapper" id="chat-input-wrapper" style="position: relative;">
+
             <div class="attach-menu" id="attach-menu">
                 <div class="attach-menu-item" onclick="triggerImageUpload()">
                     <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(44, 181, 232, 0.1); color: var(--accent-glow-2); display: flex; align-items: center; justify-content: center;"><i class="fa-regular fa-image"></i></div> Send Image
@@ -474,8 +660,8 @@ if (isset($rawStatus)) {
                 <div class="attach-menu-item" onclick="openPickLocation()">
                     <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(155, 45, 241, 0.1); color: var(--accent-glow-3); display: flex; align-items: center; justify-content: center;"><i class="fa-solid fa-location-crosshairs"></i></div> Send Location
                 </div>
-                <hr style="border-color: rgba(255,255,255,0.05); margin: 4px 0;">
-                <div class="attach-menu-item danger" onclick="cancelOrderMock()">
+                <hr id="cancel-hr" style="border-color: rgba(255,255,255,0.05); margin: 4px 0;">
+                <div id="btn-cancel-order" class="attach-menu-item danger" onclick="cancelOrderMock()">
                     <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(255, 71, 87, 0.1); color: #ff4757; display: flex; align-items: center; justify-content: center;"><i class="fa-solid fa-ban"></i></div> Cancel Order
                 </div>
             </div>
@@ -485,9 +671,17 @@ if (isset($rawStatus)) {
             <input type="text" id="chat-input" class="chat-input" placeholder="Message the group..." onkeypress="handleEnter(event)">
             <button class="send-btn" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
+
+        <!-- Chat Closed Banner -->
+        <div id="chat-closed-banner">
+            <i class="fa-solid fa-lock"></i>
+            <span id="chat-closed-text">This order is closed. No new messages.</span>
+        </div>
+
     </div>
 
-    <!-- Right Map Container (Slides up on Mobile) -->
+    <!-- Right Map Container -->
+
     <div id="map-container">
         
         <!-- UI inside map strictly for Mobile App feel -->
@@ -761,7 +955,13 @@ if (isset($rawStatus)) {
 
         // --- Map Initialization ---
         const map = L.map('map', { zoomControl: false }).setView([33.5731, -7.5898], 15);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        
+        const isLight = document.documentElement.classList.contains('light-mode');
+        const tileUrl = isLight 
+            ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
+            : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+
+        L.tileLayer(tileUrl, {
             maxZoom: 19,
             attribution: '© OpenStreetMap © CartoDB'
         }).addTo(map);
@@ -799,23 +999,23 @@ if (isset($rawStatus)) {
             let statusText = 'Order placed';
             let isCancelled = false;
 
-            if (['cancelled', 'canceled'].includes(r)) {
+            if (['cancelled', 'canceled', 'returned', 'refunded'].includes(r)) {
                 statusText = 'Cancelled';
                 stepIndex = 6;
                 isCancelled = true;
             } else if (['order delivered', 'done', 'finish', 'rated', 'delivered'].includes(r)) {
                 statusText = 'Order delivered';
                 stepIndex = 6;
-            } else if (['come to take it', 'doing', 'found', 'on way', 'on the way'].includes(r)) {
+            } else if (['come to take it', 'found', 'on way', 'on the way', 'arrived'].includes(r)) {
                 statusText = 'Come to take it';
                 stepIndex = 5;
-            } else if (['order pickup', 'pickup', 'picked', 'picked up'].includes(r)) {
+            } else if (['order pickup', 'pickup', 'picked', 'picked up', 'ready'].includes(r)) {
                 statusText = 'Order pickup';
                 stepIndex = 4;
-            } else if (['order processed', 'prepared', 'processed'].includes(r)) {
+            } else if (['order processed', 'prepared', 'processed', 'preparing'].includes(r)) {
                 statusText = 'Order processed';
                 stepIndex = 3;
-            } else if (['order confirmed', 'confirmed', 'accept', 'yes'].includes(r)) {
+            } else if (['order confirmed', 'confirmed', 'accept', 'accepted', 'yes', 'doing'].includes(r)) {
                 statusText = 'Order confirmed';
                 stepIndex = 2;
             } else {
@@ -842,6 +1042,19 @@ if (isset($rawStatus)) {
             });
             if (isCancelled && steps.length >= 6) steps[5].classList.remove('active'); 
 
+            // Disable cancel if order is processed (step 3 or higher)
+            const btnCancel = document.getElementById('btn-cancel-order');
+            const cancelHr = document.getElementById('cancel-hr');
+            if (btnCancel && cancelHr) {
+                if (stepIndex >= 3 && !isCancelled) {
+                    btnCancel.style.display = 'none';
+                    cancelHr.style.display = 'none';
+                } else {
+                    btnCancel.style.display = 'flex';
+                    cancelHr.style.display = 'block';
+                }
+            }
+
             // If final state, stop polling and show rating
             if (stepIndex === 6 && !isCancelled) {
                 driverMarker.setLatLng(homeCoord);
@@ -850,32 +1063,57 @@ if (isset($rawStatus)) {
                     document.getElementById('rating-modal').classList.add('active');
                     rateShop(5); rateDriver(5);
                 }
-                clearInterval(statusPoll);
+                // Stopped listening handled below if needed
             } else if (isCancelled) {
-                clearInterval(statusPoll);
+                // Handle cancellation state
+                db.ref('OrderTrackers/<?= $orderId ?>').once('value').then(snap => {
+                    const data = snap.val();
+                    if (data && data.cancel_reason) {
+                        const by = data.cancelled_by || 'Shop';
+                        document.getElementById('cancel-reason-text').innerHTML = `<b>Cancelled by:</b> ${by}<br><br><b>Reason:</b> ${data.cancel_reason}`;
+                    }
+                });
+                document.getElementById('cancelled-alert-modal').classList.add('active');
             }
         }
 
-        const statusPoll = setInterval(() => {
-            const isFinalState = (currentStatus.toLowerCase() === 'done' || currentStatus.toLowerCase() === 'finish' || currentStatus.toLowerCase() === 'rated' || currentStatus.toLowerCase() === 'cancelled' || currentStatus.toLowerCase() === 'order delivered');
-            
-            if (!isFinalState) {
-                fetch(`track_order.php?orderId=<?= $orderId ?>&ajax_status=1`)
-                .then(r => r.json())
-                .then(data => {
-                    if (data.status !== currentStatus) {
-                        updateTrackingUI(data.status); // <--- Update DOM via API instead of Reloading!
-                    }
-                    
-                    // Realtime driver tracking via Firebase is handled by the listener below.
-                }).catch(e => console.error(e));
+        // --- Helper: Toggle Chat Input vs Closed Banner ---
+        function setChatInputState(status) {
+            const r = String(status || '').toLowerCase().trim();
+            const isDone = ['done', 'finish', 'rated', 'cancelled', 'canceled', 'returned', 'refunded', 'order delivered', 'delivered'].includes(r);
+            const inputEl = document.getElementById('chat-input-wrapper');
+            const bannerEl = document.getElementById('chat-closed-banner');
+            const textEl = document.getElementById('chat-closed-text');
+            if (!inputEl || !bannerEl) return;
+            if (isDone) {
+                inputEl.style.display = 'none';
+                bannerEl.style.display = 'flex';
+                const isCancelled = ['cancelled', 'canceled', 'returned', 'refunded'].includes(r);
+                if (textEl) textEl.textContent = isCancelled ? '🚫 Order cancelled. Chat is closed.' : '🎉 Order delivered! Chat is now closed.';
             } else {
-                if (currentStatus.toLowerCase() === 'cancelled') {
-                    document.getElementById('prog-bar').classList.add('cancelled');
-                }
-                clearInterval(statusPoll);
+                inputEl.style.display = 'flex';
+                bannerEl.style.display = 'none';
             }
-        }, 3000);
+        }
+
+        // --- Order Status Sync via Firebase (Option 2) ---
+        const trackerRef = db.ref('OrderTrackers/<?= $orderId ?>/current_status');
+        trackerRef.on('value', snapshot => {
+            const liveStatus = snapshot.val();
+            if (liveStatus && liveStatus !== currentStatus) {
+                updateTrackingUI(liveStatus);
+            }
+            setChatInputState(liveStatus || currentStatus);
+            
+            // Auto-detach listener if terminal state reached to save resources
+            const r = String(liveStatus).toLowerCase().trim();
+            if (['done', 'finish', 'rated', 'cancelled', 'canceled', 'returned', 'refunded', 'order delivered', 'delivered'].includes(r)) {
+                trackerRef.off();
+            }
+        });
+
+        // Apply on initial page load too (for already-delivered orders)
+        setChatInputState('<?= $rawStatus ?? '' ?>');
 
         // --- Driver Realtime Firebase Location ---
         <?php if ($actualDriverId !== '0'): ?>
@@ -902,7 +1140,10 @@ if (isset($rawStatus)) {
         function renderMessage(data) {
             const chatbox = document.getElementById('chatbox');
             const card = document.createElement('div');
-            const isMe = data.sender === 'User';
+            
+            const senderRaw = String(data.sender || '').toLowerCase().trim();
+            const isMe = (senderRaw === 'user');
+            
             card.className = isMe ? 'chat-msg me' : 'chat-msg driver'; // You can separate Shop/Driver classes if you have avatars later
             
             let htmlInner = '';
@@ -911,10 +1152,10 @@ if (isset($rawStatus)) {
             
             if (isMe) {
                 dispName = 'You';
-            } else if (data.sender === 'jibler') {
+            } else if (senderRaw === 'jibler' || senderRaw === 'driver') {
                 dispName = driverNameForChat + ' <i class="fa-solid fa-motorcycle"></i>';
                 avatarHtml = `<img src="${driverImgUrl}" class="chat-avatar">`;
-            } else if (data.sender === 'Shop') {
+            } else if (senderRaw === 'shop' || senderRaw === 'vendor') {
                 dispName = '<?= htmlspecialchars($shopName) ?> <i class="fa-solid fa-store"></i>';
                 avatarHtml = `<img src="${shopImgUrl}" class="chat-avatar">`;
             } else {
@@ -925,10 +1166,20 @@ if (isset($rawStatus)) {
             if (data.MessageType === 'Image' || (data.message && typeof data.message === 'string' && data.message.includes('http') && data.message.includes('png'))) {
                 msgPayload = `<div class="chat-bubble" style="padding: 6px; background: var(--glass-bg);"><img src="${data.message}" style="width: 200px; height: 180px; object-fit: cover; border-radius: 12px;"></div>`;
             } else if (data.MessageType === 'Location' || (data.message && typeof data.message === 'string' && data.message.includes('Live location'))) {
-                msgPayload = `<div class="location-bubble">
-                    <div class="loc-map-wrapper"><div class="loc-map-bg"></div><div class="loc-map-bg-icon"><i class="fa-solid fa-location-dot"></i></div></div>
-                    <div class="loc-details"><div class="loc-title">Live location</div><div class="loc-sub">Pin shared</div></div>
-                </div>`;
+                const parts = String(data.message).match(/(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)/);
+                let navUrl = 'javascript:void(0)';
+                if (parts) {
+                    navUrl = `https://www.google.com/maps/dir/?api=1&destination=${parts[1]},${parts[2]}`;
+                }
+                msgPayload = `<a href="${navUrl}" target="_blank" style="text-decoration: none;">
+                    <div class="location-bubble">
+                        <div class="loc-map-wrapper"><div class="loc-map-bg"></div><div class="loc-map-bg-icon"><i class="fa-solid fa-location-dot"></i></div></div>
+                        <div class="loc-details">
+                            <div class="loc-title">Live location</div>
+                            <div class="loc-sub">${parts ? 'Tap for directions' : 'Pin shared'}</div>
+                        </div>
+                    </div>
+                </a>`;
             } else {
                 msgPayload = `<div class="chat-bubble">${data.message}</div>`;
             }
@@ -973,7 +1224,11 @@ if (isset($rawStatus)) {
             // Only initialize the second map once
             if(!pickMapInit) {
                 pickMap = L.map('pick-map', { zoomControl: false, attributionControl: false }).setView(homeCoord, 16);
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(pickMap);
+                const isLight = document.documentElement.classList.contains('light-mode');
+                const tileUrl = isLight 
+                    ? 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
+                    : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+                L.tileLayer(tileUrl, { maxZoom: 19 }).addTo(pickMap);
                 pickMapInit = true;
             }
             
@@ -986,14 +1241,17 @@ if (isset($rawStatus)) {
         }
 
         function confirmLocationSend() {
+            const center = pickMap.getCenter();
             closePickerPopup(); // Close the modal
             document.getElementById('attach-menu').classList.remove('active'); // Close menu
             
-            // Push Location type to Firebase
+            // Push Location type to Firebase with precise coordinates and separate fields
             chatRef.push({
                 CreatedTime: Date.now(),
                 MessageType: 'Location',
-                message: 'Live location shared',
+                message: `Live Location: ${center.lat.toFixed(6)},${center.lng.toFixed(6)}`,
+                lat: center.lat,
+                lng: center.lng,
                 sender: 'User'
             });
         }
@@ -1117,6 +1375,19 @@ if (isset($rawStatus)) {
             setTimeout(() => { window.parent.location.href = "index.php"; }, 1500);
         }
     </script>
+    
+    <!-- Global Cancelled Alert Modal -->
+    <div id="cancelled-alert-modal" class="modal-overlay" style="z-index: 99999;">
+        <div class="call-modal-content" style="align-items: center; text-align: center; border-color: rgba(255, 71, 87, 0.4); box-shadow: 0 0 30px rgba(255, 71, 87, 0.2);">
+            <div style="width: 70px; height: 70px; border-radius: 50%; background: rgba(255, 71, 87, 0.1); color: #ff4757; display: flex; align-items: center; justify-content: center; font-size: 36px; margin-bottom: 10px;">
+                <i class="fa-solid fa-xmark"></i>
+            </div>
+            <h3 style="font-size: 22px; color: #fff; font-weight: 800; margin: 0;">Order Cancelled</h3>
+            <p id="cancel-reason-text" style="color: rgba(255,255,255,0.6); font-size: 14px; margin: 10px 0 20px;">This order has been cancelled by the shop or driver.</p>
+            
+            <button class="send-btn" style="width: 100%; height: 48px; border-radius: 12px; font-weight: 800; font-size: 15px; background: rgba(255, 71, 87, 0.1); color: #ff4757; border: 1px solid rgba(255, 71, 87, 0.3);" onclick="window.location.href='index.php'">Return to Home</button>
+        </div>
+    </div>
 </body>
 </html>
 

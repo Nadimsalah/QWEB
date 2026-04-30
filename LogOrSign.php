@@ -59,9 +59,10 @@ function loginSuccess($row) {
         $opts['samesite'] = 'Lax';
     }
 
-    setcookie('qoon_user_id',    (string)$uid,  $opts);
-    setcookie('qoon_user_name',  $uName,         $opts);
-    if (!empty($uPhoto)) setcookie('qoon_user_photo', $uPhoto, $opts);
+    // Frontend needs to read User ID, so httponly is false for it
+    setcookie('qoon_user_id',    (string)$uid,  array_merge($opts, ['httponly' => false]));
+    setcookie('qoon_user_name',  $uName,         array_merge($opts, ['httponly' => false]));
+    if (!empty($uPhoto)) setcookie('qoon_user_photo', $uPhoto, array_merge($opts, ['httponly' => false]));
 
     // Update Firebase token
     if (!empty($firebaseToken) && $con) {
@@ -137,8 +138,13 @@ if ($accountType === 'Email') {
         exit;
     }
 
-    $socialField = ($accountType === 'Google') ? 'GoogleID' : 'FaceID';
+    // Google uses GoogleID column; Apple uses AppleID column
+    $socialField = ($accountType === 'Google') ? 'GoogleID' : 'AppleID';
 
+    // Also read photo sent by frontend
+    $photo = sanitizeString($_POST['Photo'] ?? '', 512);
+
+    // 1. Look up existing user
     $stmt = $con->prepare("SELECT UserID, name, UserPhoto FROM Users WHERE $socialField=? AND AccountType=? LIMIT 1");
     $stmt->bind_param("ss", $socialId, $accountType);
     $stmt->execute();
@@ -146,18 +152,25 @@ if ($accountType === 'Email') {
     $stmt->close();
 
     if ($row) {
+        // Update photo if we have one now
+        if (!empty($photo) && empty($row['UserPhoto'])) {
+            $us = $con->prepare("UPDATE Users SET UserPhoto=? WHERE UserID=?");
+            if ($us) { $us->bind_param("si", $photo, $row['UserID']); $us->execute(); $us->close(); }
+            $row['UserPhoto'] = $photo;
+        }
         loginSuccess($row);
     } else {
-        // Register new social user
-        $stmt2 = $con->prepare("INSERT INTO Users (name, Email, $socialField, AccountType, UserFirebaseToken, AccountState) VALUES (?, ?, ?, ?, ?, 'Active')");
-        $stmt2->bind_param("sssss", $name, $email, $socialId, $accountType, $firebaseToken);
+        // 2. Register new social user
+        $stmt2 = $con->prepare("INSERT INTO Users (name, Email, UserPhoto, $socialField, AccountType, UserFirebaseToken, AccountState) VALUES (?, ?, ?, ?, ?, ?, 'Active')");
+        if (!$stmt2) { echo json_encode(['success' => false, 'message' => 'Server error: ' . $con->error]); exit; }
+        $stmt2->bind_param("ssssss", $name, $email, $photo, $socialId, $accountType, $firebaseToken);
         if ($stmt2->execute()) {
             $newId = $stmt2->insert_id;
             $stmt2->close();
-            $row = ['UserID' => $newId, 'name' => $name, 'UserPhoto' => ''];
+            $row = ['UserID' => $newId, 'name' => $name, 'UserPhoto' => $photo];
             loginSuccess($row);
         } else {
-            echo json_encode(['success' => false, 'message' => 'Failed to create social account.']);
+            echo json_encode(['success' => false, 'message' => 'Failed to create social account: ' . $con->error]);
             exit;
         }
     }
