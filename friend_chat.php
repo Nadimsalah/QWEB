@@ -87,7 +87,7 @@ $chatRoomId = $idArr[0] . "_" . $idArr[1];
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        body, html { height: 100%; overflow: hidden; background: var(--bg-color); color: var(--text-main); }
+        body, html { height: 100%; height: 100dvh; overflow: hidden; background: var(--bg-color); color: var(--text-main); width: 100%; }
         
         /* Light Mode Overrides */
         html.light-mode { --bg-color: #f8f9fa; --tg-header: #ffffff; --tg-input: #ffffff; --bubble-me: #2cb5e8; --bubble-them: #ffffff; --text-main: #0f1115; --text-muted: rgba(0, 0, 0, 0.5); }
@@ -125,10 +125,10 @@ $chatRoomId = $idArr[0] . "_" . $idArr[1];
         }
 
         .chat-container {
-            display: flex; flex-direction: column; height: 100vh;
+            display: flex; flex-direction: column; height: 100%; height: 100dvh;
             /* Adjust for mobile safe areas */
             padding-bottom: env(safe-area-inset-bottom);
-            max-width: 800px; margin: 0 auto; background: rgba(0,0,0,0.2);
+            max-width: 800px; width: 100%; margin: 0 auto; background: rgba(0,0,0,0.2);
             box-shadow: 0 0 50px rgba(0,0,0,0.5); position: relative;
         }
 
@@ -277,6 +277,53 @@ $chatRoomId = $idArr[0] . "_" . $idArr[1];
             display: flex; align-items: center; justify-content: center; font-size: 10px;
         }
 
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            .chat-container {
+                box-shadow: none;
+                background: transparent;
+            }
+            .chat-header {
+                padding: 10px 15px;
+                gap: 10px;
+            }
+            .header-avatar {
+                width: 38px; height: 38px;
+            }
+            .header-name {
+                font-size: 15px;
+            }
+            .chat-input-container {
+                padding: 10px;
+            }
+            .messages-area {
+                padding: 15px 15px 20px 15px;
+            }
+            .msg-wrapper {
+                max-width: 85%;
+            }
+            .msg-bubble {
+                font-size: 14px;
+                padding: 10px 12px 18px 12px;
+            }
+            .apple-cash-card {
+                width: 220px;
+                padding: 15px;
+            }
+            .ac-amount { font-size: 26px; }
+            .attach-btn {
+                padding: 8px; font-size: 20px;
+            }
+            .send-btn {
+                width: 36px; height: 36px; font-size: 15px;
+            }
+            .input-wrapper {
+                min-height: 40px;
+            }
+            .chat-input {
+                font-size: 15px; padding: 8px 12px;
+            }
+        }
     </style>
 </head>
 <body>
