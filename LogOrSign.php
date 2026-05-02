@@ -46,6 +46,17 @@ function loginSuccess($row) {
     $uid    = $row['UserID'];
     $uName  = $row['name'] ?? 'User';
     $uPhoto = $row['UserPhoto'] ?? '';
+    $uToken = $row['UserToken'] ?? '';
+
+    // Generate secure token if missing (essential for sending money API)
+    if (empty($uToken) || $uToken === 's') {
+        $uToken = bin2hex(random_bytes(32));
+        if ($con) {
+            $st = $con->prepare("UPDATE Users SET UserToken=? WHERE UserID=?");
+            if ($st) { $st->bind_param("si", $uToken, $uid); $st->execute(); $st->close(); }
+        }
+        $row['UserToken'] = $uToken;
+    }
 
     // HttpOnly + Secure + SameSite cookies
     $opts = ['expires' => time() + 86400 * 30, 'path' => '/', 'domain' => 'qoon.app',
@@ -70,7 +81,7 @@ function loginSuccess($row) {
         if ($stmt) { $stmt->bind_param("si", $firebaseToken, $uid); $stmt->execute(); $stmt->close(); }
     }
 
-    echo json_encode(['success' => true, 'message' => 'Logged in successfully', 'UserID' => $uid]);
+    echo json_encode(['success' => true, 'message' => 'Logged in successfully', 'UserID' => $uid, 'UserToken' => $uToken]);
     exit;
 }
 
@@ -78,7 +89,7 @@ function loginSuccess($row) {
 if ($accountType === 'Email') {
 
     if ($mode === 'Login') {
-        $stmt = $con->prepare("SELECT UserID, name, UserPhoto, Password, AccountState FROM Users WHERE Email=? AND AccountType='Email' LIMIT 1");
+        $stmt = $con->prepare("SELECT UserID, name, UserPhoto, Password, AccountState, UserToken FROM Users WHERE Email=? AND AccountType='Email' LIMIT 1");
         if (!$stmt) { echo json_encode(['success' => false, 'message' => 'Server error']); exit; }
         $stmt->bind_param("s", $email);
         $stmt->execute();
@@ -123,7 +134,7 @@ if ($accountType === 'Email') {
         if ($stmt2->execute()) {
             $newId = $stmt2->insert_id;
             $stmt2->close();
-            $row = ['UserID' => $newId, 'name' => $name, 'UserPhoto' => ''];
+            $row = ['UserID' => $newId, 'name' => $name, 'UserPhoto' => '', 'UserToken' => ''];
             loginSuccess($row);
         } else {
             echo json_encode(['success' => false, 'message' => 'Failed to create account.']);
@@ -145,7 +156,7 @@ if ($accountType === 'Email') {
     $photo = sanitizeString($_POST['Photo'] ?? '', 512);
 
     // 1. Look up existing user
-    $stmt = $con->prepare("SELECT UserID, name, UserPhoto FROM Users WHERE $socialField=? AND AccountType=? LIMIT 1");
+    $stmt = $con->prepare("SELECT UserID, name, UserPhoto, UserToken FROM Users WHERE $socialField=? AND AccountType=? LIMIT 1");
     $stmt->bind_param("ss", $socialId, $accountType);
     $stmt->execute();
     $row = $stmt->get_result()->fetch_assoc();
@@ -167,7 +178,7 @@ if ($accountType === 'Email') {
         if ($stmt2->execute()) {
             $newId = $stmt2->insert_id;
             $stmt2->close();
-            $row = ['UserID' => $newId, 'name' => $name, 'UserPhoto' => $photo];
+            $row = ['UserID' => $newId, 'name' => $name, 'UserPhoto' => $photo, 'UserToken' => ''];
             loginSuccess($row);
         } else {
             echo json_encode(['success' => false, 'message' => 'Failed to create social account: ' . $con->error]);
