@@ -47,20 +47,31 @@ if ($con && !$authRequired) {
     }
 }
 
-// 2. Handle Friend Search (exact phone match)
+// 2. Handle Friend Search (flexible phone match)
 $searchedFriend = null;
 $searchPhone = $_GET['phone'] ?? '';
 if ($con && $searchPhone !== '') {
-    // Exact match only
-    $stmt = $con->prepare("SELECT UserID as id, name as FName, UserPhoto as Photo, PhoneNumber FROM Users WHERE PhoneNumber = ? AND UserID != ? LIMIT 1");
-    if ($stmt) {
-        $stmt->bind_param("ss", $searchPhone, $userId);
-        $stmt->execute();
-        $res = $stmt->get_result();
-        if ($row = $res->fetch_assoc()) {
-            $searchedFriend = $row;
+    // Clean the input: remove spaces, dashes, parentheses
+    $cleanSearch = preg_replace('/[\s\-\(\)]+/', '', $searchPhone);
+    
+    // Extract just the digits to handle country code differences (e.g., matching 0612345678 with +212612345678)
+    $digitsOnly = preg_replace('/[^0-9]/', '', $cleanSearch);
+    
+    // We require at least 8 digits to prevent matching too broadly
+    if (strlen($digitsOnly) >= 8) {
+        // Match numbers that end with the provided digits (ignoring country code if omitted)
+        $searchPattern = '%' . ltrim($digitsOnly, '0');
+        
+        $stmt = $con->prepare("SELECT UserID as id, name as FName, UserPhoto as Photo, PhoneNumber FROM Users WHERE PhoneNumber LIKE ? AND UserID != ? LIMIT 1");
+        if ($stmt) {
+            $stmt->bind_param("ss", $searchPattern, $userId);
+            $stmt->execute();
+            $res = $stmt->get_result();
+            if ($row = $res->fetch_assoc()) {
+                $searchedFriend = $row;
+            }
+            $stmt->close();
         }
-        $stmt->close();
     }
 }
 
