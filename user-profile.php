@@ -390,7 +390,7 @@ $uPhoto = resolvePhotoUrl($userData['UserPhoto'] ?? '', $uName);
             <a href="orders.php" style="background:#fff; color:#000; padding:16px; border-radius:20px; font-weight:700; text-decoration:none; text-align:center; display:flex; align-items:center; justify-content:center; gap:8px;">
                 <i class="fa-solid fa-clock-rotate-left"></i> My Orders
             </a>
-            <a href="logout.php" target="_parent" style="background:rgba(255, 59, 48, 0.1); color:#ff3b30; padding:16px; border-radius:20px; font-weight:700; text-decoration:none; text-align:center; border:1px solid rgba(255, 59, 48, 0.2);">
+            <a href="javascript:void(0)" onclick="handleLogout()" style="background:rgba(255, 59, 48, 0.1); color:#ff3b30; padding:16px; border-radius:20px; font-weight:700; text-decoration:none; text-align:center; border:1px solid rgba(255, 59, 48, 0.2);">
                 <i class="fa-solid fa-right-from-bracket"></i> Logout
             </a>
         </div>
@@ -545,6 +545,29 @@ $uPhoto = resolvePhotoUrl($userData['UserPhoto'] ?? '', $uName);
                 }
             });
         });
+
+        // ── Logout Handling ──
+        async function handleLogout() {
+            try {
+                // Clear all local storage related to the user
+                localStorage.clear();
+                
+                // Sign out of Firebase if initialized
+                if (typeof firebase !== 'undefined' && firebase.auth) {
+                    await firebase.auth().signOut().catch(e => console.warn(e));
+                }
+            } catch (e) {
+                console.error("Logout cleanup error", e);
+            }
+            
+            // Redirect top window to logout.php to clear PHP cookies
+            window.parent.location.href = 'logout.php?iframe=1';
+        }
     </script>
+    
+    <!-- Firebase SDK for auth signout -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="assets/js/firebase-auth.js"></script>
 </body>
 </html>
