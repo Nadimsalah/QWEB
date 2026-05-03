@@ -41,10 +41,8 @@ function processServerLogin(user, accountType, providerId, btn, originalHtml) {
                 if (btn) btn.innerHTML = '<i class="fa-solid fa-check"></i> Welcome!';
                 const urlP = new URLSearchParams(window.location.search);
                 const rTo = urlP.get('return_to');
-                setTimeout(() => {
-                    if (rTo) window.location.href = rTo;
-                    else location.reload();
-                }, 1000);
+                if (rTo) window.location.href = rTo;
+                else location.reload();
             } else {
                 if (btn) btn.innerHTML = originalHtml;
                 alert('Backend Error: ' + (json.message || 'Unknown error'));
@@ -84,22 +82,28 @@ window.googleLogin = function () {
     console.log("Starting Google Login...");
     if (btn) btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Loading...';
 
-    firebase.auth().signInWithPopup(provider).then((result) => {
-        processServerLogin(result.user, 'Google', 'google.com', btn, originalHtml);
-    }).catch((error) => {
-        if (error.code === 'auth/popup-blocked') {
-            console.warn("Popup blocked, falling back to redirect flow...");
-            firebase.auth().signInWithRedirect(provider);
-        } else {
-            if (btn) btn.innerHTML = originalHtml;
-            console.error("Firebase Login Error:", error.code, error.message);
-            if (error.code === 'auth/unauthorized-domain') {
-                alert("Error: This domain is not authorized in Firebase Console. Add your domain to 'Authorized Domains' in Firebase Authentication settings.");
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    if (isMobile) {
+        firebase.auth().signInWithRedirect(provider);
+    } else {
+        firebase.auth().signInWithPopup(provider).then((result) => {
+            processServerLogin(result.user, 'Google', 'google.com', btn, originalHtml);
+        }).catch((error) => {
+            if (error.code === 'auth/popup-blocked') {
+                console.warn("Popup blocked, falling back to redirect flow...");
+                firebase.auth().signInWithRedirect(provider);
             } else {
-                alert("Google Login failed: " + error.message);
+                if (btn) btn.innerHTML = originalHtml;
+                console.error("Firebase Login Error:", error.code, error.message);
+                if (error.code === 'auth/unauthorized-domain') {
+                    alert("Error: This domain is not authorized in Firebase Console. Add your domain to 'Authorized Domains' in Firebase Authentication settings.");
+                } else {
+                    alert("Google Login failed: " + error.message);
+                }
             }
-        }
-    });
+        });
+    }
 };
 
 // Global Apple Login Flow
