@@ -94,6 +94,24 @@ if (!isset($categories)) {
 }
 .header-text-link:hover { color: #fff; background: rgba(255, 255, 255, 0.1); }
 
+/* Unread badge on Chat button */
+.chat-link-wrap { position: relative; display: inline-flex; }
+.chat-unread-badge {
+    position: absolute; top: -4px; right: -6px;
+    min-width: 18px; height: 18px; border-radius: 99px;
+    background: #f50057; color: #fff;
+    font-size: 11px; font-weight: 700; line-height: 18px;
+    text-align: center; padding: 0 5px;
+    display: none; /* hidden until count > 0 */
+    box-shadow: 0 2px 8px rgba(245,0,87,0.5);
+    animation: badgePop 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    pointer-events: none;
+}
+@keyframes badgePop {
+    from { transform: scale(0); }
+    to   { transform: scale(1); }
+}
+
 /* Light mode header */
 html.light-mode header { border-bottom: 1px solid #e5e5e5; }
 html.light-mode .header-text-link { color: #0f0f0f; }
@@ -276,7 +294,10 @@ html.light-mode #qoon-main-logo { height: 44px !important; }
         ?>
             <!-- Top Navigation Links -->
             <a href="javascript:void(0)" onclick="openOrdersDrawer()" class="header-text-link">Orders</a>
-            <a href="javascript:void(0)" onclick="openChatDrawer()" class="header-text-link">Chat</a>
+            <span class="chat-link-wrap">
+                <a href="javascript:void(0)" onclick="openChatDrawer()" class="header-text-link" id="chatNavBtn">Chat</a>
+                <span class="chat-unread-badge" id="chatUnreadBadge"></span>
+            </span>
 
             <!-- Google-style More Button -->
             <div class="more-apps-container" id="moreAppsContainer">
@@ -591,6 +612,62 @@ function closeQpayDrawer() {
 }
 </script>
 
+<?php if (isset($_COOKIE['qoon_user_id'])): ?>
+<!-- Firebase for unread badge -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="assets/js/firebase-auth.js"></script>
+<script>
+(function() {
+    var myId = "<?= addslashes($_COOKIE['qoon_user_id']) ?>";
+    var badge = document.getElementById('chatUnreadBadge');
+    if (!badge || !myId) return;
+
+    // Track when user last opened chat — stored in localStorage
+    var LAST_SEEN_KEY = 'qoon_chat_last_seen_' + myId;
+
+    // When chat drawer opens → mark all as seen NOW
+    var origOpen = window.openChatDrawer;
+    window.openChatDrawer = function() {
+        localStorage.setItem(LAST_SEEN_KEY, Date.now().toString());
+        badge.style.display = 'none';
+        badge.textContent = '';
+        if (origOpen) origOpen();
+    };
+
+    function startWatching() {
+        if (typeof firebase === 'undefined' || !firebase.database) {
+            setTimeout(startWatching, 400);
+            return;
+        }
+        var db = firebase.database();
+        var lastSeen = parseInt(localStorage.getItem(LAST_SEEN_KEY) || '0', 10);
+        var unreadCount = 0;
+        var checked = {};
+
+        // Watch all FriendChats for rooms involving myId
+        db.ref('FriendChats').on('child_added', function(roomSnap) {
+            var key = roomSnap.key;
+            var parts = key.split('_');
+            if (parts.length !== 2 || (parts[0] !== myId && parts[1] !== myId)) return;
+
+            // Listen for new messages in this room
+            db.ref('FriendChats/' + key).orderByChild('timestamp').startAt(lastSeen + 1).on('child_added', function(msgSnap) {
+                var msg = msgSnap.val();
+                if (!msg || msg.senderId === myId) return; // ignore own messages
+                if (checked[msgSnap.key]) return;
+                checked[msgSnap.key] = true;
+                unreadCount++;
+                badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+                badge.style.display = 'block';
+            });
+        });
+    }
+
+    startWatching();
+})();
+</script>
+<?php endif; ?>
 <script>
 /* ── Logo theme swap (all logos with data-dark-src / data-light-src) ── */
 (function() {
