@@ -2,9 +2,9 @@
 header('Content-Type: application/json');
 require_once 'conn.php';
 
-// Only allow logged-in users
-session_start();
-if (empty($_SESSION['UserID'])) {
+// App uses cookie-based auth, not PHP sessions
+$userId = $_COOKIE['qoon_user_id'] ?? '';
+if (empty($userId)) {
     echo json_encode(['found' => false, 'error' => 'Not logged in']);
     exit;
 }
