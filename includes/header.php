@@ -262,6 +262,19 @@ html.light-mode #qoon-main-logo { height: 44px !important; }
 .chat-drawer-title { font-weight: 700; color: #fff; font-size: 18px; }
 .chat-drawer-close { background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; transition: 0.2s; }
 .chat-drawer-close:hover { color: #f50057; transform: scale(1.1); }
+
+/* Drawer Theme Toggle Button */
+.chat-drawer-theme-btn {
+    background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; transition: 0.2s;
+    display: flex; align-items: center; justify-content: center; width: 30px; height: 30px;
+}
+.chat-drawer-theme-btn:hover { color: #2cb5e8; transform: scale(1.1); }
+html.light-mode .chat-drawer-theme-btn { color: #0f0f0f; }
+html.light-mode .chat-drawer-theme-btn:hover { color: #2cb5e8; }
+.chat-drawer-theme-btn .fa-moon { display: block; }
+.chat-drawer-theme-btn .fa-sun { display: none; }
+html.light-mode .chat-drawer-theme-btn .fa-moon { display: none; }
+html.light-mode .chat-drawer-theme-btn .fa-sun { display: block; }
 </style>
 
 <header style="width:100%; display:flex; justify-content:space-between; align-items:center; padding: 15px 20px; box-sizing: border-box; position: sticky; top: 0; z-index: 100; background: transparent;">
@@ -384,7 +397,12 @@ html.light-mode #qoon-main-logo { height: 44px !important; }
 <div id="chatDrawer" class="chat-drawer">
     <div class="chat-drawer-header">
         <div class="chat-drawer-title">Chat</div>
-        <button class="chat-drawer-close" onclick="closeChatDrawer()"><i class="fa-solid fa-xmark"></i></button>
+        <div style="display:flex; gap:12px; align-items:center;">
+            <button class="chat-drawer-theme-btn" onclick="if(typeof qoonToggleTheme === 'function') qoonToggleTheme();" title="Toggle Theme">
+                <i class="fa-solid fa-moon"></i><i class="fa-solid fa-sun"></i>
+            </button>
+            <button class="chat-drawer-close" onclick="closeChatDrawer()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
     </div>
     <iframe id="chatIframe" src="about:blank" style="width:100%; flex:1; border:none; background: transparent;"></iframe>
 </div>
@@ -394,7 +412,12 @@ html.light-mode #qoon-main-logo { height: 44px !important; }
 <div id="ordersDrawer" class="chat-drawer">
     <div class="chat-drawer-header">
         <div class="chat-drawer-title">Orders</div>
-        <button class="chat-drawer-close" onclick="closeOrdersDrawer()"><i class="fa-solid fa-xmark"></i></button>
+        <div style="display:flex; gap:12px; align-items:center;">
+            <button class="chat-drawer-theme-btn" onclick="if(typeof qoonToggleTheme === 'function') qoonToggleTheme();" title="Toggle Theme">
+                <i class="fa-solid fa-moon"></i><i class="fa-solid fa-sun"></i>
+            </button>
+            <button class="chat-drawer-close" onclick="closeOrdersDrawer()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
     </div>
     <iframe id="ordersIframe" src="about:blank" style="width:100%; flex:1; border:none; background: transparent;"></iframe>
 </div>
@@ -404,7 +427,12 @@ html.light-mode #qoon-main-logo { height: 44px !important; }
 <div id="profileDrawer" class="chat-drawer">
     <div class="chat-drawer-header">
         <div class="chat-drawer-title">Profile</div>
-        <button class="chat-drawer-close" onclick="closeProfileDrawer()"><i class="fa-solid fa-xmark"></i></button>
+        <div style="display:flex; gap:12px; align-items:center;">
+            <button class="chat-drawer-theme-btn" onclick="if(typeof qoonToggleTheme === 'function') qoonToggleTheme();" title="Toggle Theme">
+                <i class="fa-solid fa-moon"></i><i class="fa-solid fa-sun"></i>
+            </button>
+            <button class="chat-drawer-close" onclick="closeProfileDrawer()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
     </div>
     <iframe id="profileIframe" src="about:blank" style="width:100%; flex:1; border:none; background: transparent;"></iframe>
 </div>
@@ -414,7 +442,12 @@ html.light-mode #qoon-main-logo { height: 44px !important; }
 <div id="qpayDrawer" class="chat-drawer">
     <div class="chat-drawer-header">
         <div class="chat-drawer-title">QOON Pay</div>
-        <button class="chat-drawer-close" onclick="closeQpayDrawer()"><i class="fa-solid fa-xmark"></i></button>
+        <div style="display:flex; gap:12px; align-items:center;">
+            <button class="chat-drawer-theme-btn" onclick="if(typeof qoonToggleTheme === 'function') qoonToggleTheme();" title="Toggle Theme">
+                <i class="fa-solid fa-moon"></i><i class="fa-solid fa-sun"></i>
+            </button>
+            <button class="chat-drawer-close" onclick="closeQpayDrawer()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
     </div>
     <iframe id="qpayIframe" src="about:blank" style="width:100%; flex:1; border:none; background: transparent;"></iframe>
 </div>
