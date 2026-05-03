@@ -207,28 +207,64 @@ if ($con) {
             border: 1px solid rgba(255,255,255,0.05); border-radius: 30px; padding: 30px;
             text-align: center; margin-bottom: 20px;
         }
-        .search-hero i { font-size: 40px; color: var(--secondary); margin-bottom: 16px; }
-        .search-hero h2 { font-size: 24px; font-weight: 700; margin-bottom: 10px; }
-        .search-hero p { color: var(--text-muted); font-size: 14px; margin-bottom: 24px; }
-
+        /* Friend Search */
+        .friend-search-wrap {
+            padding: 20px 16px 12px;
+        }
         .friend-search-box {
-            position: relative; max-width: 400px; margin: 0 auto;
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 18px; padding: 8px 8px 8px 16px;
+            transition: border-color 0.3s;
+        }
+        .friend-search-box:focus-within {
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(44,181,232,0.12);
+        }
+        .friend-search-box .search-icon {
+            color: var(--text-muted); font-size: 15px; flex-shrink: 0;
         }
         .friend-search-box input {
-            width: 100%; height: 60px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(0,0,0,0.5); backdrop-filter: blur(20px); color: #fff;
-            padding: 0 60px 0 24px; font-size: 16px; outline: none; transition: all 0.3s;
+            flex: 1; background: transparent; border: none; outline: none;
+            color: #fff; font-size: 15px; padding: 6px 0;
         }
-        .friend-search-box input:focus {
-            border-color: var(--secondary); background: rgba(0,0,0,0.8);
-            box-shadow: 0 0 20px rgba(44, 181, 232, 0.2);
+        .friend-search-box input::placeholder { color: rgba(255,255,255,0.35); }
+        #friend-search-btn {
+            flex-shrink: 0; background: var(--secondary); color: #fff;
+            border: none; border-radius: 12px; padding: 10px 18px;
+            font-size: 14px; font-weight: 600; cursor: pointer;
+            display: flex; align-items: center; gap: 6px; transition: all 0.2s;
+            white-space: nowrap;
         }
-        .friend-search-box button {
-            position: absolute; right: 8px; top: 8px; bottom: 8px; width: 44px;
-            border-radius: 14px; border: none; background: var(--secondary); color: #fff;
-            cursor: pointer; font-size: 16px; transition: all 0.2s; z-index: 10;
+        #friend-search-btn:hover { opacity: 0.85; transform: scale(1.03); }
+        #friend-search-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        /* Friend Result Card */
+        .friend-result-card {
+            display: flex; align-items: center; gap: 14px;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 18px; padding: 14px 16px; margin: 8px 16px;
+            animation: fadeSlideIn 0.3s ease;
         }
-        .friend-search-box button:hover { transform: scale(1.05); }
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .friend-result-avatar {
+            width: 52px; height: 52px; border-radius: 50%;
+            object-fit: cover; flex-shrink: 0;
+            border: 2px solid var(--secondary);
+        }
+        .friend-result-info { flex: 1; min-width: 0; }
+        .friend-result-name { font-weight: 700; font-size: 15px; color: #fff; }
+        .friend-result-phone { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+        .friend-chat-btn {
+            flex-shrink: 0; background: var(--secondary); color: #fff;
+            border: none; border-radius: 12px; padding: 10px 18px;
+            font-size: 14px; font-weight: 600; cursor: pointer;
+            display: flex; align-items: center; gap: 6px; transition: all 0.2s;
+        }
+        .friend-chat-btn:hover { opacity: 0.85; transform: scale(1.04); }
 
         /* Empty States */
         .empty-state { text-align: center; padding: 60px 20px; }
@@ -552,44 +588,17 @@ if ($con) {
 
         <!-- TAB 2: FRIENDS -->
         <div id="tab-friends" class="tab-content">
-            <div class="search-hero">
-                <i class="fa-solid fa-user-lock"></i>
-                <h2>Find a Friend</h2>
-                <p>For your privacy, you can only chat with friends if you know their exact phone number.</p>
-                
-                <form class="friend-search-box" method="GET" action="chat.php">
-                    <?php if ($isIframe): ?><input type="hidden" name="iframe" value="1"><?php endif; ?>
-                    <input type="hidden" name="tab" value="friends">
-                    <input type="tel" name="phone" placeholder="Enter full phone number..." value="<?= htmlspecialchars($searchPhone) ?>" required>
-                    <button type="submit" onclick="this.closest('form').submit();"><i class="fa-solid fa-magnifying-glass"></i></button>
-                </form>
+            <!-- Search Bar -->
+            <div class="friend-search-wrap">
+                <div class="friend-search-box">
+                    <i class="fa-solid fa-phone search-icon"></i>
+                    <input type="tel" id="friend-phone-input" placeholder="Enter phone number..." autocomplete="off">
+                    <button id="friend-search-btn"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+                </div>
             </div>
 
-            <?php if ($searchPhone !== ''): ?>
-                <?php if ($searchedFriend): 
-                    $fName = trim($searchedFriend['FName'] ?? '') ?: 'User';
-                    $fPhoto = fullUrl($searchedFriend['Photo'], $domain) ?: "https://ui-avatars.com/api/?name=" . urlencode($fName);
-                ?>
-                    <h3 style="margin-bottom: 16px; font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Search Result</h3>
-                    <a href="javascript:void(0)" onclick="startFriendChat('<?= $searchedFriend['id'] ?>')" class="glass-card" style="border-color: var(--secondary);">
-                        <div class="chat-avatar-wrap">
-                            <img src="<?= htmlspecialchars($fPhoto) ?>" class="chat-avatar" alt="">
-                        </div>
-                        <div class="chat-info">
-                            <div class="chat-title"><?= htmlspecialchars($fName) ?></div>
-                            <div class="chat-subtitle"><?= htmlspecialchars($searchedFriend['PhoneNumber']) ?></div>
-                        </div>
-                        <div class="chat-action" style="background: var(--secondary);">
-                            <i class="fa-solid fa-paper-plane" style="color:#fff"></i>
-                        </div>
-                    </a>
-                <?php else: ?>
-                    <div class="empty-state">
-                        <i class="fa-solid fa-ghost"></i>
-                        <p>No user found with the exact phone number: <strong><?= htmlspecialchars($searchPhone) ?></strong>.<br>Please check the number and try again.</p>
-                    </div>
-                <?php endif; ?>
-            <?php endif; ?>
+            <!-- Results Area -->
+            <div id="friend-search-result"></div>
         </div>
         <?php endif; // end !$authRequired else ?>
     </div>
@@ -598,21 +607,61 @@ if ($con) {
         function switchTab(tabId, btn) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            
             btn.classList.add('active');
             document.getElementById('tab-' + tabId).classList.add('active');
-        }
-
-        // If page loaded with ?tab=friends or ?phone=..., switch to friends tab
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('tab') || urlParams.has('phone')) {
-            const fBtn = document.querySelector('button[onclick="switchTab(\\\'friends\\\', this)"]');
-            if (fBtn) switchTab('friends', fBtn);
         }
 
         function startFriendChat(friendId) {
             window.location.href = 'friend_chat.php?uid=' + friendId + '<?= $isIframe ? "&iframe=1" : "" ?>';
         }
+
+        // AJAX Friend Search
+        document.addEventListener('DOMContentLoaded', function () {
+            const input = document.getElementById('friend-phone-input');
+            const btn = document.getElementById('friend-search-btn');
+            const resultBox = document.getElementById('friend-search-result');
+
+            function doSearch() {
+                const phone = input ? input.value.trim() : '';
+                if (!phone || phone.length < 4) {
+                    resultBox.innerHTML = '<div class="empty-state"><i class="fa-solid fa-phone"></i><p>Please enter a phone number to search.</p></div>';
+                    return;
+                }
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Searching...';
+                resultBox.innerHTML = '';
+
+                fetch('chat_search.php?phone=' + encodeURIComponent(phone))
+                    .then(r => r.json())
+                    .then(data => {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Search';
+                        if (data.found) {
+                            resultBox.innerHTML = `
+                                <div class="friend-result-card">
+                                    <img src="${data.photo}" class="friend-result-avatar" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}&background=6C63FF&color=fff'">
+                                    <div class="friend-result-info">
+                                        <div class="friend-result-name">${data.name}</div>
+                                        <div class="friend-result-phone">${data.phone}</div>
+                                    </div>
+                                    <button class="friend-chat-btn" onclick="startFriendChat('${data.id}')">
+                                        <i class="fa-solid fa-comment"></i> Chat
+                                    </button>
+                                </div>`;
+                        } else {
+                            resultBox.innerHTML = '<div class="empty-state"><i class="fa-solid fa-user-slash"></i><p>No user found for <strong>' + phone + '</strong>.<br>Check the number and try again.</p></div>';
+                        }
+                    })
+                    .catch(() => {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Search';
+                        resultBox.innerHTML = '<div class="empty-state"><i class="fa-solid fa-triangle-exclamation"></i><p>Connection error. Please try again.</p></div>';
+                    });
+            }
+
+            if (btn) btn.addEventListener('click', doSearch);
+            if (input) input.addEventListener('keydown', function(e) { if (e.key === 'Enter') doSearch(); });
+        });
 
         <?php if (!$isIframe): ?>
         document.addEventListener('DOMContentLoaded', () => {
