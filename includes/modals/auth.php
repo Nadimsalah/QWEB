@@ -540,10 +540,8 @@
                     btn.innerHTML = '<i class="fa-solid fa-check"></i> Success!';
                     const urlP = new URLSearchParams(window.location.search);
                     const rTo = urlP.get('return_to');
-                    setTimeout(() => {
-                        if (rTo) window.location.href = rTo;
-                        else location.reload();
-                    }, 1000);
+                    if (rTo) window.location.href = rTo;
+                    else location.reload();
                 } else {
                     alert(json.message || 'Error occurred');
                     btn.innerHTML = isSignUp ? 'Create Account' : 'Sign In';
