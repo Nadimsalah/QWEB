@@ -191,13 +191,14 @@ $chatRoomId = $idArr[0] . "_" . $idArr[1];
         .msg-wrapper + .msg-wrapper.them { margin-top: 2px; }
 
         .msg-bubble {
-            padding: 9px 13px 9px 13px;
+            display: inline-flex;        /* shrinks to content naturally */
+            flex-direction: column;
+            max-width: 100%;
+            padding: 8px 12px 6px 12px;
             border-radius: 18px;
             font-size: 15px; line-height: 1.5;
-            word-wrap: break-word; white-space: pre-wrap;
+            word-break: break-word;
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            overflow: hidden; /* clearfix for floated timestamp */
-            min-width: 60px;
         }
         .msg-wrapper.me .msg-bubble {
             background: linear-gradient(135deg, #2cb5e8 0%, #1a8fc0 100%);
@@ -211,15 +212,26 @@ $chatRoomId = $idArr[0] . "_" . $idArr[1];
             border: 1px solid rgba(255,255,255,0.08);
         }
 
-        /* Inline timestamp — floats right, pushes below text naturally */
-        .msg-text { display: inline; }
+        /* Text + timestamp row inside bubble */
+        .bubble-body {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-end;
+            gap: 8px;
+            flex-wrap: nowrap;
+        }
+        .msg-text {
+            flex: 1;
+            min-width: 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
         .msg-meta-inline {
             display: inline-flex; align-items: center; gap: 3px;
-            font-size: 10.5px; color: rgba(255,255,255,0.45);
-            float: right;
-            margin-left: 8px;
-            margin-top: 4px;
-            vertical-align: bottom;
+            font-size: 10.5px; color: rgba(255,255,255,0.5);
+            white-space: nowrap;
+            flex-shrink: 0;
+            margin-bottom: 1px;
         }
         .msg-wrapper.me .msg-meta-inline { color: rgba(255,255,255,0.75); }
         .msg-meta-inline i { font-size: 10px; }
@@ -500,18 +512,21 @@ $chatRoomId = $idArr[0] . "_" . $idArr[1];
             const wrap = document.createElement('div');
             wrap.className = `msg-wrapper ${isMe ? 'me' : 'them'}`;
 
-            let contentHtml = '';
-            
+            const time = formatTime(data.timestamp || Date.now());
+            const checkmarks = isMe ? `<i class="fa-solid fa-check-double" style="color:#4db8ff;font-size:10px;"></i>` : '';
+            const meta = `<span class="msg-meta-inline">${time} ${checkmarks}</span>`;
+
             if (data.type === 'Image') {
-                contentHtml = `<img src="${data.message}" class="msg-image" onclick="openImageViewer(this.src)">`;
+                wrap.innerHTML = `
+                    <img src="${data.message}" class="msg-image" onclick="openImageViewer(this.src)">
+                    ${meta}`;
+
             } else if (data.type === 'Transfer') {
-                const amountText = parseFloat(data.message).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                const amountText = parseFloat(data.message).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
                 const descText = isMe ? `You sent to ${friendName}` : `${data.senderName} sent you`;
-                contentHtml = `
+                wrap.innerHTML = `
                     <div class="apple-cash-card">
-                        <div class="ac-logo-row">
-                            <img src="qoon_pay_logo.png" alt="QOON Pay">
-                        </div>
+                        <div class="ac-logo-row"><img src="qoon_pay_logo.png" alt="QOON Pay"></div>
                         <div class="ac-amount">${amountText}<sup>MAD</sup></div>
                         <div class="ac-desc">${descText}</div>
                         <div class="ac-bottom">
@@ -519,32 +534,18 @@ $chatRoomId = $idArr[0] . "_" . $idArr[1];
                             <div class="ac-icon"><i class="fa-solid fa-check"></i></div>
                         </div>
                     </div>
-                `;
-            } else {
-                contentHtml = `<div class="msg-bubble">${data.message}</div>`;
-            }
+                    ${meta}`;
 
-            const checkmarks = isMe ? `<i class="fa-solid fa-check-double" style="color: #4db8ff; font-size:10px;"></i>` : '';
-            const time = formatTime(data.timestamp || Date.now());
-
-            if (data.type === 'Transfer') {
-                wrap.innerHTML = `
-                    ${contentHtml}
-                    <div class="msg-meta">${time} ${checkmarks}</div>
-                `;
-            } else if (data.type === 'Image') {
-                wrap.innerHTML = `
-                    ${contentHtml}
-                    <div class="msg-meta" style="margin-top: 4px;">${time} ${checkmarks}</div>
-                `;
             } else {
-                // Text bubble: time sits BELOW the text, inside bubble, right-aligned
+                // Text bubble with text + timestamp side by side
+                const escaped = data.message.replace(/</g,'&lt;').replace(/>/g,'&gt;');
                 wrap.innerHTML = `
                     <div class="msg-bubble">
-                        <span class="msg-text">${data.message}</span>
-                        <span class="msg-meta-inline">${time} ${checkmarks}</span>
-                    </div>
-                `;
+                        <div class="bubble-body">
+                            <span class="msg-text">${escaped}</span>
+                            ${meta}
+                        </div>
+                    </div>`;
             }
 
             messagesArea.appendChild(wrap);
