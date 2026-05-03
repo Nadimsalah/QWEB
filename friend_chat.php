@@ -153,7 +153,7 @@ $chatRoomId = $idArr[0] . "_" . $idArr[1];
         .header-name { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 2px; }
         .header-status { font-size: 13px; color: #2ecc71; /* Online color */ }
 
-        .header-actions { display: flex; gap: 16px; color: #fff; font-size: 18px; }
+        .header-actions { display: flex; gap: 16px; color: rgba(255,255,255,0.7); font-size: 20px; }
         .header-actions i { cursor: pointer; transition: 0.2s; }
         .header-actions i:active { color: #2cb5e8; transform: scale(0.9); }
 
@@ -170,9 +170,10 @@ $chatRoomId = $idArr[0] . "_" . $idArr[1];
         .msg-wrapper.them { align-self: flex-start; align-items: flex-start; }
 
         .msg-bubble {
-            padding: 10px 14px 20px 14px; border-radius: 16px; font-size: 15px; line-height: 1.4;
+            padding: 8px 12px; border-radius: 16px; font-size: 15px; line-height: 1.4;
             position: relative; word-wrap: break-word; white-space: pre-wrap;
             box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            display: inline-block; max-width: 100%;
         }
         .msg-wrapper.me .msg-bubble {
             background: var(--bubble-me); color: #fff;
@@ -183,12 +184,15 @@ $chatRoomId = $idArr[0] . "_" . $idArr[1];
             border-bottom-left-radius: 4px;
         }
 
-        .msg-meta {
-            display: flex; align-items: center; justify-content: flex-end; gap: 4px;
-            font-size: 11px; margin-top: 4px;
-            color: rgba(255,255,255,0.4);
+        /* WhatsApp-style inline timestamp */
+        .msg-text { display: inline; }
+        .msg-meta-inline {
+            display: inline-flex; align-items: center; gap: 3px;
+            font-size: 11px; color: rgba(255,255,255,0.45);
+            float: right; margin-left: 8px; margin-top: 4px;
+            position: relative; bottom: -2px;
         }
-        .msg-wrapper.me .msg-meta { color: rgba(255,255,255,0.6); }
+        .msg-wrapper.me .msg-meta-inline { color: rgba(255,255,255,0.65); }
 
         .msg-image {
             max-width: 100%; border-radius: 12px; margin-top: 4px; cursor: pointer;
@@ -339,11 +343,9 @@ $chatRoomId = $idArr[0] . "_" . $idArr[1];
             <img src="<?= htmlspecialchars($fPhotoUrl) ?>" class="header-avatar" alt="">
             <div class="header-info">
                 <div class="header-name"><?= htmlspecialchars($friendName) ?></div>
-                <div class="header-status">Online</div> <!-- Hardcoded for UI aesthetic -->
+                <div class="header-status" id="friend-status">Connecting...</div>
             </div>
             <div class="header-actions">
-                <i class="fa-solid fa-phone"></i>
-                <i class="fa-solid fa-video"></i>
                 <i class="fa-solid fa-ellipsis-vertical" style="margin-left: 5px;"></i>
             </div>
         </div>
@@ -380,11 +382,55 @@ $chatRoomId = $idArr[0] . "_" . $idArr[1];
         const myId = "<?= $myId ?>";
         const friendId = "<?= $friendId ?>";
         const myName = "<?= htmlspecialchars($myName) ?>";
+        const friendName = "<?= htmlspecialchars($friendName) ?>";
         
         // Init Firebase
-        
         const db = firebase.database();
         const chatRef = db.ref('FriendChats/<?= $chatRoomId ?>');
+        const presenceRef = db.ref('UserPresence/' + friendId);
+        const myPresenceRef = db.ref('UserPresence/' + myId);
+        const connectedRef = db.ref('.info/connected');
+
+        // ── Real Presence: write my own status ──────────────────
+        connectedRef.on('value', snap => {
+            if (snap.val() === true) {
+                // Mark me as online; on disconnect set lastSeen timestamp
+                myPresenceRef.set({ online: true, lastSeen: firebase.database.ServerValue.TIMESTAMP });
+                myPresenceRef.onDisconnect().set({ online: false, lastSeen: firebase.database.ServerValue.TIMESTAMP });
+            }
+        });
+
+        // ── Listen to friend's presence ──────────────────────────
+        const statusEl = document.getElementById('friend-status');
+        presenceRef.on('value', snap => {
+            const data = snap.val();
+            if (!data) {
+                statusEl.textContent = 'Offline';
+                statusEl.style.color = 'rgba(255,255,255,0.4)';
+                return;
+            }
+            if (data.online) {
+                statusEl.textContent = 'Online';
+                statusEl.style.color = '#2ecc71';
+            } else {
+                const lastSeen = data.lastSeen;
+                statusEl.style.color = 'rgba(255,255,255,0.4)';
+                if (lastSeen) {
+                    statusEl.textContent = 'last seen ' + timeAgo(lastSeen);
+                } else {
+                    statusEl.textContent = 'Offline';
+                }
+            }
+        });
+
+        function timeAgo(ts) {
+            const diff = Math.floor((Date.now() - ts) / 1000);
+            if (diff < 60) return 'just now';
+            if (diff < 3600) return Math.floor(diff/60) + ' min ago';
+            if (diff < 86400) return Math.floor(diff/3600) + ' hour' + (Math.floor(diff/3600)>1?'s':'') + ' ago';
+            const d = new Date(ts);
+            return 'at ' + d.toLocaleDateString([], {month:'short', day:'numeric'});
+        }
 
         const messagesArea = document.getElementById('messages-area');
         const chatInput = document.getElementById('chat-input');
@@ -454,10 +500,11 @@ $chatRoomId = $idArr[0] . "_" . $idArr[1];
                     <div class="msg-meta" style="margin-top: 4px;">${time} ${checkmarks}</div>
                 `;
             } else {
+                // Text bubble: time sits BELOW the text, inside bubble, right-aligned
                 wrap.innerHTML = `
                     <div class="msg-bubble">
-                        ${data.message}
-                        <div class="msg-meta" style="position:absolute; bottom:6px; right:10px;">${time} ${checkmarks}</div>
+                        <span class="msg-text">${data.message}</span>
+                        <span class="msg-meta-inline">${time} ${checkmarks}</span>
                     </div>
                 `;
             }
