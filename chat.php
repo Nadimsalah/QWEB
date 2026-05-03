@@ -62,9 +62,9 @@ if ($con && $searchPhone !== '') {
         // Match numbers that end with the provided digits (ignoring country code if omitted)
         $searchPattern = '%' . ltrim($digitsOnly, '0');
         
-        $stmt = $con->prepare("SELECT UserID as id, name as FName, UserPhoto as Photo, PhoneNumber FROM Users WHERE PhoneNumber LIKE ? AND UserID != ? LIMIT 1");
+        $stmt = $con->prepare("SELECT UserID as id, name as FName, UserPhoto as Photo, PhoneNumber FROM Users WHERE PhoneNumber LIKE ? LIMIT 1");
         if ($stmt) {
-            $stmt->bind_param("ss", $searchPattern, $userId);
+            $stmt->bind_param("s", $searchPattern);
             $stmt->execute();
             $res = $stmt->get_result();
             if ($row = $res->fetch_assoc()) {
