@@ -226,7 +226,7 @@ if ($con) {
         .friend-search-box button {
             position: absolute; right: 8px; top: 8px; bottom: 8px; width: 44px;
             border-radius: 14px; border: none; background: var(--secondary); color: #fff;
-            cursor: pointer; font-size: 16px; transition: all 0.2s;
+            cursor: pointer; font-size: 16px; transition: all 0.2s; z-index: 10;
         }
         .friend-search-box button:hover { transform: scale(1.05); }
 
@@ -558,10 +558,10 @@ if ($con) {
                 <p>For your privacy, you can only chat with friends if you know their exact phone number.</p>
                 
                 <form class="friend-search-box" method="GET" action="chat.php">
-                    <!-- Preserve any potential tab state (will handle via JS on load ideally, but simple form for now) -->
+                    <?php if ($isIframe): ?><input type="hidden" name="iframe" value="1"><?php endif; ?>
                     <input type="hidden" name="tab" value="friends">
                     <input type="tel" name="phone" placeholder="Enter full phone number..." value="<?= htmlspecialchars($searchPhone) ?>" required>
-                    <button type="submit"><i class="fa-solid fa-search"></i></button>
+                    <button type="submit" onclick="this.closest('form').submit();"><i class="fa-solid fa-magnifying-glass"></i></button>
                 </form>
             </div>
 
