@@ -266,6 +266,27 @@ if ($con) {
         }
         .friend-chat-btn:hover { opacity: 0.85; transform: scale(1.04); }
 
+        /* Friend History List */
+        .friend-history-loading {
+            text-align: center; padding: 20px; color: rgba(255,255,255,0.3); font-size: 18px;
+        }
+        .friend-history-label {
+            font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.3);
+            text-transform: uppercase; letter-spacing: 1.2px;
+            padding: 16px 16px 6px;
+        }
+        .friend-history-card {
+            text-decoration: none;
+        }
+        .chat-date {
+            font-size: 11px; color: var(--text-muted); white-space: nowrap; flex-shrink: 0;
+        }
+        .friend-search-divider {
+            font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.3);
+            text-transform: uppercase; letter-spacing: 1.2px;
+            padding: 16px 0 8px;
+        }
+
         /* Empty States */
         .empty-state { text-align: center; padding: 60px 20px; }
         .empty-state i { font-size: 48px; color: rgba(255,255,255,0.1); margin-bottom: 16px; }
@@ -588,8 +609,15 @@ if ($con) {
 
         <!-- TAB 2: FRIENDS -->
         <div id="tab-friends" class="tab-content">
-            <!-- Search Bar -->
+
+            <!-- Recent Friend Chats (from Firebase) -->
+            <div id="friend-history-list">
+                <div class="friend-history-loading"><i class="fa-solid fa-circle-notch fa-spin"></i></div>
+            </div>
+
+            <!-- Divider + Search -->
             <div class="friend-search-wrap">
+                <div class="friend-search-divider">Find a new friend</div>
                 <div class="friend-search-box">
                     <i class="fa-solid fa-phone search-icon"></i>
                     <input type="tel" id="friend-phone-input" placeholder="Enter phone number..." autocomplete="off">
@@ -597,7 +625,7 @@ if ($con) {
                 </div>
             </div>
 
-            <!-- Results Area -->
+            <!-- Search Results Area -->
             <div id="friend-search-result"></div>
         </div>
         <?php endif; // end !$authRequired else ?>
@@ -614,6 +642,102 @@ if ($con) {
         function startFriendChat(friendId) {
             window.location.href = 'friend_chat.php?uid=' + friendId + '<?= $isIframe ? "&iframe=1" : "" ?>';
         }
+
+        // ── Firebase: Load Friend Chat History ───────────────────
+        <?php if (!$authRequired): ?>
+        (function loadFriendHistory() {
+            const myId = "<?= addslashes($userId) ?>";
+            const historyBox = document.getElementById('friend-history-list');
+            if (!historyBox) return;
+
+            // Firebase must be loaded — it is included at bottom of page
+            function initHistory() {
+                if (typeof firebase === 'undefined' || !firebase.database) {
+                    setTimeout(initHistory, 300);
+                    return;
+                }
+                const db = firebase.database();
+                // List all FriendChats where myId appears in the key (format: id1_id2)
+                db.ref('FriendChats').once('value').then(snapshot => {
+                    const chats = [];
+                    snapshot.forEach(child => {
+                        const key = child.key; // e.g. "1000001_1000009"
+                        const parts = key.split('_');
+                        if (parts.length === 2 && (parts[0] === myId || parts[1] === myId)) {
+                            const friendId = parts[0] === myId ? parts[1] : parts[0];
+                            // Get last message
+                            let lastMsg = null;
+                            let lastTs = 0;
+                            child.forEach(msgSnap => {
+                                const m = msgSnap.val();
+                                if (m && m.timestamp > lastTs) {
+                                    lastTs = m.timestamp;
+                                    lastMsg = m;
+                                }
+                            });
+                            if (lastMsg) chats.push({ friendId, lastMsg, lastTs });
+                        }
+                    });
+
+                    // Sort by most recent
+                    chats.sort((a, b) => b.lastTs - a.lastTs);
+
+                    if (chats.length === 0) {
+                        historyBox.innerHTML = '';
+                        return;
+                    }
+
+                    // Fetch friend info from server for each
+                    const ids = chats.map(c => c.friendId);
+                    fetch('chat_user_info.php?ids=' + encodeURIComponent(ids.join(',')))
+                        .then(r => r.json())
+                        .then(users => {
+                            let html = '<div class="friend-history-label">Recent Chats</div>';
+                            chats.forEach(chat => {
+                                const u = users[chat.friendId] || {};
+                                const name = u.name || 'User';
+                                const photo = u.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=6C63FF&color=fff`;
+                                const type = chat.lastMsg.type || 'Text';
+                                let preview = '';
+                                if (type === 'Image') preview = '📷 Photo';
+                                else if (type === 'Transfer') preview = '💸 Payment';
+                                else preview = (chat.lastMsg.message || '').substring(0, 40);
+
+                                const time = formatHistoryTime(chat.lastTs);
+                                html += `
+                                    <a href="javascript:void(0)" onclick="startFriendChat('${chat.friendId}')" class="glass-card friend-history-card">
+                                        <div class="chat-avatar-wrap">
+                                            <img src="${photo}" class="chat-avatar" alt="" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=6C63FF&color=fff'">
+                                        </div>
+                                        <div class="chat-info">
+                                            <div class="chat-title">${name}</div>
+                                            <div class="chat-subtitle" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;">${preview}</div>
+                                        </div>
+                                        <div class="chat-date">${time}</div>
+                                    </a>`;
+                            });
+                            historyBox.innerHTML = html;
+                        })
+                        .catch(() => { historyBox.innerHTML = ''; });
+                }).catch(() => { historyBox.innerHTML = ''; });
+            }
+            initHistory();
+
+            function formatHistoryTime(ts) {
+                const d = new Date(ts);
+                const now = new Date();
+                const diffDays = Math.floor((now - d) / 86400000);
+                if (diffDays === 0) {
+                    let h = d.getHours(), m = d.getMinutes();
+                    const ap = h >= 12 ? 'PM' : 'AM';
+                    h = h % 12 || 12;
+                    return `${h}:${m < 10 ? '0'+m : m} ${ap}`;
+                }
+                if (diffDays === 1) return 'Yesterday';
+                return d.toLocaleDateString([], {month: 'short', day: 'numeric'});
+            }
+        })();
+        <?php endif; ?>
 
         // AJAX Friend Search
         document.addEventListener('DOMContentLoaded', function () {
@@ -731,5 +855,9 @@ if ($con) {
         });
         <?php endif; ?>
     </script>
+    <!-- Firebase SDK for friend history -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="assets/js/firebase-auth.js"></script>
 </body>
 </html>
