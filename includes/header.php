@@ -275,6 +275,9 @@ html.light-mode .chat-drawer-theme-btn:hover { color: #2cb5e8; }
 .chat-drawer-theme-btn .fa-sun { display: none; }
 html.light-mode .chat-drawer-theme-btn .fa-moon { display: none; }
 html.light-mode .chat-drawer-theme-btn .fa-sun { display: block; }
+
+/* Hide global FAB when a drawer is open */
+body.drawer-is-open .theme-fab { display: none !important; }
 </style>
 
 <header style="width:100%; display:flex; justify-content:space-between; align-items:center; padding: 15px 20px; box-sizing: border-box; position: sticky; top: 0; z-index: 100; background: transparent;">
@@ -554,6 +557,7 @@ function openChatDrawer() {
     document.getElementById('chatDrawerOverlay').classList.add('open');
     document.getElementById('chatDrawer').classList.add('open');
     document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    document.body.classList.add('drawer-is-open');
     
     var iframe = document.getElementById('chatIframe');
     if (!iframe.src || iframe.src === window.location.href || iframe.src === 'about:blank') {
@@ -568,6 +572,7 @@ function closeChatDrawer() {
         overlay.classList.remove('open');
         drawer.classList.remove('open');
         document.body.style.overflow = '';
+        document.body.classList.remove('drawer-is-open');
     }
 }
 
@@ -576,6 +581,7 @@ function openOrdersDrawer() {
     document.getElementById('ordersDrawerOverlay').classList.add('open');
     document.getElementById('ordersDrawer').classList.add('open');
     document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    document.body.classList.add('drawer-is-open');
     
     var iframe = document.getElementById('ordersIframe');
     if (!iframe.src || iframe.src === window.location.href || iframe.src === 'about:blank') {
@@ -590,6 +596,7 @@ function closeOrdersDrawer() {
         overlay.classList.remove('open');
         drawer.classList.remove('open');
         document.body.style.overflow = '';
+        document.body.classList.remove('drawer-is-open');
     }
 }
 
@@ -598,6 +605,7 @@ function openProfileDrawer() {
     document.getElementById('profileDrawerOverlay').classList.add('open');
     document.getElementById('profileDrawer').classList.add('open');
     document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    document.body.classList.add('drawer-is-open');
     
     var iframe = document.getElementById('profileIframe');
     if (!iframe.src || iframe.src === window.location.href || iframe.src === 'about:blank') {
@@ -612,6 +620,7 @@ function closeProfileDrawer() {
         overlay.classList.remove('open');
         drawer.classList.remove('open');
         document.body.style.overflow = '';
+        document.body.classList.remove('drawer-is-open');
     }
 }
 
@@ -620,6 +629,7 @@ function openQpayDrawer(view = '') {
     document.getElementById('qpayDrawerOverlay').classList.add('open');
     document.getElementById('qpayDrawer').classList.add('open');
     document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    document.body.classList.add('drawer-is-open');
     
     var iframe = document.getElementById('qpayIframe');
     var targetSrc = 'qpay.php?iframe=1';
@@ -641,6 +651,7 @@ function closeQpayDrawer() {
         overlay.classList.remove('open');
         drawer.classList.remove('open');
         document.body.style.overflow = '';
+        document.body.classList.remove('drawer-is-open');
     }
 }
 </script>
