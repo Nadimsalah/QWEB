@@ -173,26 +173,34 @@ $chatRoomId = $idArr[0] . "_" . $idArr[1];
         .messages-area::-webkit-scrollbar { width: 4px; }
         .messages-area::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 10px; }
 
-        .msg-wrapper { display: flex; flex-direction: column; max-width: 78%; animation: msgIn 0.2s ease; }
+        .msg-wrapper {
+            display: flex; flex-direction: column;
+            max-width: 75%;
+            width: fit-content;  /* ← key fix: shrinks to content, not full width */
+            animation: msgIn 0.2s ease;
+        }
         @keyframes msgIn {
             from { opacity: 0; transform: translateY(6px) scale(0.97); }
             to   { opacity: 1; transform: translateY(0) scale(1); }
         }
-        .msg-wrapper.me { align-self: flex-end; align-items: flex-end; }
-        .msg-wrapper.them { align-self: flex-start; align-items: flex-start; }
+        .msg-wrapper.me  { align-self: flex-end;   align-items: flex-end; }
+        .msg-wrapper.them{ align-self: flex-start; align-items: flex-start; }
 
-        /* Group messages — less gap between same sender */
-        .msg-wrapper + .msg-wrapper.me,
-        .msg-wrapper + .msg-wrapper.them { margin-top: 1px; }
+        /* Less gap for consecutive same-sender messages */
+        .msg-wrapper + .msg-wrapper.me   { margin-top: 2px; }
+        .msg-wrapper + .msg-wrapper.them { margin-top: 2px; }
 
         .msg-bubble {
-            padding: 9px 13px; border-radius: 18px; font-size: 15px; line-height: 1.45;
+            padding: 9px 13px 9px 13px;
+            border-radius: 18px;
+            font-size: 15px; line-height: 1.5;
             word-wrap: break-word; white-space: pre-wrap;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
-            display: inline-block; max-width: 100%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            overflow: hidden; /* clearfix for floated timestamp */
+            min-width: 60px;
         }
         .msg-wrapper.me .msg-bubble {
-            background: linear-gradient(135deg, #2cb5e8, #1a8fc0);
+            background: linear-gradient(135deg, #2cb5e8 0%, #1a8fc0 100%);
             color: #fff;
             border-radius: 18px 18px 5px 18px;
         }
@@ -200,18 +208,20 @@ $chatRoomId = $idArr[0] . "_" . $idArr[1];
             background: rgba(255,255,255,0.09);
             color: #fff;
             border-radius: 18px 18px 18px 5px;
-            border: 1px solid rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.08);
         }
 
-        /* WhatsApp-style inline timestamp */
+        /* Inline timestamp — floats right, pushes below text naturally */
         .msg-text { display: inline; }
         .msg-meta-inline {
             display: inline-flex; align-items: center; gap: 3px;
             font-size: 10.5px; color: rgba(255,255,255,0.45);
-            float: right; margin-left: 10px; margin-top: 5px;
-            position: relative; bottom: -1px;
+            float: right;
+            margin-left: 8px;
+            margin-top: 4px;
+            vertical-align: bottom;
         }
-        .msg-wrapper.me .msg-meta-inline { color: rgba(255,255,255,0.7); }
+        .msg-wrapper.me .msg-meta-inline { color: rgba(255,255,255,0.75); }
         .msg-meta-inline i { font-size: 10px; }
 
         .msg-image {
