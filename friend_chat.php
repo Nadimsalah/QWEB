@@ -76,13 +76,15 @@ $chatRoomId = $idArr[0] . "_" . $idArr[1];
     </script>
     <style>
         :root {
-            --bg-color: #050505;
-            --tg-header: rgba(30, 35, 41, 0.85);
-            --tg-input: rgba(30, 35, 41, 0.95);
-            --bubble-me: #2b5278; /* Telegram dark mode blue */
-            --bubble-them: #182533; /* Telegram dark mode dark blue */
+            --bg-color: #0a0a0f;
+            --tg-header: rgba(15, 16, 22, 0.9);
+            --tg-input: rgba(15, 16, 22, 0.95);
+            --bubble-me: linear-gradient(135deg, #2cb5e8 0%, #1a8fc0 100%);
+            --bubble-them: rgba(255, 255, 255, 0.07);
             --text-main: #ffffff;
-            --text-muted: rgba(255, 255, 255, 0.5);
+            --text-muted: rgba(255, 255, 255, 0.45);
+            --accent: #2cb5e8;
+            --border: rgba(255,255,255,0.07);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -134,65 +136,83 @@ $chatRoomId = $idArr[0] . "_" . $idArr[1];
 
         /* Header */
         .chat-header {
-            display: flex; align-items: center; gap: 14px; padding: 12px 20px;
-            background: var(--tg-header); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255,255,255,0.05); z-index: 10;
+            display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+            background: var(--tg-header); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border-bottom: 1px solid var(--border); z-index: 10; position: relative;
         }
         .back-btn {
-            color: #fff; font-size: 20px; cursor: pointer; text-decoration: none; padding: 5px;
-            transition: 0.2s;
+            color: var(--accent); font-size: 18px; cursor: pointer; text-decoration: none;
+            padding: 6px 8px; border-radius: 10px; transition: 0.2s; flex-shrink: 0;
         }
-        .back-btn:active { transform: scale(0.9); }
+        .back-btn:active { background: rgba(44,181,232,0.15); }
         
         .header-avatar {
-            width: 44px; height: 44px; border-radius: 50%; object-fit: cover;
-            border: 1px solid rgba(255,255,255,0.1);
+            width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
+            border: 2px solid rgba(44,181,232,0.4); flex-shrink: 0;
         }
         
-        .header-info { flex: 1; }
-        .header-name { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 2px; }
-        .header-status { font-size: 13px; color: #2ecc71; /* Online color */ }
+        .header-info { flex: 1; min-width: 0; }
+        .header-name { font-size: 15px; font-weight: 700; color: #fff; line-height: 1.2; }
+        .header-status { font-size: 12px; color: var(--accent); margin-top: 1px; }
 
-        .header-actions { display: flex; gap: 16px; color: rgba(255,255,255,0.7); font-size: 20px; }
-        .header-actions i { cursor: pointer; transition: 0.2s; }
-        .header-actions i:active { color: #2cb5e8; transform: scale(0.9); }
+        .header-actions { display: flex; gap: 4px; }
+        .header-action-btn {
+            width: 36px; height: 36px; border-radius: 50%; background: transparent;
+            border: none; color: rgba(255,255,255,0.6); font-size: 18px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.2s;
+        }
+        .header-action-btn:hover { background: rgba(255,255,255,0.08); color: #fff; }
 
         /* Messages Area */
         .messages-area {
-            flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px;
+            flex: 1; overflow-y: auto; padding: 16px 12px;
+            display: flex; flex-direction: column; gap: 3px;
             scroll-behavior: smooth;
         }
-        .messages-area::-webkit-scrollbar { width: 5px; }
-        .messages-area::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        .messages-area::-webkit-scrollbar { width: 4px; }
+        .messages-area::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 10px; }
 
-        .msg-wrapper { display: flex; flex-direction: column; max-width: 80%; }
+        .msg-wrapper { display: flex; flex-direction: column; max-width: 78%; animation: msgIn 0.2s ease; }
+        @keyframes msgIn {
+            from { opacity: 0; transform: translateY(6px) scale(0.97); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
         .msg-wrapper.me { align-self: flex-end; align-items: flex-end; }
         .msg-wrapper.them { align-self: flex-start; align-items: flex-start; }
 
+        /* Group messages — less gap between same sender */
+        .msg-wrapper + .msg-wrapper.me,
+        .msg-wrapper + .msg-wrapper.them { margin-top: 1px; }
+
         .msg-bubble {
-            padding: 8px 12px; border-radius: 16px; font-size: 15px; line-height: 1.4;
-            position: relative; word-wrap: break-word; white-space: pre-wrap;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            padding: 9px 13px; border-radius: 18px; font-size: 15px; line-height: 1.45;
+            word-wrap: break-word; white-space: pre-wrap;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
             display: inline-block; max-width: 100%;
         }
         .msg-wrapper.me .msg-bubble {
-            background: var(--bubble-me); color: #fff;
-            border-bottom-right-radius: 4px;
+            background: linear-gradient(135deg, #2cb5e8, #1a8fc0);
+            color: #fff;
+            border-radius: 18px 18px 5px 18px;
         }
         .msg-wrapper.them .msg-bubble {
-            background: var(--bubble-them); color: #fff;
-            border-bottom-left-radius: 4px;
+            background: rgba(255,255,255,0.09);
+            color: #fff;
+            border-radius: 18px 18px 18px 5px;
+            border: 1px solid rgba(255,255,255,0.07);
         }
 
         /* WhatsApp-style inline timestamp */
         .msg-text { display: inline; }
         .msg-meta-inline {
             display: inline-flex; align-items: center; gap: 3px;
-            font-size: 11px; color: rgba(255,255,255,0.45);
-            float: right; margin-left: 8px; margin-top: 4px;
-            position: relative; bottom: -2px;
+            font-size: 10.5px; color: rgba(255,255,255,0.45);
+            float: right; margin-left: 10px; margin-top: 5px;
+            position: relative; bottom: -1px;
         }
-        .msg-wrapper.me .msg-meta-inline { color: rgba(255,255,255,0.65); }
+        .msg-wrapper.me .msg-meta-inline { color: rgba(255,255,255,0.7); }
+        .msg-meta-inline i { font-size: 10px; }
 
         .msg-image {
             max-width: 100%; border-radius: 12px; margin-top: 4px; cursor: pointer;
@@ -200,34 +220,42 @@ $chatRoomId = $idArr[0] . "_" . $idArr[1];
 
         /* Input Area */
         .chat-input-container {
-            display: flex; align-items: flex-end; gap: 10px; padding: 12px 16px;
-            background: var(--tg-input); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex; align-items: flex-end; gap: 8px; padding: 10px 12px;
+            background: var(--tg-input); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border-top: 1px solid var(--border);
+            padding-bottom: max(10px, env(safe-area-inset-bottom));
         }
         
         .attach-btn {
-            color: var(--text-muted); font-size: 22px; cursor: pointer; padding: 10px;
+            color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 10px;
             background: none; border: none; transition: 0.2s; flex-shrink: 0;
         }
-        .attach-btn:hover { color: #fff; }
+        .attach-btn:hover { color: var(--accent); }
 
         .input-wrapper {
-            flex: 1; background: rgba(0,0,0,0.3); border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.05); padding: 2px;
+            flex: 1; background: rgba(255,255,255,0.07); border-radius: 22px;
+            border: 1px solid rgba(255,255,255,0.1); padding: 2px 6px;
             display: flex; align-items: center; min-height: 44px;
+            transition: border-color 0.2s;
+        }
+        .input-wrapper:focus-within {
+            border-color: rgba(44,181,232,0.5);
+            background: rgba(255,255,255,0.09);
         }
         .chat-input {
-            flex: 1; background: transparent; border: none; color: #fff; font-size: 16px;
-            padding: 10px 14px; max-height: 120px; overflow-y: auto; resize: none;
+            flex: 1; background: transparent; border: none; color: #fff; font-size: 15px;
+            padding: 10px 10px; max-height: 120px; overflow-y: auto; resize: none;
             outline: none; line-height: 1.4;
         }
-        .chat-input::placeholder { color: rgba(255,255,255,0.3); }
+        .chat-input::placeholder { color: rgba(255,255,255,0.25); }
 
         .send-btn {
-            width: 40px; height: 40px; border-radius: 50%; background: #2cb5e8; color: #fff;
-            border: none; display: flex; align-items: center; justify-content: center;
-            font-size: 18px; cursor: pointer; transition: 0.2s; flex-shrink: 0;
-            box-shadow: 0 4px 15px rgba(44, 181, 232, 0.3); margin-bottom: 2px;
+            width: 40px; height: 40px; border-radius: 50%;
+            background: linear-gradient(135deg, #2cb5e8, #1a8fc0);
+            color: #fff; border: none;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; cursor: pointer; transition: 0.2s; flex-shrink: 0;
+            box-shadow: 0 4px 16px rgba(44,181,232,0.35);
         }
         .send-btn:active { transform: scale(0.9); }
 
@@ -339,14 +367,14 @@ $chatRoomId = $idArr[0] . "_" . $idArr[1];
         
         <!-- Header -->
         <div class="chat-header">
-            <a href="chat.php<?= $isIframe ? '?iframe=1' : '' ?>" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+            <a href="chat.php<?= $isIframe ? '?iframe=1' : '' ?>" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
             <img src="<?= htmlspecialchars($fPhotoUrl) ?>" class="header-avatar" alt="">
             <div class="header-info">
                 <div class="header-name"><?= htmlspecialchars($friendName) ?></div>
                 <div class="header-status" id="friend-status">Connecting...</div>
             </div>
             <div class="header-actions">
-                <i class="fa-solid fa-ellipsis-vertical" style="margin-left: 5px;"></i>
+                <button class="header-action-btn"><i class="fa-solid fa-ellipsis-vertical"></i></button>
             </div>
         </div>
 
