@@ -36,6 +36,31 @@ if ($res) {
         $newDate = date('Y-m-d H:i:s', strtotime($CreatedAtTrips. ' + 1 hours'));
         $row["CreatedAtComments"] = $newDate;
         
+        $CommentID = $row['CommentID'];
+        $res2 = mysqli_query($con, "
+            SELECT r.*, 
+                   COALESCE(u.name, s.ShopName, 'Unknown') as AuthorName,
+                   COALESCE(u.UserPhoto, s.ShopLogo) as AuthorPhoto
+            FROM Replies r
+            LEFT JOIN Users u ON r.UserID = u.UserID
+            LEFT JOIN Shops s ON r.UserID = s.ShopID
+            WHERE r.CommentID = '$CommentID'
+            ORDER BY r.ReplyID ASC
+        ");
+        $replies = [];
+        if ($res2) {
+            while ($row2 = mysqli_fetch_assoc($res2)) {
+                $row2['UserPhoto'] = resolvePhotoUrl($row2['AuthorPhoto'], $row2['AuthorName']);
+                $CreatedAtTrips2 = $row2["CreatedAtReplies"]; 
+                if ($CreatedAtTrips2) {
+                    $row2["CreatedAtReplies"] = date('Y-m-d H:i:s', strtotime($CreatedAtTrips2. ' + 1 hours'));
+                }
+                $replies[] = $row2;
+            }
+        }
+        $row['replies'] = $replies;
+        $row['0'] = $replies;
+        
         $result[] = $row;
     }
 }

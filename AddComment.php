@@ -48,7 +48,7 @@ $test=0;
                  $ShopFirebaseToken = $row["ShopFirebaseToken"]; 
 				 
 				 ResturantNotification($ShopFirebaseToken,$CommentText);
-				 newNotfi($ShopFirebaseToken,$CommentText,$accessToken,$ProgID);
+				 // newNotfi($ShopFirebaseToken,$CommentText,$accessToken,$ProgID);
 
             }
 

@@ -70,9 +70,14 @@ $row["CreatedAtOrders"] = $CreatedAtOrders;
 	if($row["DestnationPhoto"]=="0"){
 		$row["DestnationPhoto"] = $row["UserPhoto"];
 	}
+	
+	// Fallback for Firebase Users who don't exist in the legacy MySQL Users table
+	if(empty($row["name"]) || $row["name"] == null){
+		$row["name"] = $row["UserName"] ?? 'Customer';
+	}
 
 	if(empty($row["UserPhoto"]) || $row["UserPhoto"] == "0"){
-		$row["UserPhoto"] = "https://ui-avatars.com/api/?name=".urlencode($row["name"] ?? 'User')."&background=random";
+		$row["UserPhoto"] = "https://ui-avatars.com/api/?name=".urlencode($row["name"])."&background=random";
 	}
 
 $result[] = $row;

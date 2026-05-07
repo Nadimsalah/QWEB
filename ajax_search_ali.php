@@ -51,7 +51,7 @@ function callAliSearch($keyword, $page, $appKey, $appSecret, $accessToken) {
         "sign_method" => "md5",
         "session"     => $accessToken,
     ], [
-        "keyWord"     => $keyword,
+        "keyword"     => $keyword,
         "countryCode" => "MA",
         "currency"    => "MAD",
         "local"       => "en",

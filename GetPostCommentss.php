@@ -6,7 +6,7 @@ $test=0;
 
 $PostID = $_POST['PostID']; 
 
-$res = mysqli_query($con,"SELECT * FROM Comments JOIN Users ON Comments.UserID = Users.UserID WHERE Comments.PostID='$PostID' ORDER BY CommentID DESC");
+$res = mysqli_query($con,"SELECT * FROM Comments LEFT JOIN Users ON Comments.UserID = Users.UserID WHERE Comments.PostID='$PostID' ORDER BY CommentID DESC");
 
 $result = array();
 
@@ -29,10 +29,10 @@ $res2 = mysqli_query($con,"SELECT * FROM Replies WHERE CommentID='$CommentID'");
 
         $result2 = array();
         
-        while($row = mysqli_fetch_assoc($res2)){
+        while($row2 = mysqli_fetch_assoc($res2)){
         
         //$data = $row[0];
-        $result2[] = $row;
+        $result2[] = $row2;
         
         $test=4;
         

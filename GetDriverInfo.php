@@ -10,23 +10,22 @@ $res = mysqli_query($con,"SELECT * FROM Drivers WHERE DriverID=$DriverID");
 $result = array();
 
 while($row = mysqli_fetch_assoc($res)){
-
-//$data = $row[0];
-$result[] = $row;
-
-
-
-$test=4;
-
+    $result[] = $row;
+    $test=4;
 }
-/////////////
-//echo json_encode(array("result"=>$result));
+
 if($test==4 || empty($result)){
     $message ="sucssesfully";
     $success = true;
     $status_code = 200;
 
-echo json_encode(array('status_code' => $status_code,'success' => $success ,"data"=>$result[0],"message"=>$message));
+    $driver = $result[0];
+    if (isset($driver['PersonalPhoto'])) $driver['PersonalPhoto'] = resolvePhotoUrl($driver['PersonalPhoto'], $driver['Fname']);
+    if (isset($driver['NationalIDPhoto'])) $driver['NationalIDPhoto'] = resolvePhotoUrl($driver['NationalIDPhoto'], $driver['Fname']);
+    if (isset($driver['CarPhoto'])) $driver['CarPhoto'] = resolvePhotoUrl($driver['CarPhoto'], $driver['Fname']);
+    if (isset($driver['licensePhoto'])) $driver['licensePhoto'] = resolvePhotoUrl($driver['licensePhoto'], $driver['Fname']);
+
+    echo json_encode(array('status_code' => $status_code,'success' => $success ,"data"=>$driver,"message"=>$message));
 }
 else{
 	$message ="Error";

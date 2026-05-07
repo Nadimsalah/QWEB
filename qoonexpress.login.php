@@ -52,53 +52,9 @@ if (isset($_SESSION['driver_id'])) {
         body {
             height: 100%;
             font-family: 'Outfit', sans-serif;
-            background: var(--bg);
+            background: #ffffff;
             color: var(--text);
             overflow-x: hidden;
-        }
-
-        /* ── Animated background ── */
-        .bg-scene {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            overflow: hidden;
-            background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
-        }
-
-        .orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(100px);
-            opacity: 0.2;
-            animation: orbFloat 14s ease-in-out infinite alternate;
-        }
-
-        .orb-1 {
-            width: 700px;
-            height: 700px;
-            top: -250px;
-            left: -200px;
-            background: radial-gradient(circle, #2cb5e8, #6a11cb);
-        }
-
-        .orb-2 {
-            width: 500px;
-            height: 500px;
-            bottom: -150px;
-            right: -150px;
-            background: radial-gradient(circle, #6a11cb, #ff0080);
-        }
-
-        /* Grid */
-        .bg-grid {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            background-image:
-                linear-gradient(rgba(44, 181, 232, 0.05) 1.5px, transparent 1.5px),
-                linear-gradient(90deg, rgba(44, 181, 232, 0.05) 1.5px, transparent 1.5px);
-            background-size: 60px 60px;
         }
 
         /* ── Layout ── */
@@ -157,8 +113,8 @@ if (isset($_SESSION['driver_id'])) {
             top: 0;
             left: 0;
             right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #2cb5e8, #6a11cb, #ff0080);
+            height: 4px;
+            background: var(--express-blue);
         }
 
         /* ── Driver badge ── */
@@ -483,19 +439,12 @@ if (isset($_SESSION['driver_id'])) {
 
 <body>
 
-    <div class="bg-scene">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-    </div>
-    <div class="bg-grid"></div>
-
     <div class="page-wrapper">
         <div class="login-container">
 
             <!-- Logo -->
             <div class="logo-wrap">
-                <img src="logo_express.png" alt="QOON Express">
+                <img src="https://qoon.app/logo.png" alt="QOON Express">
                 <div class="logo-sub">Driver Portal — Sign in to your account</div>
             </div>
 

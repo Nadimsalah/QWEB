@@ -18,9 +18,17 @@ try {
                     Posts.PostText     AS caption,
                     'VIDEO'            AS storyType,
                     Shops.ShopName     AS shopName,
-                    Shops.ShopLogo     AS shopLogo
+                    Shops.ShopLogo     AS shopLogo,
+                    Foods.FoodID       AS productId,
+                    Foods.FoodName     AS productName,
+                    Foods.FoodPrice    AS productPrice,
+                    Foods.FoodPhoto    AS productPhoto,
+                    Categories.Type    AS shopType,
+                    Categories.EnglishCategory AS catDesc
                 FROM Posts
                 JOIN Shops ON Shops.ShopID = Posts.ShopID
+                JOIN Categories ON Categories.CategoryId = Shops.CategoryID
+                LEFT JOIN Foods ON Posts.ProductID = Foods.FoodID
                 WHERE Shops.Status = 'ACTIVE' 
                   AND Posts.PostStatus = 'ACTIVE' 
                   AND Posts.Video != '' 
@@ -36,9 +44,17 @@ try {
                     ''                 AS caption,
                     ShopStory.StotyType AS storyType,
                     Shops.ShopName     AS shopName,
-                    Shops.ShopLogo     AS shopLogo
+                    Shops.ShopLogo     AS shopLogo,
+                    Foods.FoodID       AS productId,
+                    Foods.FoodName     AS productName,
+                    Foods.FoodPrice    AS productPrice,
+                    Foods.FoodPhoto    AS productPhoto,
+                    Categories.Type    AS shopType,
+                    Categories.EnglishCategory AS catDesc
                 FROM Shops
+                JOIN Categories ON Categories.CategoryId = Shops.CategoryID
                 JOIN ShopStory ON Shops.ShopID = ShopStory.ShopID
+                LEFT JOIN Foods ON ShopStory.ProductId = Foods.FoodID
                 WHERE Shops.Status = 'ACTIVE' 
                   AND ShopStory.StoryStatus = 'ACTIVE'
             ) AS all_media
@@ -80,14 +96,33 @@ try {
                     $shopLogo = $DomainNamee . 'photo/' . $shopLogo;
                 }
 
+                $bunnyS = trim($row['bunnyS'] ?? '');
+                if ($bunnyS && strpos($bunnyS, 'http') === false) {
+                    $bunnyS = $DomainNamee . 'photo/' . $bunnyS;
+                }
+                
+                $productPhoto = trim($row['productPhoto'] ?? '');
+                if ($productPhoto && strpos($productPhoto, 'http') === false) {
+                    $productPhoto = $DomainNamee . 'photo/' . $productPhoto;
+                }
+
                 $reels[] = [
                     'id'         => (int)$row['id'],
                     'sourceType' => $row['sourceType'],
                     'mediaUrl'   => $mediaUrl,
                     'mediaType'  => $mediaType,
+                    'thumbnailUrl' => $bunnyS ? $bunnyS : ($mediaType === 'image' ? $mediaUrl : ''),
                     'caption'    => $row['caption'] ?? '',
                     'shopName'   => $row['shopName'] ?? 'Shop',
                     'shopLogo'   => $shopLogo,
+                    'product'    => empty($row['productId']) ? null : [
+                        'id'    => $row['productId'],
+                        'name'  => $row['productName'],
+                        'price' => $row['productPrice'],
+                        'photo' => $productPhoto
+                    ],
+                    'shopType'   => $row['shopType'] ?? '',
+                    'catDesc'    => $row['catDesc'] ?? ''
                 ];
             }
         }

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 error_reporting(0);
 ini_set("display_errors", "0");
 require "conn.php";
@@ -22,7 +22,11 @@ if($Pro==""){
 	$Pro = "Normal";
 }
 
-$res = mysqli_query($con,"SELECT Shops.*,Posts.*,Foods.*, (6372.797 * acos(cos(radians($UserLat)) * cos(radians(ShopLat)) * cos(radians(ShopLongt) - radians($UserLongt)) + sin(radians($UserLat)) * sin(radians(ShopLat)))) AS distance FROM Shops JOIN Posts ON Shops.ShopID=Posts.ShopID LEFT JOIN Foods ON Posts.ProductID = Foods.FoodID JOIN Categories ON Shops.CategoryID = Categories.CategoryId WHERE Shops.Status = 'ACTIVE' AND Categories.Pro = '$Pro' AND Posts.PostStatus='ACTIVE' HAVING distance <= 10050 ORDER BY distance ASC , rand() LIMIT $Page, 5");
+if ($Pro === 'ALL') {
+    $res = mysqli_query($con,"SELECT Shops.*,Posts.*,Foods.*, (6372.797 * acos(cos(radians($UserLat)) * cos(radians(ShopLat)) * cos(radians(ShopLongt) - radians($UserLongt)) + sin(radians($UserLat)) * sin(radians(ShopLat)))) AS distance FROM Shops JOIN Posts ON Shops.ShopID=Posts.ShopID LEFT JOIN Foods ON Posts.ProductID = Foods.FoodID JOIN Categories ON Shops.CategoryID = Categories.CategoryId WHERE Shops.Status = 'ACTIVE' AND Posts.PostStatus='ACTIVE' HAVING distance <= 10050 ORDER BY distance ASC , rand() LIMIT $Page, 5");
+} else {
+    $res = mysqli_query($con,"SELECT Shops.*,Posts.*,Foods.*, (6372.797 * acos(cos(radians($UserLat)) * cos(radians(ShopLat)) * cos(radians(ShopLongt) - radians($UserLongt)) + sin(radians($UserLat)) * sin(radians(ShopLat)))) AS distance FROM Shops JOIN Posts ON Shops.ShopID=Posts.ShopID LEFT JOIN Foods ON Posts.ProductID = Foods.FoodID JOIN Categories ON Shops.CategoryID = Categories.CategoryId WHERE Shops.Status = 'ACTIVE' AND Categories.Pro = '$Pro' AND Posts.PostStatus='ACTIVE' HAVING distance <= 10050 ORDER BY distance ASC , rand() LIMIT $Page, 5");
+}
 
 $result = array();
 

@@ -13,9 +13,9 @@ $photo1name=rand(1,700000).rand(1,700000);
 
 
 
-$paths1 = "$photo1name.png";
-$path1 =  "photo/$paths1";
-$actualpath1 = $DomainNamee."$path1";
+$paths1 = "https://qoon.app/userDriver/UserDriverApi/photo/$photo1name.png";
+$path1 =  "photo/$photo1name.png";
+$actualpath1 = $paths1;
 
 
 

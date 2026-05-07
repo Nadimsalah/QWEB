@@ -5,7 +5,7 @@ $test=0;
 
 $DelvryId = $_POST["DelvryId"];
 
-$res = mysqli_query($con,"SELECT * FROM Orders LEFT JOIN Users ON Users.UserID = Orders.UserID LEFT JOIN Shops ON Orders.DestinationName = Shops.ShopName WHERE DelvryId='$DelvryId' AND OrderState = 'Doing' ORDER BY OrderID DESC");
+$res = mysqli_query($con,"SELECT * FROM Orders LEFT JOIN Users ON Users.UserID = Orders.UserID LEFT JOIN Shops ON Orders.DestinationName = Shops.ShopName WHERE DelvryId='$DelvryId' AND OrderState IN ('Doing', 'Order pickup', 'Come to take it', 'Order processed', 'Preparing') ORDER BY OrderID DESC");
 
 $result = array();
 $i = 0;
@@ -54,6 +54,15 @@ if($row["OrderTypeSender"]=="COMPANY"){
 	if($WeightsId!='-'){
 		$res2 = mysqli_query($con,"SELECT WeightText FROM Weights WHERE WeightsId  = $WeightsId");
 		while($row2 = mysqli_fetch_assoc($res2)){ $row["WeightText"] = $row2["WeightText"]; }
+	}
+
+	// Fallback for Firebase Users who don't exist in the legacy MySQL Users table
+	if(empty($row["name"]) || $row["name"] == null){
+		$row["name"] = $row["UserName"] ?? 'Customer';
+	}
+
+	if(empty($row["UserPhoto"]) || $row["UserPhoto"] == "0"){
+		$row["UserPhoto"] = "https://ui-avatars.com/api/?name=".urlencode($row["name"])."&background=random";
 	}
 
 $result[] = $row;

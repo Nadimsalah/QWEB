@@ -72,8 +72,13 @@ if($row["OrderTypeSender"]=="COMPANY"){
 // 		while($row2 = mysqli_fetch_assoc($res2)){ $row["WeightText"] = $row2["WeightText"]; }
 // 	}
 
+	// Fallback for Firebase Users who don't exist in the legacy MySQL Users table
+	if(empty($row["name"]) || $row["name"] == null){
+		$row["name"] = $row["UserName"] ?? 'Customer';
+	}
+
 if(empty($row["UserPhoto"]) || $row["UserPhoto"] == "0"){
-    $row["UserPhoto"] = "https://ui-avatars.com/api/?name=".urlencode($row["name"] ?? 'User')."&background=random";
+    $row["UserPhoto"] = "https://ui-avatars.com/api/?name=".urlencode($row["name"])."&background=random";
 }
 
 $result[] = $row;

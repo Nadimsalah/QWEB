@@ -52,33 +52,15 @@ $test=0;
 
         if($AppType=="QOON"){
 
-
-        $res = mysqli_query($con,"SELECT * FROM DriversOffer WHERE DriverID ='$DriverID' AND OrderId='$OrderId'");
-        
+        // Check for existing offer from this driver on this order
+        $resExisting = mysqli_query($con,"SELECT * FROM DriversOffer WHERE DriverID ='$DriverID' AND OrderId='$OrderId'");
+        if(mysqli_num_rows($resExisting) > 0){
+            // Delete the old offer so driver can update their price (re-push to Firebase)
+            mysqli_query($con,"DELETE FROM DriversOffer WHERE DriverID='$DriverID' AND OrderId='$OrderId'");
+        }
         $result = array();
-        
-        
-        
-        while($row = mysqli_fetch_assoc($res)){
-        
-        //$data = $row[0];
-        $result[] = $row;
-        
-        $test=4;
-        
-        }
-        /////////////
-        //echo json_encode(array("result"=>$result));
-        if($test==4 || !empty($result)){
-        	
-            $message ="You ordered before";
-            $success = false;
-        	$result = [];
-            $status_code = 200;
-        
-        echo json_encode(array('status_code' => $status_code,'success' => $success ,"data"=>$result,"message"=>$message));
-        }
-        else{
+        // Always continue to main offer logic below
+        {
         	
         	$UserID = "";
         	$res = mysqli_query($con,"SELECT * FROM Orders WHERE OrderID ='$OrderId' AND OrderState='waiting'");
@@ -247,8 +229,8 @@ $test=0;
            
            /////////////////////////////////////////////
         		
-        		send_notification($UserFirebaseToken,$OrderId,$FName,$LANG,$Price);
-        		newNotfi($UserFirebaseToken,$OrderId,$FName,$LANG,$Price,$accessToken,$ProgID,$ORDERObjectLL);
+        		// send_notification($UserFirebaseToken,$OrderId,$FName,$LANG,$Price);
+        		// newNotfi($UserFirebaseToken,$OrderId,$FName,$LANG,$Price,$accessToken,$ProgID,$ORDERObjectLL);
         	}
         	   
         	   

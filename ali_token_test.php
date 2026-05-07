@@ -14,7 +14,7 @@ $sysParams = [
     "session"     => $token
 ];
 $apiParams = [
-    "keyWord"     => "shoes",
+    "keyword"     => "shoes",
     "countryCode" => "MA",
     "currency"    => "MAD",
     "local"       => "en",

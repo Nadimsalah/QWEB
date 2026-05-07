@@ -13,8 +13,10 @@ if (!$driverLat || !$driverLng) {
 
 $sql = "SELECT o.OrderID, o.OrderDetails, o.OrderState, o.CreatedAtOrders,
                o.DestnationLat, o.DestnationLongt, o.DestnationAddress, o.DestinationName,
-               o.DestnationPhoto, o.OrderDelvTime, o.OrderType,
-               u.name AS UserName, u.UserPhoto, u.PhoneNumber AS UserPhone,
+               o.DestnationPhoto, o.OrderDelvTime, o.OrderType, o.PlatformFee,
+               IFNULL(NULLIF(u.name, ''), o.UserName) AS UserName, 
+               u.UserPhoto, 
+               IFNULL(NULLIF(u.PhoneNumber, ''), o.UserPhone) AS UserPhone,
                s.ShopName, s.ShopLogo,
                IFNULL((6372.797 * acos(
                    cos(radians($driverLat)) * cos(radians(IFNULL(NULLIF(o.DestnationLat, ''), 0))) *

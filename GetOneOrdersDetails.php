@@ -31,9 +31,17 @@ $row["OrderPriceFromShop"] = (string)$row["OrderPriceFromShop"];
 $row["UserFees"] = $UserFees;
 }
 
+if(empty($row["name"]) || $row["name"] == null){
+    $row["name"] = $row["UserName"] ?? 'Customer';
+}
+if(empty($row["PhoneNumber"]) || $row["PhoneNumber"] == null || $row["PhoneNumber"] == "0"){
+    $row["PhoneNumber"] = $row["UserPhone"] ?? '';
+}
 if(empty($row["UserPhoto"]) || $row["UserPhoto"] == "0"){
     $row["UserPhoto"] = "https://ui-avatars.com/api/?name=".urlencode($row["name"] ?? 'User')."&background=random";
 }
+
+$row["ShopPickupPin"] = str_pad(abs(crc32($row["OrderID"] . "QOON_SHOP_PICKUP_TOKEN")) % 10000, 4, '0', STR_PAD_LEFT);
 
 $result[] = $row;
 

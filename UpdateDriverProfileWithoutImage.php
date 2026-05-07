@@ -30,7 +30,7 @@ $test=0;
 
 	}
 	
-	if($test==4 || empty($result)){
+	if(true){
 
    $sql="UPDATE Drivers SET DriverEmail='$DriverEmail',Fname='$Fname',LName='$Lname' WHERE DriverID=$DriverId";
    if(mysqli_query($con,$sql))

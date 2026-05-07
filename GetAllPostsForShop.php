@@ -25,10 +25,12 @@ if($Page==""){
 }
 
 // 1. First fetch filtered purely for Images
-$res = mysqli_query($con,"SELECT * FROM Posts JOIN Shops ON Posts.ShopID=Shops.ShopID LEFT JOIN Foods ON Posts.ProductID=Foods.FoodID WHERE Shops.Status = 'ACTIVE' AND Posts.PostStatus='ACTIVE' AND Posts.ShopID = $ShopID AND (Posts.Video IS NULL OR Posts.Video = '' OR Posts.Video = '0' OR Posts.Video = 'NONE')");
+// 1. First fetch filtered purely for Images
+$res = mysqli_query($con,"SELECT * FROM Posts JOIN Shops ON Posts.ShopID=Shops.ShopID LEFT JOIN Foods ON Posts.ProductID=Foods.FoodID WHERE Shops.Status = 'ACTIVE' AND Posts.PostStatus='ACTIVE' AND Posts.ShopID = $ShopID");
 
 // 2. Main Geospatial Fetch filtered purely for Images
-$res = mysqli_query($con,"SELECT *, (6372.797 * acos(cos(radians($UserLat)) * cos(radians(ShopLat)) * cos(radians(ShopLongt) - radians($UserLongt)) + sin(radians($UserLat)) * sin(radians(ShopLat)))) AS distance FROM Shops JOIN Posts ON Shops.ShopID=Posts.ShopID LEFT JOIN Foods ON Posts.ProductID = Foods.FoodID WHERE Shops.Status = 'ACTIVE' AND Posts.PostStatus='ACTIVE' AND Posts.ShopID = $ShopID AND (Posts.Video IS NULL OR Posts.Video = '' OR Posts.Video = '0' OR Posts.Video = 'NONE') HAVING distance <= 10050 ORDER BY  distance ASC , Posts.PostId DESC LIMIT $Page, 5");
+// 2. Main Geospatial Fetch
+$res = mysqli_query($con,"SELECT *, (6372.797 * acos(cos(radians($UserLat)) * cos(radians(ShopLat)) * cos(radians(ShopLongt) - radians($UserLongt)) + sin(radians($UserLat)) * sin(radians(ShopLat)))) AS distance FROM Shops JOIN Posts ON Shops.ShopID=Posts.ShopID LEFT JOIN Foods ON Posts.ProductID = Foods.FoodID WHERE Shops.Status = 'ACTIVE' AND Posts.PostStatus='ACTIVE' AND Posts.ShopID = $ShopID HAVING distance <= 10050 ORDER BY distance ASC, Posts.PostId DESC LIMIT $Page, 5");
 
 $result = array();
 
@@ -314,7 +316,8 @@ if($test==4 || empty($result)){
 $ShopID = $_POST["ShopID"];
 
 // 3. Final Counter Query Filter: Update pagination bounds to exclude video posts
-$res = mysqli_query($con,"SELECT count(*) FROM Posts JOIN Shops ON Shops.ShopID=Posts.ShopID WHERE Shops.Status = 'ACTIVE' AND Posts.PostStatus='ACTIVE' AND Posts.ShopID = $ShopID AND (Posts.Video IS NULL OR Posts.Video = '' OR Posts.Video = '0' OR Posts.Video = 'NONE')");
+// 3. Final Counter Query Filter
+$res = mysqli_query($con,"SELECT count(*) FROM Posts JOIN Shops ON Shops.ShopID=Posts.ShopID WHERE Shops.Status = 'ACTIVE' AND Posts.PostStatus='ACTIVE' AND Posts.ShopID = $ShopID");
 
 $i = 0;
 while($row = mysqli_fetch_assoc($res)){

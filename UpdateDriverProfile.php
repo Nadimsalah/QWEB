@@ -1,26 +1,30 @@
 <?php
 require "conn.php";
 
-$DriverId         = $_POST["DriverId"] ?? null;
-$Fname            = $_POST["Fname"] ?? "";
-$LName           = $_POST["LName"] ?? "";
+$DriverId         = $_POST["DriverID"] ?? $_POST["DriverId"] ?? "";
 $DriverEmail      = $_POST["DriverEmail"] ?? "";
+$Fname            = $_POST["FName"] ?? $_POST["Fname"] ?? "";
+$LName            = $_POST["LName"] ?? "";
 $DriverPhone      = $_POST["DriverPhone"] ?? "";
+$City             = $_POST["City"] ?? "";
+$AGE              = $_POST["AGE"] ?? "";
+
+// Base64 Images
 $PersonalPhoto    = $_POST["PersonalPhoto"] ?? "";
 $NationalIDPhoto  = $_POST["NationalIDPhoto"] ?? "";
 $CarPhoto         = $_POST["CarPhoto"] ?? "";
 $licensePhoto     = $_POST["licensePhoto"] ?? "";
 
 if (!$DriverId) {
-    echo json_encode(array('status_code' => 400, 'success' => false, "message" => "DriverId is missing"));
+    echo json_encode(array('status_code' => 400, 'success' => false, "message" => "Missing Driver ID"));
     exit;
 }
 
-$uploadDir = __DIR__ . DIRECTORY_SEPARATOR . 'photo' . DIRECTORY_SEPARATOR;
-if (!is_dir($uploadDir)) { mkdir($uploadDir, 0777, true); }
+$uploadDir = "photo/";
+if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
 
 function saveBase64($base64Data, $prefix) {
-    if (!$base64Data) return null;
+    if (!$base64Data || strlen($base64Data) < 20) return null;
     global $uploadDir;
     
     $ext = "png";
@@ -30,10 +34,12 @@ function saveBase64($base64Data, $prefix) {
     }
     $decoded = base64_decode($base64Data);
     if (!$decoded) return null;
+
+    $filename = $prefix . "_" . rand(100000, 999999) . "." . $ext;
+    $filePath = $uploadDir . $filename;
     
-    $filename = $prefix . "_" . rand(1, 999999) . "." . $ext;
-    if (file_put_contents($uploadDir . $filename, $decoded)) {
-        return $filename;
+    if (file_put_contents($filePath, $decoded)) {
+        return "https://qoon.app/userDriver/UserDriverApi/photo/" . $filename;
     }
     return null;
 }
@@ -41,23 +47,22 @@ function saveBase64($base64Data, $prefix) {
 $paths1 = saveBase64($PersonalPhoto, "driver_" . $DriverId);
 $paths2 = saveBase64($NationalIDPhoto, "nid_" . $DriverId);
 $paths3 = saveBase64($CarPhoto, "car_" . $DriverId);
-$paths4 = saveBase64($licensePhoto, "lic_" . $DriverId);
+$paths4 = saveBase64($licensePhoto, "license_" . $DriverId);
 
-// Update Drivers table with the new paths
-$stmt = $con->prepare("UPDATE Drivers SET DriverEmail=?, Fname=?, LName=?, PersonalPhoto=COALESCE(?, PersonalPhoto), NationalIDPhoto=COALESCE(?, NationalIDPhoto), CarPhoto=COALESCE(?, CarPhoto), LicensePhoto=COALESCE(?, LicensePhoto) WHERE DriverID=?");
-$stmt->bind_param("sssssssi", $DriverEmail, $Fname, $LName, $paths1, $paths2, $paths3, $paths4, $DriverId);
+$stmt = $con->prepare("UPDATE Drivers SET DriverEmail=?, Fname=?, LName=?, DriverPhone=?, City=?, AGE=?, PersonalPhoto=COALESCE(?, PersonalPhoto), NationalIDPhoto=COALESCE(?, NationalIDPhoto), CarPhoto=COALESCE(?, CarPhoto), licensePhoto=COALESCE(?, licensePhoto) WHERE DriverID=?");
+$stmt->bind_param("ssssssssssi", $DriverEmail, $Fname, $LName, $DriverPhone, $City, $AGE, $paths1, $paths2, $paths3, $paths4, $DriverId);
 
 if ($stmt->execute()) {
     $res = mysqli_query($con, "SELECT * FROM Drivers WHERE DriverID=$DriverId");
     $driver = mysqli_fetch_assoc($res);
     
-    // Resolve paths for response
-    $driver['PersonalPhoto'] = resolvePhotoUrl($driver['PersonalPhoto'], $driver['Fname']);
-    
+    if (isset($driver['PersonalPhoto'])) $driver['PersonalPhoto'] = resolvePhotoUrl($driver['PersonalPhoto'], $driver['Fname']);
+    if (isset($driver['NationalIDPhoto'])) $driver['NationalIDPhoto'] = resolvePhotoUrl($driver['NationalIDPhoto'], $driver['Fname']);
+    if (isset($driver['CarPhoto'])) $driver['CarPhoto'] = resolvePhotoUrl($driver['CarPhoto'], $driver['Fname']);
+    if (isset($driver['licensePhoto'])) $driver['licensePhoto'] = resolvePhotoUrl($driver['licensePhoto'], $driver['Fname']);
+
     echo json_encode(array('status_code' => 200, 'success' => true, "data" => $driver, "message" => "Updated successfully"));
 } else {
     echo json_encode(array('status_code' => 400, 'success' => false, "message" => "Database Update Error: " . $stmt->error));
 }
-
-mysqli_close($con);
 ?>
