@@ -1,0 +1,1 @@
+<?php require "conn.php"; $q=mysqli_query($con, "SELECT PostId AS StotyID, Video AS StoryPhoto, PostText AS AdName, ShopID, 'Video' AS StotyType, PostStatus AS StoryStatus, ProductID AS ProductId, BunnyV, BunnyS, AiChecked FROM Posts WHERE Video IS NOT NULL AND Video != ' AND Video != '0' AND Video != 'NONE' LIMIT 1"); print_r(mysqli_fetch_assoc($q)); ?>

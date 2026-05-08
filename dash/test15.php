@@ -1,0 +1,1 @@
+<?php require "conn.php"; $r = mysqli_query($con, "SELECT StotyID, StoryPhoto, StotyType, BunnyV FROM ShopStory WHERE StotyType='Video' ORDER BY StotyID DESC LIMIT 3"); while($row=mysqli_fetch_assoc($r)) { echo json_encode($row)."\n"; } ?>

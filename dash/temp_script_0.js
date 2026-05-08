@@ -1,0 +1,1 @@
+const REELS_DATA = [<?= implode(',', $reelsData ?? []) ?>];

@@ -1,0 +1,1 @@
+<?php require "conn.php"; $r = mysqli_query($con, "DESCRIBE Posts"); while($row=mysqli_fetch_assoc($r)) { if($row["Field"]=="PostLikes" || $row["Field"]=="Postcomments") echo $row["Field"]." | ".$row["Type"]."\n"; } ?>

@@ -1,0 +1,1 @@
+<?php require "conn.php"; $r = mysqli_query($con, "SELECT PostId, Video, PostStatus FROM Posts WHERE Video IS NOT NULL AND Video != '0' ORDER BY PostId DESC LIMIT 3"); while($row=mysqli_fetch_assoc($r)) { echo $row["PostId"]." | ".$row["PostStatus"]." | ".$row["Video"]."\n"; } ?>

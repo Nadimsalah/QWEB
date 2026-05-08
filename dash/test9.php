@@ -1,0 +1,1 @@
+<?php require "conn.php"; $r = mysqli_query($con, "SHOW COLUMNS FROM UserReals"); while($row=mysqli_fetch_row($r)) echo $row[0].", "; echo "\n"; $r = mysqli_query($con, "SHOW COLUMNS FROM UserSearchTable"); while($row=mysqli_fetch_row($r)) echo $row[0].", "; ?>

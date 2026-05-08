@@ -1,0 +1,1 @@
+<?php require "conn.php"; $_POST["UserLat"]="33.5"; $_POST["UserLongt"]="-7.5"; $_POST["UserID"]="10"; $_POST["Page"]="0"; $_POST["Pro"]="Normal"; ob_start(); include "test_api_target.php"; $out = ob_get_clean(); echo substr($out, 0, 500); ?>

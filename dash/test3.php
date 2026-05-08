@@ -1,0 +1,1 @@
+<?php require "conn.php"; $r = mysqli_query($con, "SELECT StoryPhoto, BunnyV FROM ShopStory WHERE StotyType='Video' LIMIT 3"); while($row=mysqli_fetch_assoc($r)) echo $row["StoryPhoto"]." | ".$row["BunnyV"]."\n"; ?>
