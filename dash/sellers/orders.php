@@ -430,6 +430,13 @@ $commPerc = ($percQuery && $pRow = $percQuery->fetch_assoc()) ? (float)$pRow['pe
                                                 <i class="fas fa-shield-alt"></i> Proof
                                             </button>
                                          <?php endif; ?>
+                                         <?php if(!in_array(strtolower($st), ['cancelled','canceled','done','rated','returned','delivered'])): ?>
+                                         <button class="btn-details" style="background:#FEE2E2; color:#991B1B; margin-right:5px; border:none; cursor:pointer; font-size: 11px; padding: 6px 10px;" 
+                                             onclick="cancelOrder('<?= $row['OrderID'] ?>')"
+                                             title="Cancel this order">
+                                             <i class="fas fa-times-circle"></i> Cancel
+                                         </button>
+                                         <?php endif; ?>
                                          <a href="order_detail.php?id=<?= $row['OrderID'] ?>" class="btn-details" style="display:inline-flex; text-decoration:none;">View Details</a>
                                     </td>
                                 </tr>
@@ -520,6 +527,12 @@ $commPerc = ($percQuery && $pRow = $percQuery->fetch_assoc()) ? (float)$pRow['pe
                                                 onclick="openProofModal('<?= $row['OrderID'] ?>', '<?= $row['DelvryId'] ?>', '<?= $row['UserLat'] ?>', '<?= $row['UserLongt'] ?>', '<?= htmlspecialchars($row['DriverName']??'') ?>', '<?= htmlspecialchars($row['BuyerName']??'') ?>', '<?= htmlspecialchars($row['CancelLat']??'') ?>', '<?= htmlspecialchars($row['CancelLng']??'') ?>', '<?= htmlspecialchars($row['CancelPhoto']??'') ?>', '<?= htmlspecialchars($row['DeliveryLat']??'') ?>', '<?= htmlspecialchars($row['DeliveryLng']??'') ?>', '<?= htmlspecialchars($row['DeliveryPhoto']??'') ?>', '<?= $st ?>')">
                                                 <i class="fas fa-shield-alt"></i> Proof
                                             </button>
+                                         <?php endif; ?>
+                                         <?php if(!in_array(strtolower($st), ['cancelled','canceled','done','rated','returned','delivered'])): ?>
+                                         <button class="btn-details" style="background:#FEE2E2; color:#991B1B; padding: 10px; border-radius: 12px; border:none; cursor:pointer;" 
+                                             onclick="cancelOrder('<?= $row['OrderID'] ?>')">
+                                             <i class="fas fa-times-circle"></i> Cancel
+                                         </button>
                                          <?php endif; ?>
                                          <a href="order_detail.php?id=<?= $row['OrderID'] ?>" class="btn-details" style="padding: 10px 20px; border-radius: 12px; display:inline-flex; text-decoration:none; text-align:center; flex:1;">Manage Order</a>
                             </div>
@@ -697,6 +710,31 @@ $commPerc = ($percQuery && $pRow = $percQuery->fetch_assoc()) ? (float)$pRow['pe
                     }
                 };
             });
+        }
+
+        async function cancelOrder(orderId) {
+            const reason = await showCancelPrompt();
+            if (reason === null) return;
+            
+            const formData = new FormData();
+            formData.append('order_id', orderId);
+            formData.append('status', 'Cancelled');
+            formData.append('cancel_reason', reason);
+
+            try {
+                const res = await fetch('api_orders.php?action=update_status', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    location.reload();
+                } else {
+                    showErrorModal(data.message || 'Could not cancel order.');
+                }
+            } catch (err) {
+                showErrorModal('Network error. Please try again.');
+            }
         }
 
         async function handleSelectChange(selectEl, orderId) {
