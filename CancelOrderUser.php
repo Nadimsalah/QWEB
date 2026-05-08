@@ -60,11 +60,8 @@ $test=0;
        $extraUpdates .= ", CancelPhoto='$cancelPhoto'";
    }
 
-   if($IsPrepared=="NO"){
-	  $sql="UPDATE Orders SET OrderState='Cancelled',ShowButtons='NO' $extraUpdates WHERE OrderID=$OrderID";
-   }else{
-	  $sql="UPDATE Orders SET OrderState='Cancelled' $extraUpdates WHERE OrderID=$OrderID"; 
-   }
+   // Always allow cancellation regardless of IsPrepared flag
+   $sql="UPDATE Orders SET OrderState='Cancelled',ShowButtons='NO' $extraUpdates WHERE OrderID=$OrderID";
    
    $newStatus = 'Cancelled'; // For Firebase sync below
    if(mysqli_query($con,$sql))
