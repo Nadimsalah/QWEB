@@ -130,26 +130,29 @@ if ($action == 'update_status') {
         curl_close($chFb);
         
         // --- Firebase Push to Chat ---
-        $friendlyStatus = $newStatus;
-        if($newStatus == 'waiting') $friendlyStatus = 'Placed';
-        if($newStatus == 'Accepted') $friendlyStatus = 'Confirmed';
-        if($newStatus == 'Preparing') $friendlyStatus = 'Processed';
-        if($newStatus == 'Ready') $friendlyStatus = 'Ready for Pickup';
-        if($newStatus == 'Doing') $friendlyStatus = 'Shipped';
-        if($newStatus == 'Done') $friendlyStatus = 'Delivered';
-        if($newStatus == 'Returned') $friendlyStatus = 'Returned';
-        if($newStatus == 'No_Answer') $friendlyStatus = 'No Answer from Customer';
-        if($newStatus == 'Postponed') $friendlyStatus = 'Delivery Postponed';
-        if($newStatus == 'Paid') $friendlyStatus = 'Paid - Payment Confirmed';
-        if($newStatus == 'Out_For_Delivery') $friendlyStatus = 'Out for Delivery';
-        if($newStatus == 'Refunded') $friendlyStatus = 'Refunded';
+        $msgTxt = "Update: Your order is now " . $newStatus;
+        if($newStatus == 'waiting') $msgTxt = "We have received your order! Please wait while we confirm it. 🕒";
+        if($newStatus == 'Accepted') $msgTxt = "Great news! We have confirmed your order and will start preparing it soon. 👨‍🍳";
+        if($newStatus == 'Preparing') $msgTxt = "Your order is now being freshly prepared! 🥘";
+        if($newStatus == 'Ready') $msgTxt = "Your order is ready and waiting for the driver to pick it up! 🛍️";
+        if($newStatus == 'Doing') $msgTxt = "Your order has been handed to the driver and is on its way! 🛵";
+        if($newStatus == 'Done') $msgTxt = "Your order has been delivered successfully. Enjoy! 🎉";
+        if($newStatus == 'Returned') $msgTxt = "Your order has been returned to the store. 🔄";
+        if($newStatus == 'No_Answer') $msgTxt = "Unfortunately, we received no answer from the customer. 📞";
+        if($newStatus == 'Postponed') $msgTxt = "Your delivery has been postponed. ⏳";
+        if($newStatus == 'Paid') $msgTxt = "Payment confirmed. Thank you! 💳";
+        if($newStatus == 'Out_For_Delivery') $msgTxt = "Your order is out for delivery! 🛵";
+        if($newStatus == 'Refunded') $msgTxt = "Your order has been refunded. 💸";
         if($newStatus == 'Cancelled') {
             $reason = isset($_POST['cancel_reason']) ? $_POST['cancel_reason'] : 'Unknown';
-            $friendlyStatus = "Cancelled by Shop (Reason: " . $reason . ")";
+            $msgTxt = "Unfortunately, we had to cancel your order. Reason: " . $reason . " 😔";
         }
         $msgData = [
+            'CreatedTime' => time() * 1000,
+            'MessageType' => 'words',
             'height' => time() * 1000,
-            'message' => "Order Status Updated: " . $friendlyStatus,
+            'message' => $msgTxt,
+            'name' => $_SESSION['SellerName'] ?? 'Store',
             'sender' => 'vendor'
         ];
         

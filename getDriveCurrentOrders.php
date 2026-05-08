@@ -27,6 +27,14 @@ while($row = mysqli_fetch_assoc($res)){
 
 $row["MaxDeliveryPrice"]  = (string)$row["MaxDeliveryPrice"];
 
+// --- TRICK FOR DRIVER APP ---
+// If the user accepted the offer (DelvryId is set) but the shop hasn't accepted yet (OrderState is 'waiting'),
+// we tell the Driver App it's 'Doing' so it moves to Active Trips and shows the Chat button!
+// The DB remains 'waiting' so the Seller Dashboard functions correctly.
+if (strtolower(trim($row["OrderState"] ?? '')) === 'waiting' && !empty($row["DelvryId"]) && $row["DelvryId"] !== '0') {
+    $row["OrderState"] = 'Doing';
+}
+
 if($row["OrderTypeSender"]=="COMPANY"){
 	
 	$CompanyID = $row["CompanyID"];

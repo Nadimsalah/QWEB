@@ -10,12 +10,11 @@ $OrderID = $_POST["OrderID"];
                         
                                         $result = array();
                         
-                                        while($row = mysqli_fetch_assoc($res)){
-                        
-                                       
-										$UserFees = $row["UserFees"];
+					$UserFees = '-';
+					while($row = mysqli_fetch_assoc($res)){
+						$UserFees = $row["UserFees"];
+					}
                                                                
-                                        }
 
 $res = mysqli_query($con,"SELECT Orders.*, Drivers.*, Users.name, Users.PhoneNumber, Users.UserPhoto, 
     IFNULL(IFNULL(s.ShopName, s2.ShopName), Orders.DestinationName) as ShopName,
@@ -37,10 +36,10 @@ while($row = mysqli_fetch_assoc($res)){
 
 //$data = $row[0];
 if($UserFees!='-'){
-//$row["OrderDetails"] = $row["OrderDetails"]  . 'Jibler fees ' . $UserFees ;
-$row["OrderPriceFromShop"] = $row["OrderPriceFromShop"] + $UserFees;
-$row["OrderPriceFromShop"] = (string)$row["OrderPriceFromShop"];
-$row["UserFees"] = $UserFees;
+    $currentPrice = isset($row["OrderPriceFromShop"]) && is_numeric($row["OrderPriceFromShop"]) ? (float)$row["OrderPriceFromShop"] : 0;
+    $fee = is_numeric($UserFees) ? (float)$UserFees : 0;
+    $row["OrderPriceFromShop"] = (string)($currentPrice + $fee);
+    $row["UserFees"] = $UserFees;
 }
 
 if(empty($row["name"]) || $row["name"] == null){

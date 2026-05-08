@@ -11,7 +11,9 @@ $totalProducts = ($prodQuery) ? $prodQuery->fetch_assoc()['c'] : 0;
 $orderQuery = $con->query("SELECT COUNT(*) as c FROM Orders WHERE ShopID = $sellerID");
 $totalOrders = ($orderQuery) ? $orderQuery->fetch_assoc()['c'] : 0;
 
-$revQuery = $con->query("SELECT SUM(OrderPrice) as totalRev FROM Orders WHERE ShopID = $sellerID AND OrderState IN ('Done', 'Rated')");
+$revQuery = $con->query("SELECT SUM(
+                            COALESCE((SELECT SUM(od.Quantity * f.FoodPrice) FROM OrderDetailsOrder od JOIN Foods f ON od.FoodID = f.FoodID WHERE od.OrderID = Orders.OrderID), OrderPriceFromShop, OrderPrice)
+                         ) as totalRev FROM Orders WHERE ShopID = $sellerID AND OrderState IN ('Done', 'Rated')");
 $totalRevenue = ($revQuery && $revRow = $revQuery->fetch_assoc()) ? (float)$revRow['totalRev'] : 0;
 
 $recentOrdersSql = "SELECT Orders.OrderID, Orders.OrderPrice, Orders.OrderState, Orders.CreatedAtOrders, Users.name as BuyerName, Users.UserPhoto as BuyerPhoto FROM Orders LEFT JOIN Users ON Orders.UserID = Users.UserID WHERE ShopID = $sellerID ORDER BY Orders.OrderID DESC LIMIT 5";
@@ -30,7 +32,9 @@ for ($i=6; $i>=0; $i--) {
     $dString = $dateObj->format('Y-m-d');
     $chartLabels[] = $dateObj->format('M d');
     
-    $dq = "SELECT SUM(OrderPrice) as dRev FROM Orders WHERE ShopID = $sellerID AND OrderState IN ('Done', 'Rated') AND DATE(CreatedAtOrders) = '$dString'";
+    $dq = "SELECT SUM(
+                COALESCE((SELECT SUM(od.Quantity * f.FoodPrice) FROM OrderDetailsOrder od JOIN Foods f ON od.FoodID = f.FoodID WHERE od.OrderID = Orders.OrderID), OrderPriceFromShop, OrderPrice)
+           ) as dRev FROM Orders WHERE ShopID = $sellerID AND OrderState IN ('Done', 'Rated') AND DATE(CreatedAtOrders) = '$dString'";
     $dRes = $con->query($dq);
     $chartData[] = ($dRes && $dRow = $dRes->fetch_assoc()) ? (float)$dRow['dRev'] : 0;
 }

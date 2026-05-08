@@ -84,9 +84,11 @@ $shopNameEscaped = $con->real_escape_string($_SESSION['SellerName']);
         .workspace { display: flex; flex: 1; overflow: hidden; padding: 20px; gap: 20px; }
 
         /* --- Left Column: Context (Dribbble Style Cards) --- */
-        .col-context { width: 380px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; padding-right: 5px; }
+        .col-context { width: 380px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; padding-right: 5px; -webkit-overflow-scrolling: touch; }
         .col-context::-webkit-scrollbar { width: 6px; }
         .col-context::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
+        
+        body.modal-open .col-context { overflow: hidden; padding-right: 11px; /* prevent layout shift */ }
         
         .dribbble-card { background: #FFF; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid #F1F5F9; }
         .card-header { font-size: 13px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
@@ -172,10 +174,10 @@ $shopNameEscaped = $con->real_escape_string($_SESSION['SellerName']);
 
         /* Modals */
         .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); z-index: 9999; display: none; align-items: center; justify-content: center; }
-        .modal-card { background: #FFF; padding: 40px 30px; border-radius: 28px; width: 90%; max-width: 420px; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.15); animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .modal-card { background: #FFF; padding: 40px 30px; border-radius: 28px; width: 90%; max-width: 420px; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.15); animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden; }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
         .m-icon { width: 72px; height: 72px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 24px; }
-        .modal-card input.pin-input { width: 100%; text-align: center; font-size: 36px; letter-spacing: 12px; padding: 16px; border-radius: 20px; border: 2px solid #E2E8F0; margin-bottom: 30px; outline: none; font-weight: 800; color: var(--brand-purple); background: #F8FAFC; transition: all 0.2s; }
+        .modal-card input.pin-input { width: 100%; height: 80px; line-height: 80px; text-align: center; font-size: 36px; letter-spacing: 12px; padding: 0; border-radius: 20px; border: 2px solid #E2E8F0; margin-bottom: 30px; outline: none; font-weight: 800; color: var(--brand-purple); background: #F8FAFC; transition: all 0.2s; overflow: hidden; }
         .modal-card input.pin-input:focus { border-color: var(--brand-purple); background: #FFF; box-shadow: 0 0 0 4px var(--brand-purple-light); }
         .modal-actions { display: flex; gap: 12px; }
         .modal-actions button { flex: 1; padding: 14px; border-radius: 16px; border: none; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 15px; }
@@ -808,6 +810,7 @@ $shopNameEscaped = $con->real_escape_string($_SESSION['SellerName']);
                 const titleEl = document.querySelector('#pinModal h3');
                 if(titleEl) titleEl.innerText = newStatus === 'Returned' ? 'Return PIN' : 'Security PIN';
                 document.getElementById('pinModal').style.display = 'flex';
+                document.body.classList.add('modal-open');
                 document.getElementById('driverPinInput').focus();
                 
                 document.getElementById('btnPinConfirm').onclick = () => {
@@ -818,7 +821,7 @@ $shopNameEscaped = $con->real_escape_string($_SESSION['SellerName']);
                 };
                 
                 document.getElementById('btnPinCancel').onclick = () => {
-                    document.getElementById('pinModal').style.display = 'none';
+                    closeModal('pinModal');
                 };
                 return; // Stop here, wait for user to click confirm
             } else if(newStatus === 'Cancelled' && !pinOverride) { // pinOverride is used here temporarily as reasonOverride if passed, but it's not. Let's just use a promise for cancel.
@@ -826,15 +829,16 @@ $shopNameEscaped = $con->real_escape_string($_SESSION['SellerName']);
                     const radios = document.querySelectorAll('input[name="reason"]');
                     radios.forEach(r => r.checked = false);
                     document.getElementById('cancelModal').style.display = 'flex';
+                    document.body.classList.add('modal-open');
                     document.getElementById('btnCancelSubmit').onclick = () => {
                         const r = document.querySelector('input[name="reason"]:checked')?.value;
                         if(r) {
-                            document.getElementById('cancelModal').style.display = 'none';
+                            closeModal('cancelModal');
                             res(r);
                         } else alert('Select a reason');
                     };
                     document.getElementById('btnCancelClose').onclick = () => { // Assuming there is a cancel close
-                        document.getElementById('cancelModal').style.display = 'none';
+                        closeModal('cancelModal');
                         res(null);
                     }
                 });
@@ -867,9 +871,6 @@ $shopNameEscaped = $con->real_escape_string($_SESSION['SellerName']);
                 
                 let data = null;
                 try {
-                    // Safely extract just the first JSON object. 
-                    // Since our API only returns {"status":"success"} or {"status":"error","message":"..."},
-                    // finding the first { and the first } after it is perfectly safe and bulletproof against ad-injectors or warnings.
                     let startIdx = text.indexOf('{');
                     let endIdx = text.indexOf('}', startIdx) + 1;
                     if (startIdx !== -1 && endIdx !== 0) {
@@ -897,7 +898,7 @@ $shopNameEscaped = $con->real_escape_string($_SESSION['SellerName']);
                         console.error("UI Update Error:", uiErr);
                     }
                     showToast('success', 'Status updated successfully!');
-                    document.getElementById('pinModal').style.display = 'none';
+                    closeModal('pinModal');
                 }
             } catch(e) { 
                 console.error("Fetch/Network Error, but server processed the request:", e);
@@ -907,7 +908,11 @@ $shopNameEscaped = $con->real_escape_string($_SESSION['SellerName']);
             }
         }
 
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        function closeModal(id) { 
+            const el = document.getElementById(id);
+            if(el) el.style.display = 'none'; 
+            document.body.classList.remove('modal-open');
+        }
 
         // 5. Call Functionality
         function showCallPopup(role, name, phone) {

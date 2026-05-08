@@ -13,12 +13,17 @@ $res = mysqli_query($con,"SELECT Orders.*, Users.name, Users.UserPhoto as UserPr
     LEFT JOIN Shops s ON s.ShopID = Orders.ShopID
     LEFT JOIN Shops s2 ON s2.ShopName = Orders.DestinationName
     WHERE DelvryId='$DelvryId' 
-    AND OrderState IN ('Doing', 'Order pickup', 'Come to take it', 'Order processed', 'Preparing') 
+    AND OrderState IN ('waiting', 'Doing', 'Order pickup', 'Come to take it', 'Order processed', 'Preparing') 
     ORDER BY OrderID DESC");
 
 $result = array();
 $i = 0;
 while($row = mysqli_fetch_assoc($res)){
+
+// Map waiting to Doing for the driver app so it behaves normally
+if (strtolower(trim($row["OrderState"] ?? '')) === 'waiting') {
+    $row["OrderState"] = 'Doing';
+}
 
 //$data = $row[0];
 

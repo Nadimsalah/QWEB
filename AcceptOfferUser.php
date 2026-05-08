@@ -313,7 +313,7 @@ $test=0;
 	    $url = 'https://jibler-37339-default-rtdb.firebaseio.com/Offers/'.$OrderID.'/'.$OfferID.'.json/';
 
 		$postData = array(
-		      'driverorderstate' => "",
+		      'driverorderstate' => "Confirmed",
 			  'isOfferAccepted' => "yes",
 			  'state' => "accepted",
 
