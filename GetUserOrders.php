@@ -3,7 +3,28 @@
 require "conn.php";
 $test=0;
 
-$UserId = $_POST["UserId"];
+$UserId = isset($_POST["UserId"]) ? mysqli_real_escape_string($con, $_POST["UserId"]) : '0';
+$Email = isset($_POST["Email"]) ? mysqli_real_escape_string($con, $_POST["Email"]) : '';
+$Phone = isset($_POST["Phone"]) ? mysqli_real_escape_string($con, $_POST["Phone"]) : '';
+
+// Resolve Firebase string UID to internal numeric UserID
+if (!is_numeric($UserId) && strlen($UserId) > 5) {
+    $resolvedId = '0';
+    if (!empty($Phone) && $Phone !== '00000000') {
+        $check = mysqli_query($con, "SELECT UserID FROM Users WHERE PhoneNumber='$Phone' LIMIT 1");
+        if ($r = mysqli_fetch_assoc($check)) $resolvedId = $r['UserID'];
+    }
+    if ($resolvedId === '0' && !empty($Email) && $Email !== 'user@qoon.app') {
+        $check = mysqli_query($con, "SELECT UserID FROM Users WHERE Email='$Email' LIMIT 1");
+        if ($r = mysqli_fetch_assoc($check)) $resolvedId = $r['UserID'];
+    }
+    $UserId = $resolvedId;
+}
+
+if ($UserId === '0' || $UserId === 0) {
+    echo json_encode(array('status_code' => 200, 'success' => true, 'data' => [], 'message' => "No linked user account found"));
+    die;
+}
 
 $res = mysqli_query($con,"SELECT Orders.*,Drivers.*,Shops.Type FROM Orders LEFT JOIN Drivers ON Drivers.DriverID = Orders.DelvryId LEFT JOIN Shops ON Shops.ShopID = Orders.ShopID WHERE UserID='$UserId' ORDER BY OrderID DESC");
 

@@ -31,7 +31,20 @@ $test=0;
 	
 	if($test==4 || empty($result)){
 
-   $sql="UPDATE Orders SET OrderState='Doing' WHERE OrderID=$OrderID";
+	   $checkShop = mysqli_query($con, "SELECT ShopID, ShopAccept FROM Orders WHERE OrderID = '$OrderID'");
+	   $ShopAccept = 'NO';
+	   $ShopID = '0';
+	   if ($rowShop = mysqli_fetch_assoc($checkShop)) {
+	       $ShopAccept = strtoupper(trim($rowShop["ShopAccept"] ?? 'NO'));
+	       $ShopID = strval($rowShop["ShopID"] ?? '0');
+	   }
+	   
+	   $newState = 'Doing';
+	   if ($ShopID !== '0' && $ShopID !== '' && $ShopAccept !== 'YES') {
+	       $newState = 'waiting';
+	   }
+	   
+   $sql="UPDATE Orders SET OrderState='$newState', DelvryId='$DriverID' WHERE OrderID=$OrderID";
    if(mysqli_query($con,$sql))
    {
 	   

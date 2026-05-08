@@ -63,7 +63,14 @@ $test=0;
         {
         	
         	$UserID = "";
-        	$res = mysqli_query($con,"SELECT * FROM Orders WHERE OrderID ='$OrderId' AND OrderState='waiting'");
+        	$resDebug = mysqli_query($con, "SELECT OrderState FROM Orders WHERE OrderID = '$OrderId'");
+        	if ($rowDebug = mysqli_fetch_assoc($resDebug)) {
+        	    file_put_contents('sql_debug.txt', date('Y-m-d H:i:s') . " - OrderID $OrderId has state: '" . $rowDebug['OrderState'] . "'\n", FILE_APPEND);
+        	} else {
+        	    file_put_contents('sql_debug.txt', date('Y-m-d H:i:s') . " - OrderID $OrderId NOT FOUND in Orders table!\n", FILE_APPEND);
+        	}
+
+        	$res = mysqli_query($con,"SELECT * FROM Orders WHERE OrderID ='$OrderId' AND OrderState IN ('waiting', 'placed', 'WAITING', 'PLACED', 'waiting ', 'placed ')");
         
         	$result = array();
         
@@ -123,7 +130,8 @@ $test=0;
                    'id' => $DriverID,
                    'Offer' => $Price,
                    'rate' => $DriverRate,
-                   'driverphoto' => $PersonalPhoto
+                   'driverphoto' => $PersonalPhoto,
+                   'timestamp' => time()
                ];
                $chFb = curl_init();
                curl_setopt($chFb, CURLOPT_URL, $fbUrl);
@@ -136,16 +144,35 @@ $test=0;
                curl_exec($chFb);
                curl_close($chFb);
         	   
-        	if($OrderType=="SLOW"){   
-        	   $sql="UPDATE Orders SET OrderState='Doing' , DelvryId = '$DriverID', OrderPrice = '$Price' WHERE OrderID=$OrderId";
-        	   if(mysqli_query($con,$sql))
-        	   {}
+        	   $checkShop = mysqli_query($con, "SELECT ShopID, ShopAccept FROM Orders WHERE OrderID = '$OrderId'");
+               $ShopAccept = 'NO';
+               $ShopID = '0';
+               if ($rowShop = mysqli_fetch_assoc($checkShop)) {
+                   $ShopAccept = strtoupper(trim($rowShop["ShopAccept"] ?? 'NO'));
+                   $ShopID = strval($rowShop["ShopID"] ?? '0');
+               }
+               
+        	if($OrderType=="SLOW" || ($ShopID !== '0' && $ShopID !== '')){
+        	    
+            
+                $newState = 'Doing';
+                if ($ShopID !== '0' && $ShopID !== '' && $ShopAccept !== 'YES') {
+                    $newState = 'waiting';
+                }
+                
+        	   $sql="UPDATE Orders SET OrderState='$newState' , DelvryId = '$DriverID', OrderPrice = '$Price' WHERE OrderID='$OrderId'";
+        	   file_put_contents('sql_debug.txt', date('Y-m-d H:i:s') . " - Executing: $sql\n", FILE_APPEND);
+        	   if(mysqli_query($con,$sql)) {
+        	       file_put_contents('sql_debug.txt', date('Y-m-d H:i:s') . " - SUCCESS\n", FILE_APPEND);
+        	   } else {
+        	       file_put_contents('sql_debug.txt', date('Y-m-d H:i:s') . " - ERROR: " . mysqli_error($con) . "\n", FILE_APPEND);
+        	   }
         	}
         	   
         	   $UserFirebaseToken = "";
         	   
-        	   $res = mysqli_query($con,"SELECT * FROM Users WHERE UserID=$UserID");
-        		while($row = mysqli_fetch_assoc($res)){
+        	   $res = mysqli_query($con,"SELECT * FROM Users WHERE UserID='$UserID'");
+        		while($res && $row = mysqli_fetch_assoc($res)){
         		
         		
         		$UserFirebaseToken = $row["UserFirebaseToken"];

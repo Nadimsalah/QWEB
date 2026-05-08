@@ -5,7 +5,16 @@ $test=0;
 
 $DelvryId = $_POST["DelvryId"];
 
-$res = mysqli_query($con,"SELECT * FROM Orders LEFT JOIN Users ON Users.UserID = Orders.UserID LEFT JOIN Shops ON Orders.DestinationName = Shops.ShopName WHERE DelvryId='$DelvryId' AND OrderState IN ('Doing', 'Order pickup', 'Come to take it', 'Order processed', 'Preparing') ORDER BY OrderID DESC");
+$res = mysqli_query($con,"SELECT Orders.*, Users.name, Users.UserPhoto as UserProfilePhoto, 
+    IFNULL(s.ShopName, s2.ShopName) as ShopName,
+    IFNULL(s.ShopLogo, s2.ShopLogo) as ShopLogo
+    FROM Orders 
+    LEFT JOIN Users ON Users.UserID = Orders.UserID 
+    LEFT JOIN Shops s ON s.ShopID = Orders.ShopID
+    LEFT JOIN Shops s2 ON s2.ShopName = Orders.DestinationName
+    WHERE DelvryId='$DelvryId' 
+    AND OrderState IN ('Doing', 'Order pickup', 'Come to take it', 'Order processed', 'Preparing') 
+    ORDER BY OrderID DESC");
 
 $result = array();
 $i = 0;
@@ -60,9 +69,62 @@ if($row["OrderTypeSender"]=="COMPANY"){
 	if(empty($row["name"]) || $row["name"] == null){
 		$row["name"] = $row["UserName"] ?? 'Customer';
 	}
+	$row["UserName"] = $row["name"]; // Ensure both keys exist
 
-	if(empty($row["UserPhoto"]) || $row["UserPhoto"] == "0"){
-		$row["UserPhoto"] = "https://ui-avatars.com/api/?name=".urlencode($row["name"])."&background=random";
+	// If the primary JOIN failed to find a photo, look it up by UserID, then phone, then email
+	if (empty($row["UserPhoto"]) || $row["UserPhoto"] == "0" || $row["UserPhoto"] == "null") {
+		$uid = intval($row['UserID'] ?? 0);
+		if ($uid > 0) {
+			$photoRes = mysqli_query($con, "SELECT UserPhoto FROM Users WHERE UserID = $uid LIMIT 1");
+			if ($photoRow = mysqli_fetch_assoc($photoRes)) {
+				if (!empty($photoRow['UserPhoto']) && $photoRow['UserPhoto'] !== '0') {
+					$row['UserPhoto'] = $photoRow['UserPhoto'];
+				}
+			}
+		}
+		// Fallback: look up by phone number stored in the order
+		if ((empty($row['UserPhoto']) || $row['UserPhoto'] === '0') && !empty($row['UserPhone'])) {
+			$safePhone = mysqli_real_escape_string($con, $row['UserPhone']);
+			$photoRes = mysqli_query($con, "SELECT UserPhoto, name FROM Users WHERE PhoneNumber='$safePhone' LIMIT 1");
+			if ($photoRow = mysqli_fetch_assoc($photoRes)) {
+				if (!empty($photoRow['UserPhoto']) && $photoRow['UserPhoto'] !== '0') {
+					$row['UserPhoto'] = $photoRow['UserPhoto'];
+				}
+				if (!empty($photoRow['name'])) { $row['name'] = $photoRow['name']; $row['UserName'] = $photoRow['name']; }
+			}
+		}
+		// Fallback: look up by email stored in the order
+		if ((empty($row['UserPhoto']) || $row['UserPhoto'] === '0') && !empty($row['UserEmail'])) {
+			$safeEmail = mysqli_real_escape_string($con, $row['UserEmail']);
+			$photoRes = mysqli_query($con, "SELECT UserPhoto, name FROM Users WHERE Email='$safeEmail' LIMIT 1");
+			if ($photoRow = mysqli_fetch_assoc($photoRes)) {
+				if (!empty($photoRow['UserPhoto']) && $photoRow['UserPhoto'] !== '0') {
+					$row['UserPhoto'] = $photoRow['UserPhoto'];
+				}
+				if (!empty($photoRow['name'])) { $row['name'] = $photoRow['name']; $row['UserName'] = $photoRow['name']; }
+			}
+		}
+	}
+
+	// Handle profile photo fallback
+	if(empty($row["UserPhoto"]) || $row["UserPhoto"] == "0" || $row["UserPhoto"] == "null"){
+		// Try the aliased UserProfilePhoto from the JOIN first
+		if(!empty($row["UserProfilePhoto"]) && $row["UserProfilePhoto"] != "0" && $row["UserProfilePhoto"] != "null") {
+			$row["UserPhoto"] = $row["UserProfilePhoto"];
+		} else {
+			$row["UserPhoto"] = "https://ui-avatars.com/api/?name=".urlencode($row["name"])."&background=random";
+		}
+	}
+	
+	// Convert to full URLs if they are just filenames
+	if (!empty($row["UserPhoto"]) && !filter_var($row["UserPhoto"], FILTER_VALIDATE_URL)) {
+		$row["UserPhoto"] = "https://qoon.app/photo/" . $row["UserPhoto"];
+	}
+	if (!empty($row["ShopLogo"]) && !filter_var($row["ShopLogo"], FILTER_VALIDATE_URL)) {
+		$row["ShopLogo"] = "https://qoon.app/photo/" . $row["ShopLogo"];
+	}
+	if (!empty($row["DestnationPhoto"]) && !filter_var($row["DestnationPhoto"], FILTER_VALIDATE_URL)) {
+		$row["DestnationPhoto"] = "https://qoon.app/photo/" . $row["DestnationPhoto"];
 	}
 
 $result[] = $row;

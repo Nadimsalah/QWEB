@@ -16,12 +16,22 @@ $AppType = $_POST["AppType"];
 $RealType = "";
 
 
-	$res = mysqli_query($con,"SELECT RealType FROM Orders WHERE OrderID=$OrderID");
+	$res = mysqli_query($con,"SELECT RealType, FourDigit FROM Orders WHERE OrderID=$OrderID");
+	$OrderFourDigit = "";
 	while($row = mysqli_fetch_assoc($res)){
-	    
-	    
 	    $RealType = $row["RealType"];
-	    
+	    $OrderFourDigit = $row["FourDigit"];
+	}
+
+	$DeliveryPIN = $_POST["DeliveryPIN"] ?? "";
+	if (!empty($DeliveryPIN) && !empty($OrderFourDigit) && $OrderFourDigit !== "0" && $OrderFourDigit !== "0000") {
+	    if (str_pad($OrderFourDigit, 4, '0', STR_PAD_LEFT) !== $DeliveryPIN) {
+	        $message ="Invalid Delivery PIN";
+	        $success = false;
+	        $status_code = 400;
+	        echo json_encode(array('status_code' => $status_code,'success' => $success ,"data"=>[],"message"=>$message));
+	        exit;
+	    }
 	}
 
 

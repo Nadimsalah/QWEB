@@ -16,6 +16,45 @@ $DestnationCountryId= $_POST["DestnationCountryId"];
 
 
 $UserID     = $_POST["UserID"];
+$UserPhoto  = $_POST["UserPhoto"]; // New: Received from Firebase in the app
+
+// Sync User Profile (Name, Phone, Photo) — resolve real UserID before INSERT
+// Step 1: Try to find by Phone
+if (!empty($UserPhone) && $UserPhone !== '00000000') {
+    $checkUser = mysqli_query($con, "SELECT UserID, UserPhoto FROM Users WHERE PhoneNumber='$UserPhone' LIMIT 1");
+    if ($rowUser = mysqli_fetch_assoc($checkUser)) {
+        $existingID = $rowUser['UserID'];
+        if (!empty($UserPhoto) && (empty($rowUser['UserPhoto']) || $rowUser['UserPhoto'] == '0')) {
+            mysqli_query($con, "UPDATE Users SET UserPhoto='$UserPhoto', name='$UserName' WHERE UserID=$existingID");
+        }
+        $UserID = $existingID;
+    }
+}
+
+// Step 2: If still unresolved, try by Email
+if (($UserID === '0' || empty($UserID)) && !empty($UserEmail) && $UserEmail !== 'user@qoon.app') {
+    $checkUser = mysqli_query($con, "SELECT UserID, UserPhoto FROM Users WHERE Email='$UserEmail' LIMIT 1");
+    if ($rowUser = mysqli_fetch_assoc($checkUser)) {
+        $existingID = $rowUser['UserID'];
+        if (!empty($UserPhoto) && (empty($rowUser['UserPhoto']) || $rowUser['UserPhoto'] == '0')) {
+            mysqli_query($con, "UPDATE Users SET UserPhoto='$UserPhoto', name='$UserName' WHERE UserID=$existingID");
+        }
+        $UserID = $existingID;
+    }
+}
+
+// Step 3: If still unresolved, try by Name
+if (($UserID === '0' || empty($UserID)) && !empty($UserName) && $UserName !== 'QOON Client') {
+    $checkUser = mysqli_query($con, "SELECT UserID, UserPhoto FROM Users WHERE name='$UserName' LIMIT 1");
+    if ($rowUser = mysqli_fetch_assoc($checkUser)) {
+        $existingID = $rowUser['UserID'];
+        if (!empty($UserPhoto) && (empty($rowUser['UserPhoto']) || $rowUser['UserPhoto'] == '0')) {
+            mysqli_query($con, "UPDATE Users SET UserPhoto='$UserPhoto' WHERE UserID=$existingID");
+        }
+        $UserID = $existingID;
+    }
+}
+
 $DestinationName  = $_POST["DestinationName"];
 $DestnationLat      = $_POST["DestnationLat"];
 $DestnationLongt   = $_POST["DestnationLongt"];
@@ -32,8 +71,6 @@ $RealType    = $_POST["RealType"];
 if($RealType==""){
     $RealType = 'QOON';
 }
-
-
 
 $res = mysqli_query($con,"SELECT name,PhoneNumber,Email FROM Users WHERE UserID=$UserID");
 	while($row = mysqli_fetch_assoc($res)){

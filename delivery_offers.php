@@ -45,7 +45,8 @@ if(isset($_GET['ajax']) && $_GET['ajax'] == 'offers') {
                                 'distance' => number_format(rand(10,30)/10, 1) . ' km',
                                 'time' => rand(3, 15) . ' min',
                                 'price' => $offerVal, // Driver Bid (already includes commission from addoffer.php)
-                                'img' => (!empty($img) && strpos($img, 'http') !== false) ? $img : "https://ui-avatars.com/api/?name=".urlencode($fName)."&background=random"
+                                'img' => (!empty($img) && strpos($img, 'http') !== false) ? $img : "https://ui-avatars.com/api/?name=".urlencode($fName)."&background=random",
+                                'timestamp' => isset($offerNode['timestamp']) ? intval($offerNode['timestamp']) : time()
                             ];
                         }
                     }

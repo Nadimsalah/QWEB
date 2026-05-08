@@ -109,24 +109,28 @@ $test=0;
         }
         // ----------------------------------
 
-   $sql="UPDATE Orders SET OrderState='Doing' ,OfferKey='$OfferKey', DelvryId = '$DelvryId', OrderPrice = '$OrderPrice' WHERE OrderID=$OrderID";
+    $checkShop = mysqli_query($con, "SELECT ShopID, ShopAccept FROM Orders WHERE OrderID = '$OrderID'");
+    $ShopAccept = 'NO';
+    $ShopID = '0';
+    if ($rowShop = mysqli_fetch_assoc($checkShop)) {
+        $ShopAccept = strtoupper(trim($rowShop["ShopAccept"] ?? 'NO'));
+        $ShopID = strval($rowShop["ShopID"] ?? '0');
+    }
+
+    $newState = 'Doing';
+    if ($ShopID !== '0' && $ShopID !== '' && $ShopAccept !== 'YES') {
+        $newState = 'waiting';
+    }
+
+   $sql="UPDATE Orders SET OrderState='$newState' ,OfferKey='$OfferKey', DelvryId = '$DelvryId', OrderPrice = '$OrderPrice' WHERE OrderID=$OrderID";
    if(mysqli_query($con,$sql))
    {
 	   
-	   
-	   $res = mysqli_query($con,"SELECT ShopAccept FROM Orders WHERE OrderID=$OrderID");
-			while($row = mysqli_fetch_assoc($res)){
-				
-				
-				
-				$ShopAccept = $row["ShopAccept"];
-				
-				if($ShopAccept=='YES'){
-					AcceptOrderFirebase($OrderID,$OfferKey);
-				}else{
-					AcceptOrderFirebaseT($OrderID,$OfferKey);
-				}
-			}
+		if($ShopAccept=='YES' || $ShopID === '0' || $ShopID === ''){
+			AcceptOrderFirebase($OrderID,$OfferKey);
+		}else{
+			AcceptOrderFirebaseT($OrderID,$OfferKey);
+		}
 	  			
 	  $res = mysqli_query($con,"SELECT ShopID FROM Orders WHERE OrderID =$OrderID");
 	while($row = mysqli_fetch_assoc($res)){

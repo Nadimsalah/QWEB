@@ -22,8 +22,10 @@ if ($con && $orderId !== '0') {
         
         $shopName = !empty($row['SName']) ? $row['SName'] : (!empty($row['DestinationName']) ? $row['DestinationName'] : 'QOON Shop');
         if (!empty($row['SPhoto'])) {
-            // Check if ShopLogo is valid string
             $shopImgUrl = $row['SPhoto'];
+            if (strpos($shopImgUrl, 'http') === false) {
+                $shopImgUrl = "https://qoon.app/photo/" . $shopImgUrl;
+            }
         } else {
             $shopImgUrl = "https://ui-avatars.com/api/?name=".urlencode($shopName)."&background=FFD700&color=000";
         }
@@ -34,10 +36,17 @@ if ($con && $orderId !== '0') {
         } else {
             $driverName = 'Waiting for Driver';
         }
+        
         if (!empty($row['DriverImg']) && strpos($row['DriverImg'], 'http') !== false) {
             $driverImgUrl = $row['DriverImg'];
-        } else if (!empty($row['DriverImg']) && strlen($row['DriverImg']) > 5) {
-            $driverImgUrl = "https://dash.qoon.app/assets/images/users/" . $row['DriverImg'];
+        } else if (!empty($row['DriverImg'])) {
+            $driverImgUrl = $row['DriverImg'];
+            if (strlen($driverImgUrl) > 5 && strpos($driverImgUrl, '.') !== false) {
+                // Could be from dash.qoon.app or photo/
+                $driverImgUrl = "https://qoon.app/photo/" . $driverImgUrl;
+            } else {
+                $driverImgUrl = "https://dash.qoon.app/assets/images/users/" . $driverImgUrl;
+            }
         } else if (!empty($row['FName'])) {
             $driverImgUrl = "https://ui-avatars.com/api/?name=".urlencode($driverName)."&background=random";
         }

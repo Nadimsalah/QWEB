@@ -87,8 +87,14 @@ if ($con && $orderId !== '0') {
         }
         
         $userName = !empty($row['UserName']) ? $row['UserName'] : 'Customer';
-        $userImgUrl = (!empty($row['UserImg']) && strpos($row['UserImg'], 'http') !== false) ? $row['UserImg'] : "https://ui-avatars.com/api/?name=".urlencode($userName)."&background=0ea5e9&color=fff";
-        
+        if (!empty($row['UserImg'])) {
+            $userImgUrl = $row['UserImg'];
+            if (strpos($userImgUrl, 'http') === false) {
+                $userImgUrl = "https://qoon.app/photo/" . $userImgUrl;
+            }
+        } else {
+            $userImgUrl = "https://ui-avatars.com/api/?name=".urlencode($userName)."&background=0ea5e9&color=fff";
+        }        
         if (isset($row['FourDigit']) && $row['FourDigit'] !== '' && $row['FourDigit'] !== '0') {
             $fourDigitPin = str_pad($row['FourDigit'], 4, '0', STR_PAD_LEFT);
         } else {

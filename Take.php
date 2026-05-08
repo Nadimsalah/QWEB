@@ -4,7 +4,20 @@ require "conn.php";
 $test= 4;
 $OrderID = $_POST["OrderID"];
 
-$updateSql = "UPDATE Orders SET OrderState='Come to take it' WHERE OrderID='$OrderID'";
+$checkShop = mysqli_query($con, "SELECT ShopID, ShopAccept FROM Orders WHERE OrderID = '$OrderID'");
+$ShopAccept = 'NO';
+$ShopID = '0';
+if ($rowShop = mysqli_fetch_assoc($checkShop)) {
+    $ShopAccept = strtoupper(trim($rowShop["ShopAccept"] ?? 'NO'));
+    $ShopID = strval($rowShop["ShopID"] ?? '0');
+}
+
+$newState = 'Come to take it';
+if ($ShopID !== '0' && $ShopID !== '' && $ShopAccept !== 'YES') {
+    $newState = 'waiting';
+}
+
+$updateSql = "UPDATE Orders SET OrderState='$newState' WHERE OrderID='$OrderID'";
 mysqli_query($con, $updateSql);
 
 $res = mysqli_query($con,"SELECT Users.LANG,Users.UserFirebaseToken FROM Users JOIN Orders ON Users.UserID = Orders.UserID WHERE Orders.OrderID=$OrderID");

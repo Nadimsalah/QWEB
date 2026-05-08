@@ -3,10 +3,15 @@
 require "conn.php";
 $test=0;
 
-$PhoneNumber = $_POST["PhoneNumber"];
+$PhoneNumber = mysqli_real_escape_string($con, $_POST["PhoneNumber"]);
 
-
-$res = mysqli_query($con,"SELECT UserID,name,PhoneNumber,UserPhoto FROM `Users` WHERE (PhoneNumber LIKE '%$PhoneNumber%') OR (name LIKE '%$PhoneNumber%')");
+if (strpos($PhoneNumber, '@') !== false) {
+    // It's an email
+    $res = mysqli_query($con, "SELECT UserID,name,PhoneNumber,UserPhoto FROM `Users` WHERE Email = '$PhoneNumber'");
+} else {
+    // It's a phone or name
+    $res = mysqli_query($con, "SELECT UserID,name,PhoneNumber,UserPhoto FROM `Users` WHERE (PhoneNumber LIKE '%$PhoneNumber%') OR (name LIKE '%$PhoneNumber%') LIMIT 50");
+}
 
 $result = array();
 

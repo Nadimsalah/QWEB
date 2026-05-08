@@ -77,8 +77,45 @@ if($row["OrderTypeSender"]=="COMPANY"){
 		$row["name"] = $row["UserName"] ?? 'Customer';
 	}
 
-if(empty($row["UserPhoto"]) || $row["UserPhoto"] == "0"){
-    $row["UserPhoto"] = "https://ui-avatars.com/api/?name=".urlencode($row["name"])."&background=random";
+	// If the JOIN returned no photo (UserID=0), look up by phone or email stored in Orders
+	if(empty($row["UserPhoto"]) || $row["UserPhoto"] == "0" || $row["UserPhoto"] == "null"){
+		// Try by phone
+		if (!empty($row['UserPhone'])) {
+			$safePhone = mysqli_real_escape_string($con, $row['UserPhone']);
+			$photoRes = mysqli_query($con, "SELECT UserPhoto, name FROM Users WHERE PhoneNumber='$safePhone' LIMIT 1");
+			if ($photoRow = mysqli_fetch_assoc($photoRes)) {
+				if (!empty($photoRow['UserPhoto']) && $photoRow['UserPhoto'] !== '0') {
+					$row['UserPhoto'] = $photoRow['UserPhoto'];
+				}
+				if (!empty($photoRow['name'])) { $row['name'] = $photoRow['name']; }
+			}
+		}
+		// Try by email
+		if ((empty($row['UserPhoto']) || $row['UserPhoto'] === '0') && !empty($row['UserEmail'])) {
+			$safeEmail = mysqli_real_escape_string($con, $row['UserEmail']);
+			$photoRes = mysqli_query($con, "SELECT UserPhoto, name FROM Users WHERE Email='$safeEmail' LIMIT 1");
+			if ($photoRow = mysqli_fetch_assoc($photoRes)) {
+				if (!empty($photoRow['UserPhoto']) && $photoRow['UserPhoto'] !== '0') {
+					$row['UserPhoto'] = $photoRow['UserPhoto'];
+				}
+				if (!empty($photoRow['name'])) { $row['name'] = $photoRow['name']; }
+			}
+		}
+		// Final fallback: generated avatar
+		if (empty($row['UserPhoto']) || $row['UserPhoto'] === '0') {
+			$row["UserPhoto"] = "https://ui-avatars.com/api/?name=".urlencode($row["name"])."&background=random";
+		}
+	}
+
+// Convert to full URLs if they are just filenames
+if (!empty($row["UserPhoto"]) && !filter_var($row["UserPhoto"], FILTER_VALIDATE_URL)) {
+    $row["UserPhoto"] = "https://qoon.app/photo/" . $row["UserPhoto"];
+}
+if (!empty($row["ShopLogo"]) && !filter_var($row["ShopLogo"], FILTER_VALIDATE_URL)) {
+    $row["ShopLogo"] = "https://qoon.app/photo/" . $row["ShopLogo"];
+}
+if (!empty($row["DestnationPhoto"]) && !filter_var($row["DestnationPhoto"], FILTER_VALIDATE_URL)) {
+    $row["DestnationPhoto"] = "https://qoon.app/photo/" . $row["DestnationPhoto"];
 }
 
 $result[] = $row;
