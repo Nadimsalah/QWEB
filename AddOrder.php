@@ -195,8 +195,27 @@ $test=0;
 
 	}
 	
-	if($ShopID==""){
+	if($ShopID===""){
 	    $ShopID = "0";
+	}
+
+	// ── CRITICAL FIX: Auto-resolve ShopID from FoodIDs when app sends ShopID=0 ──
+	// The mobile app used to hardcode ShopID=0. We now look up the real ShopID
+	// from the first food item in the FoodIDs string (format: "123*1**#456*2**").
+	if ($ShopID == "0" && !empty($FoodIDs)) {
+	    $firstFoodId = 0;
+	    // Parse first FoodID from format "FoodID*Qty**"
+	    if (preg_match('/^(\d+)\*/', $FoodIDs, $foodMatch)) {
+	        $firstFoodId = (int)$foodMatch[1];
+	    }
+	    if ($firstFoodId > 0) {
+	        $foodShopRes = mysqli_query($con, "SELECT ShopID FROM Foods WHERE FoodID = $firstFoodId LIMIT 1");
+	        if ($foodShopRow = mysqli_fetch_assoc($foodShopRes)) {
+	            if (!empty($foodShopRow['ShopID']) && $foodShopRow['ShopID'] != '0') {
+	                $ShopID = $foodShopRow['ShopID'];
+	            }
+	        }
+	    }
 	}
 	
 	$res = mysqli_query($con,"SELECT CityID FROM Shops WHERE ShopID=$ShopID");
@@ -213,7 +232,6 @@ $test=0;
         
                  //$ShopID = $row["ShopID"];
                  $ShopFirebaseToken = $row["ShopFirebaseToken"]; 
-                 $ShopPhone = $row["ShopPhone"]; 
 				 $ShopLang = $row["LANG"]; 
 				 
 				 $ShopName = $row["ShopName"]; 
