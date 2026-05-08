@@ -78,7 +78,7 @@ if(empty($row["UserPhoto"]) || $row["UserPhoto"] == "0" || $row["UserPhoto"] == 
         }
     }
     // Final fallback: generated avatar
-    if (empty($row['UserPhoto']) || $row['UserPhoto'] === '0') {
+    if (empty($row['UserPhoto']) || $row['UserPhoto'] === '0' || $row['UserPhoto'] === 'null') {
         $row["UserPhoto"] = "https://ui-avatars.com/api/?name=".urlencode($row["name"] ?? 'User')."&background=random";
     }
 }

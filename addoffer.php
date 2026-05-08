@@ -152,11 +152,11 @@ $test=0;
                    $ShopID = strval($rowShop["ShopID"] ?? '0');
                }
                
-        	if($OrderType=="SLOW" || ($ShopID !== '0' && $ShopID !== '')){
+        	if($OrderType=="SLOW" || ($ShopID !== '0' && $ShopID !== '' && strtolower($ShopID) !== 'null')){
         	    
             
                 $newState = 'Doing';
-                if ($ShopID !== '0' && $ShopID !== '' && $ShopAccept !== 'YES') {
+                if ($ShopID !== '0' && $ShopID !== '' && strtolower($ShopID) !== 'null' && $ShopAccept !== 'YES') {
                     $newState = 'waiting';
                 }
                 

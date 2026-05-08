@@ -195,7 +195,7 @@ $test=0;
 
 	}
 	
-	if($ShopID==""){
+	if($ShopID=="" || strtolower($ShopID)=="null"){
 	    $ShopID = "0";
 	}
 	
@@ -232,7 +232,7 @@ $test=0;
     
     
     
-    if($ShopID==""){
+    if($ShopID=="" || strtolower($ShopID)=="null"){
     
     $ShopID = '0';
 	

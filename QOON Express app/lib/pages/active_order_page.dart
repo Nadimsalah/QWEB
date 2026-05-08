@@ -1182,6 +1182,9 @@ class _ActiveOrderPageState extends State<ActiveOrderPage> {
     final userName = orderDetails?['UserName'] ?? orderDetails?['name'] ?? 'Customer';
     String userPhoto = orderDetails?['UserPhoto']?.toString() ?? '';
     if (userPhoto.isNotEmpty) userPhoto = ApiService.resolvePhotoUrl(userPhoto);
+    if (userPhoto.isEmpty) {
+      userPhoto = 'https://ui-avatars.com/api/?name=${Uri.encodeComponent(userName)}&background=2cb5e8&color=fff&size=64';
+    }
     String userPhone = orderDetails?['PhoneNumber']?.toString() ?? orderDetails?['UserPhone']?.toString() ?? '';
     if (userPhone == '0') userPhone = '';
 
